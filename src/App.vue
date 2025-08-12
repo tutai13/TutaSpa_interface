@@ -49,7 +49,7 @@
     </header>
 
     <!-- Content -->
-    <router-view></router-view>
+    <main class="mt-5 pt-4"><router-view></router-view></main>
     <!-- Floating Button -->
     <div class="chat-popup-wrapper">
       <!-- Chat Toggle Button -->
