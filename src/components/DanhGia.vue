@@ -193,10 +193,11 @@
 
 <script setup>
 import { ref, onMounted, watch, nextTick } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import axiosClient from "../utils/axiosClient";
 
 const route = useRoute();
+const router = useRouter();
 
 // Reactive data
 const danhGia = ref({
@@ -213,7 +214,13 @@ const showSuccess = ref(false);
 const isLoading = ref(false);
 const hoveredRating = ref(0);
 
-const userId = localStorage.getItem("userId");
+const userInfoStr = localStorage.getItem("user_info");
+
+// Chuyển chuỗi JSON thành object
+const userInfo = JSON.parse(userInfoStr);
+
+// Lấy id
+const userId = userInfo.id;
 
 // Rating text mapping
 const ratingTexts = {
@@ -307,7 +314,7 @@ async function submitDanhGia() {
 
     console.log("🚀 Submit payload:", { ...danhGia.value, userId });
 
-    await axiosClient.post("DanhGia", {
+    await axiosClient.post("/DanhGia", {
       ...danhGia.value,
       userId,
     });
@@ -328,6 +335,7 @@ async function submitDanhGia() {
     };
 
     await loadDanhGia(currentDichVuID);
+    router.push("/");
   } catch (err) {
     console.error(err);
     alert("❌ Đánh giá thất bại.");
