@@ -469,7 +469,7 @@ const modalForm = ref({
 });
 const availableSlots = ref([]);
 // Base URL for images
-const IMAGE_BASE_URL = "https://localhost:7183/images/";
+const IMAGE_BASE_URL = import.meta.env.VITE_BASE_URL.replace("/api", "") + "/images/";
 
 const currentSlide = ref(0);
 
