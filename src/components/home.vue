@@ -276,7 +276,11 @@
 
             <div class="form-group">
               <label for="service">Chọn dịch vụ *</label>
-              <select id="service" v-model="selectedService">
+              <select
+                id="service"
+                v-model="selectedService"
+                :disabled="bookingForm.consultAtStore"
+              >
                 <option value="">-- Chọn dịch vụ --</option>
                 <option
                   v-for="service in services"
@@ -290,7 +294,7 @@
                 <button
                   type="button"
                   class="add-service-btn"
-                  :disabled="!selectedService"
+                  :disabled="!selectedService || bookingForm.consultAtStore"
                   @click="addService"
                 >
                   Thêm dịch vụ
@@ -301,6 +305,7 @@
                     type="checkbox"
                     v-model="bookingForm.consultAtStore"
                     style="width: 15px; height: 15px"
+                    @change="handleConsultAtStore"
                   />
                   Tới quán nhân viên tư vấn
                 </label>
@@ -308,7 +313,10 @@
             </div>
 
             <!-- Selected Services List -->
-            <div class="selected-services" v-if="bookingForm.services.length">
+            <div
+              class="selected-services"
+              v-if="bookingForm.services.length && !bookingForm.consultAtStore"
+            >
               <h4>Dịch vụ đã chọn:</h4>
               <ul>
                 <li
@@ -318,7 +326,7 @@
                 >
                   <span>{{ service.name }} - {{ service.price }} VNĐ</span>
                   <div class="quantity-control">
-                    <label for="quantity-${index}">Số lượng:</label>
+                    <label :for="'quantity-' + index">Số lượng:</label>
                     <input
                       type="number"
                       :id="'quantity-' + index"
@@ -383,7 +391,12 @@
             <button
               type="submit"
               class="submit-btn"
-              :disabled="!bookingForm.services.length"
+              :disabled="
+                !bookingForm.phone ||
+                (!bookingForm.services.length && !bookingForm.consultAtStore) ||
+                !bookingForm.date ||
+                !bookingForm.time
+              "
             >
               Đặt lịch hẹn
             </button>
@@ -469,7 +482,8 @@ const modalForm = ref({
 });
 const availableSlots = ref([]);
 // Base URL for images
-const IMAGE_BASE_URL = import.meta.env.VITE_BASE_URL.replace("/api", "") + "/images/";
+const IMAGE_BASE_URL =
+  import.meta.env.VITE_BASE_URL.replace("/api", "") + "/images/";
 
 const currentSlide = ref(0);
 
@@ -501,9 +515,18 @@ const stats = [
 ];
 
 // Methods
+const handleConsultAtStore = () => {
+  if (bookingForm.value.consultAtStore) {
+    bookingForm.value.services = [];
+    selectedService.value = null;
+  }
+};
 
 const addServiceFromCard = (service) => {
-  if (!bookingForm.value.services.some((s) => s.id === service.id)) {
+  if (
+    !bookingForm.value.services.some((s) => s.id === service.id) &&
+    !bookingForm.value.consultAtStore
+  ) {
     bookingForm.value.services.push({
       ...service,
       soLuong: 1,
@@ -515,6 +538,7 @@ const addServiceFromCard = (service) => {
     bookingSection.scrollIntoView({ behavior: "smooth" });
   }
 };
+
 const fetchSlots = async () => {
   if (!bookingForm.value.date) return;
   try {
@@ -607,7 +631,10 @@ const filterServices = (category) => {
 const addService = () => {
   if (
     selectedService.value &&
-    !bookingForm.value.services.some((s) => s.id === selectedService.value.id)
+    !bookingForm.value.services.some(
+      (s) => s.id === selectedService.value.id
+    ) &&
+    !bookingForm.value.consultAtStore
   ) {
     bookingForm.value.services.push({ ...selectedService.value, soLuong: 1 });
     selectedService.value = null; // Reset dropdown
@@ -651,6 +678,7 @@ const submitBooking = async () => {
       date: new Date().toISOString().split("T")[0],
       time: "",
       notes: "",
+      consultAtStore: false,
     };
     selectedService.value = null;
   } catch (err) {
@@ -666,6 +694,7 @@ const resetBookingForm = () => {
     date: "",
     time: "",
     notes: "",
+    consultAtStore: false,
   };
   selectedService.value = null;
 };
@@ -1350,7 +1379,6 @@ onMounted(async () => {
 
 .quantity-input {
   width: 60px;
-
   border-radius: 5px;
   text-align: center;
 }
