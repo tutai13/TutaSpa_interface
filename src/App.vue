@@ -208,6 +208,7 @@
 import { onMounted, onUnmounted, ref, nextTick } from "vue";
 import * as signalR from "@microsoft/signalr";
 import { useAuthState } from "./services/authstate";
+import { authAPI } from "./services/authservice";
 
 const chatClosed = ref(false);
 const adminDisconnected = ref(false); // Thêm biến theo dõi trạng thái admin disconnect
@@ -242,6 +243,7 @@ onMounted(() => {
   });
   initializeChat();
 });
+
 
 // Enhanced cleanup function
 onUnmounted(async () => {
