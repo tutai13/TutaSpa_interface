@@ -148,16 +148,14 @@ export const authAPI = {
   refreshToken: async () => {
     try {
       const response = await apiClient.post("/account/refresh-token");
-
-      if (response.status == 200) {
-        localStorage.setItem("accessToken", response.accessToken);
-        return true;
-      }
-
-      return false;
+      localStorage.setItem("accessToken", response.accessToken);
+      return true;
+      
     } catch (error) {
+      
       localStorage.removeItem("accessToken");
       throw error;
+
     }
   },
 
