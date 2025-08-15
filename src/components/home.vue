@@ -123,8 +123,7 @@
             <div class="feature-icon">👥</div>
             <h3>Chuyên gia giàu kinh nghiệm</h3>
             <p>
-              Đội ngũ chuyên viên được đào tạo bài bản, có chứng chỉ quốc tế và
-              kinh nghiệm hơn 5 năm
+              Đội ngũ chuyên viên được đào tạo bài bản, và có kinh nghiệm hơn 5 năm
             </p>
           </div>
           <div class="feature-card">
@@ -207,40 +206,45 @@
         </div>
       </div>
     </section>
+<!-- testimonials -->
+    <section class="testimonials py-5 bg-light">
+    <div class="container">
+      <h2 class="section-title text-center mb-5">
+        Khách hàng nói gì về chúng tôi
+      </h2>
 
-    <!-- Testimonials Section -->
-    <section class="testimonials">
-      <div class="container">
-        <h2 class="section-title">Khách hàng nói gì về chúng tôi</h2>
-        <div class="testimonials-grid">
-          <div class="testimonial-card">
-            <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
-            <p class="testimonial-text">
-              Dịch vụ massage tại Serenity Spa thật sự tuyệt vời! Tôi cảm thấy
-              thư giãn và thoải mái như chưa bao giờ. Nhân viên rất chuyên
-              nghiệp và chu đáo.
-            </p>
-            <div class="testimonial-author">- Chị Lan Anh, 32 tuổi</div>
+      <div v-if="loading" class="text-center text-muted">Đang tải...</div>
+      <div v-else-if="testimonials.length === 0" class="text-center text-muted">
+        Chưa có đánh giá nào.
+      </div>
+
+      <div v-else class="testimonials-grid row g-4">
+        <div
+          v-for="(item, index) in testimonials"
+          :key="index"
+          class="testimonial-card col-md-4"
+        >
+          <div class="testimonial-rating mb-2">
+            <i
+              v-for="n in 5"
+              :key="n"
+              class="fa-star fas"
+              :class="n <= item.soSao ? 'text-warning' : 'text-secondary opacity-25'"
+            ></i>
           </div>
-          <div class="testimonial-card">
-            <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
-            <p class="testimonial-text">
-              Sau liệu trình chăm sóc da tại đây, làn da tôi trở nên mịn màng và
-              sáng khỏe hơn rất nhiều. Tôi sẽ quay lại và giới thiệu cho bạn bè.
-            </p>
-            <div class="testimonial-author">- Chị Minh Hương, 28 tuổi</div>
-          </div>
-          <div class="testimonial-card">
-            <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
-            <p class="testimonial-text">
-              Không gian spa rất đẹp và thư giãn. Dịch vụ detox toàn thân giúp
-              tôi cảm thấy nhẹ nhõm và tràn đầy năng lượng. Đáng tiền!
-            </p>
-            <div class="testimonial-author">- Anh Đức Minh, 35 tuổi</div>
+          <p class="testimonial-text fst-italic">
+            "{{ item.noiDung || '(Không có nội dung)' }}"
+          </p>
+          <div class="testimonial-author mt-2 fw-semibold">
+            - 
+            <span v-if="item.anDanh">Ẩn danh</span>
+            <span v-else>{{ item.user?.name || 'Khách hàng' }}</span>,
+            {{ item.user?.tuoi || '...' }} tuổi
           </div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
     <!-- Booking Section -->
     <section id="booking" class="booking">
@@ -392,55 +396,51 @@
       </div>
     </section>
 
-    <!-- About Section -->
-    <section id="about" class="about">
-      <div class="container">
-        <div class="about-content">
-          <div class="about-text">
-            <h2>Về TutaSpa</h2>
-            <p>
-              Với hơn 10 năm kinh nghiệm trong lĩnh vực chăm sóc sức khỏe và làm
-              đẹp, Serenity Spa tự hào là điểm đến lý tưởng cho những ai tìm
-              kiếm sự thư giãn, làm đẹp và chăm sóc toàn diện.
-            </p>
-            <p>
-              Chúng tôi kết hợp tinh hoa của các liệu pháp truyền thống phương
-              Đông với công nghệ hiện đại phương Tây, tạo nên những dịch vụ độc
-              đáo và hiệu quả. Mỗi liệu trình đều được thiết kế riêng biệt, phù
-              hợp với nhu cầu và tình trạng cụ thể của từng khách hàng.
-            </p>
-            <p>
-              Không gian spa được thiết kế theo phong cách tối giản nhưng sang
-              trọng, với ánh sáng dịu nhẹ, âm nhạc thư giãn và hương thơm tự
-              nhiên từ các loại tinh dầu cao cấp. Đây chính là nơi bạn có thể
-              tạm quên đi những lo toan trong cuộc sống và tận hưởng những phút
-              giây thư giãn tuyệt đối.
-            </p>
-            <div class="about-features">
-              <div class="about-feature">
-                <span>✓</span> Chứng nhận ISO 9001:2015
-              </div>
-              <div class="about-feature">
-                <span>✓</span> Đội ngũ chuyên gia quốc tế
-              </div>
-              <div class="about-feature">
-                <span>✓</span> Sản phẩm organic cao cấp
-              </div>
-              <div class="about-feature">
-                <span>✓</span> Cam kết hài lòng 100%
-              </div>
-            </div>
-          </div>
-          <div class="about-image"></div>
+<!-- About Section -->
+<section id="about" class="about-section py-5">
+  <div class="container">
+    <div class="row align-items-center">
+      
+      <!-- Cột trái: Nội dung -->
+      <div class="col-lg-6">
+        <h2 class="fw-bold mb-4">Về TutaSpa</h2>
+        <p class="mb-4">
+          Hãy để TutaSpa mang đến cho bạn những phút giây thư giãn tuyệt vời cùng dịch vụ làm đẹp chuyên nghiệp, kết hợp tinh hoa truyền thống và công nghệ hiện đại.
+        </p>
+
+        <ul class="list-unstyled about-list">
+          <li>🌿 Sản phẩm hữu cơ cao cấp</li>
+          <li>💆‍♀️ Đội ngũ chuyên gia quốc tế</li>
+          <li>🏆 Chứng nhận ISO 9001:2015</li>
+          <li>💯 Cam kết hài lòng 100%</li>
+        </ul>
+      </div>
+
+      <!-- Cột phải: Hình ảnh -->
+      <div class="col-lg-6 text-center">
+        <div class="about-image-box p-3 rounded">
+          <img
+            src=""
+            alt="TutaSpa"
+            class="img-fluid rounded shadow"
+          />
         </div>
       </div>
-    </section>
+
+    </div>
+  </div>
+</section>
+
+
+
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, watch } from "vue";
 import apiClient from "../utils/axiosClient";
+
+
 
 // Reactive state
 const services = ref([]);
@@ -493,6 +493,20 @@ const slides = [
     subtitle: "Sử dụng 100% sản phẩm thiên nhiên",
   },
 ];
+
+const testimonials = ref([]);
+
+
+onMounted(async () => {
+  try {
+    const res = await apiClient.get("/DanhGia/admin");
+    testimonials.value = res.filter((dg) => dg.daDuyet && dg.isActive); // chỉ lấy đánh giá đã duyệt và đang hiển thị
+  } catch (err) {
+    console.error("Lỗi khi tải testimonials:", err);
+  } finally {
+    loading.value = false;
+  }
+});
 
 const stats = [
   { number: "10+", label: "Năm kinh nghiệm", icon: "🏆" },
@@ -926,50 +940,24 @@ onMounted(async () => {
 }
 
 /* Testimonials */
-.testimonials {
-  padding: 8rem 2rem;
-  background: white;
-}
-
 .testimonials-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-  max-width: 1200px;
-  margin: 4rem auto 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
 }
-
 .testimonial-card {
-  background: linear-gradient(135deg, #f8fdf8 0%, #f0fdf4 100%);
-  padding: 2rem;
-  border-radius: 15px;
-  position: relative;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s, box-shadow 0.3s;
 }
-
-.testimonial-card::before {
-  content: '"';
-  position: absolute;
-  top: -10px;
-  left: 20px;
-  font-size: 4rem;
-  color: #78ba7e;
-  opacity: 0.3;
+.testimonial-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
 }
-
-.testimonial-text {
-  font-style: italic;
-  margin-bottom: 1rem;
-  color: #374151;
-}
-
-.testimonial-author {
-  font-weight: bold;
-  color: #2d4a2d;
-}
-
-.testimonial-rating {
-  color: #fbbf24;
-  margin-bottom: 0.5rem;
+.testimonial-rating i {
+  margin-right: 2px;
 }
 
 /* Booking Section */
@@ -1370,4 +1358,24 @@ onMounted(async () => {
   color: white;
   font-size: 0.9rem;
 }
+
+/* giớ thiệu */
+.about-section {
+  background: linear-gradient(135deg, #029660 5%, #6CA374 95% );
+  color: #fff;
+}
+
+.about-list li {
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+.about-image-box {
+  background-color: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(6px);
+  display: inline-block;
+}
+
+
+
 </style>
