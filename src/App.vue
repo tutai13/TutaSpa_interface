@@ -1,52 +1,59 @@
 <template>
   <div id="app">
     <!-- Header -->
-    <header class="header">
-      <nav class="nav">
-        <div class="logo">
-          <router-link to="/" class="navbar-brand d-flex align-items-center">
-            <img
-              src="../src/assets/img/logotutaspa.png"
-              alt="TutaSpa Logo"
-              class="me-2"
-              style="height: 50px; width: auto"
-            />
-            <span>TutaSpa 🌿</span>
-          </router-link>
-        </div>
-        <ul class="nav-links">
-          <li><router-link to="/">Trang chủ</router-link></li>
-          <li><router-link to="/#services">Dịch vụ</router-link></li>
-          <li><router-link to="/#booking">Đặt lịch</router-link></li>
-          <li><router-link to="/#about">Về chúng tôi</router-link></li>
-          <li><router-link to="/#contact">Liên hệ</router-link></li>
-        </ul>
-        <!-- <router-link to="/#booking" class="book-btn">Đặt lịch ngay</router-link> -->
-        <div class="d-flex align-items-center gap-2">
-          <router-link
-            v-if="!state.isAuthenticated"
-            to="/login"
-            class="book-btn"
-          >
-            <i class="fa-solid fa-user"></i> Đăng nhập
-          </router-link>
-          <router-link
-            v-if="state.isAuthenticated"
-            to="/LichSuDatLich"
-            class="book-btn"
-          >
-            <i class="fa-regular fa-calendar-check"></i> Xem lịch
-          </router-link>
-          <button
-            v-if="state.isAuthenticated"
-            class="book-btn"
-            @click="state.logout"
-          >
-            <i class="fa-regular fa-sign-out-alt"></i> Đăng Xuất
-          </button>
-        </div>
-      </nav>
-    </header>
+    <!-- Header -->
+<header class="header">
+  <nav class="nav">
+    <div class="logo">
+      <router-link to="/" class="navbar-brand d-flex align-items-center">
+        <img
+          src="../src/assets/img/logotutaspa.png"
+          alt="TutaSpa Logo"
+          style="height: 50px; width: auto"
+        />
+        <span>TutaSpa 🌿</span>
+      </router-link>
+    </div>
+
+    <!-- Nút toggle menu khi mobile -->
+    <button class="menu-toggle" @click="toggleMenu">
+      <i class="fa fa-bars"></i>
+    </button>
+
+    <ul class="nav-links" :class="{ 'show': isMenuVisible }">
+      <li><router-link to="/">Trang chủ</router-link></li>
+      <li><router-link to="/#services">Dịch vụ</router-link></li>
+      <li><router-link to="/#booking">Đặt lịch</router-link></li>
+      <li><router-link to="/#about">Về chúng tôi</router-link></li>
+      <li><router-link to="/#contact">Liên hệ</router-link></li>
+    </ul>
+
+    <div class="d-flex align-items-center gap-2">
+      <router-link
+        v-if="!state.isAuthenticated"
+        to="/login"
+        class="book-btn"
+      >
+        <i class="fa-solid fa-user"></i> Đăng nhập
+      </router-link>
+      <router-link
+        v-if="state.isAuthenticated"
+        to="/LichSuDatLich"
+        class="book-btn"
+      >
+        Dịch vụ đã dùng
+      </router-link>
+      <button
+        v-if="state.isAuthenticated"
+        class="book-btn"
+        @click="state.logout"
+      >
+        Đăng Xuất
+      </button>
+    </div>
+  </nav>
+</header>
+
 
     <!-- Content -->
     <main class="mt-5 pt-4"><router-view></router-view></main>
@@ -670,6 +677,41 @@ body {
   height: 75px; /* hoặc kích thước bạn muốn */
   animation: fadeInDown 1s ease-in-out;
 }
+
+
+/* Nút toggle menu */
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: white;
+  cursor: pointer;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+  }
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    background-color: #6CA374;
+    position: absolute;
+    top: 70px;
+    right: 0;
+    width: 200px;
+    padding: 10px;
+  }
+  .nav-links.show {
+    display: flex;
+  }
+  .nav-links li {
+    margin: 10px 0;
+  }
+}
+
 
 /* Nếu bạn có hiệu ứng logo đang dùng */
 @keyframes fadeInDown {

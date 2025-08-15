@@ -1,54 +1,75 @@
 <template>
-  <section class="history-section">
-    <div class="container">
-      <h2 class="section-title font-lora">
-        🧾 Lịch Sử Sử Dụng Dịch Vụ
-      </h2>
-      <p class="section-subtitle">
-        Xem lại các dịch vụ bạn đã trải nghiệm tại TutaSpa và để lại đánh giá cho chúng tôi nhé!
+  <div class="spa-history-container">
+    <!-- Header Section -->
+    <div class="header-section">
+      <h1 class="page-title">Lịch Sử Sử Dụng Dịch Vụ</h1>
+      <p class="page-subtitle">
+        Theo dõi hành trình chăm sóc sức khỏe và làm đẹp của bạn
       </p>
+    </div>
 
-      <div v-if="lichSu.length === 0" class="history-empty">
-        <span class="empty-icon">📭</span>
-        <div>Bạn chưa sử dụng dịch vụ nào.</div>
-      </div>
+    <!-- Empty State -->
+    <div v-if="lichSu.length === 0" class="empty-state">
+      <div class="empty-icon">🌿</div>
+      <h3>Chưa có lịch sử sử dụng</h3>
+      <p>Hãy trải nghiệm những dịch vụ tuyệt vời của chúng tôi</p>
+    </div>
 
-      <div class="history-grid">
-        <div
-          v-for="hoaDon in lichSu"
-          :key="hoaDon.hoaDonID"
-          class="history-card"
-        >
-          <div class="history-card-header">
-            <span class="history-date">🗓️ {{ formatDate(hoaDon.ngayTao) }}</span>
-            <span class="history-pay">💳 {{ hoaDon.hinhThucThanhToan }}</span>
+    <!-- History Cards -->
+    <div class="history-grid">
+      <div
+        v-for="hoaDon in lichSu"
+        :key="hoaDon.hoaDonID"
+        class="history-card"
+      >
+        <!-- Card Header -->
+        <div class="card-header">
+          <div class="date-info">
+            <div class="date-icon">📅</div>
+            <div>
+              <div class="date-text">{{ formatDate(hoaDon.ngayTao) }}</div>
+              <div class="payment-method">{{ hoaDon.hinhThucThanhToan }}</div>
+            </div>
           </div>
-          <div class="history-card-body">
-            <ul class="history-list">
-              <li
-                v-for="ct in hoaDon.chiTietHoaDons"
-                :key="ct.chiTietHoaDonID"
-                class="history-list-item"
-              >
+          <div class="status-badge">Hoàn thành</div>
+        </div>
+
+        <!-- Services List -->
+        <div class="services-list">
+          <div
+            v-for="ct in hoaDon.chiTietHoaDons"
+            :key="ct.chiTietHoaDonID"
+            class="service-item"
+          >
+            <div class="service-main">
+              <div class="service-icon">🌸</div>
+              <div class="service-details">
+                <h4 class="service-name">{{ ct.dichVu.tenDichVu }}</h4>
                 <div class="service-info">
-                  <strong class="service-name">{{ ct.dichVu.tenDichVu }}</strong>
-                  <span class="service-qty">Số lượng: {{ ct.soLuongSP }}</span>
-                  <span class="service-price">Giá: {{ formatCurrency(ct.dichVu.gia) }}</span>
-                  <span class="service-total">Thành tiền: {{ formatCurrency(ct.thanhTien) }}</span>
+                  <span class="quantity">Số lượng: {{ ct.soLuongSP }}</span>
+                  <span class="unit-price">Giá: {{ formatCurrency(ct.dichVu.gia) }}</span>
                 </div>
-                <router-link
-                  :to="`/DanhGia/${ct.dichVu.dichVuID}`"
-                  class="btn-rate"
-                >
-                  <i class="fa-regular fa-calendar-check"></i> Đánh Giá
-                </router-link>
-              </li>
-            </ul>
+              </div>
+              <div class="service-total">
+                {{ formatCurrency(ct.thanhTien) }}
+              </div>
+            </div>
+
+            <!-- Action Button -->
+            <div class="service-actions">
+              <router-link
+                :to="`/DanhGia/${ct.dichVu.dichVuID}`"
+                class="review-btn"
+              >
+                <i class="fa-regular fa-star"></i>
+                Đánh giá dịch vụ
+              </router-link>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
 </template>
 
 <script setup>
@@ -89,139 +110,268 @@ const formatCurrency = (value) =>
 </script>
 
 <style scoped>
-.history-section {
-  padding: 8rem 2rem;
-  background: linear-gradient(135deg, #f8fdf8 0%, #f0fdf4 50%, #e8f5e8 100%);
+.spa-history-container {
   min-height: 100vh;
+  background: linear-gradient(135deg, #f5f9f5 0%, #e8f5e8 100%);
+  padding: 2rem 1rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-.section-title {
+
+/* Header Section */
+.header-section {
   text-align: center;
-  font-size: 2.8rem;
-  margin-bottom: 1rem;
-  color: #2d4a2d;
-  font-family: "Lora", serif;
-  position: relative;
-}
-.section-title::after {
-  content: "";
-  display: block;
-  width: 80px;
-  height: 3px;
-  background: linear-gradient(45deg, #78ba7e, #5e8c64);
-  margin: 1rem auto 0;
-  border-radius: 2px;
-}
-.section-subtitle {
-  text-align: center;
-  font-size: 1.1rem;
-  color: #4b5563;
-  margin-bottom: 4rem;
-  max-width: 600px;
+  margin-bottom: 3rem;
+  max-width: 800px;
   margin-left: auto;
   margin-right: auto;
 }
-.history-empty {
-  text-align: center;
-  color: #6b7280;
-  font-size: 1.2rem;
-  margin-top: 4rem;
-  margin-bottom: 6rem;
-}
-.empty-icon {
-  font-size: 3rem;
-  display: block;
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2d5a2d;
   margin-bottom: 1rem;
+  letter-spacing: -0.02em;
 }
+
+.page-subtitle {
+  font-size: 1.1rem;
+  color: #5a7a5a;
+  margin-bottom: 0;
+  line-height: 1.6;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(45, 90, 45, 0.1);
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+}
+
+.empty-state h3 {
+  color: #2d5a2d;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+  color: #5a7a5a;
+  font-size: 1rem;
+}
+
+/* History Grid */
 .history-grid {
+  max-width: 1200px;
+  margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-  gap: 2.5rem;
+  gap: 2rem;
 }
+
 .history-card {
   background: white;
   border-radius: 20px;
-  box-shadow: 0 8px 25px rgba(120, 186, 126, 0.12);
-  border: 1px solid #e8f5e8;
-  padding: 2rem 2rem 1.5rem 2rem;
-  transition: all 0.4s ease;
-  position: relative;
+  box-shadow: 0 10px 30px rgba(45, 90, 45, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+
 .history-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(120, 186, 126, 0.2);
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(45, 90, 45, 0.15);
 }
-.history-card-header {
+
+/* Card Header */
+.card-header {
+  background: linear-gradient(135deg, #6ba86b 0%, #4a8c4a 100%);
+  color: white;
+  padding: 1.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #f0fdf4;
-  border-radius: 12px;
-  padding: 0.8rem 1rem;
-  font-weight: 500;
+}
+
+.date-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.date-icon {
+  font-size: 2rem;
+  opacity: 0.9;
+}
+
+.date-text {
   font-size: 1.1rem;
-  color: #2d4a2d;
-  margin-bottom: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
 }
-.history-list {
-  list-style: none;
+
+.payment-method {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.status-badge {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+}
+
+/* Services List */
+.services-list {
   padding: 0;
-  margin: 0;
 }
-.history-list-item {
-  background: rgba(120, 186, 126, 0.07);
-  border-radius: 12px;
-  padding: 1rem 1rem 1rem 1.2rem;
-  margin-bottom: 1rem;
+
+.service-item {
+  padding: 1.5rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.service-item:last-child {
+  border-bottom: none;
+}
+
+.service-main {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1.5rem;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
+
+.service-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.service-details {
+  flex: 1;
+}
+
+.service-name {
+  color: #2d5a2d;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.4;
+}
+
 .service-info {
   display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
+  gap: 1.5rem;
+  flex-wrap: wrap;
 }
-.service-name {
-  color: #2d4a2d;
-  font-size: 1.1rem;
-  font-family: "Lora", serif;
-}
-.service-qty,
-.service-price,
-.service-total {
-  color: #4b5563;
-  font-size: 0.98rem;
-}
-.btn-rate {
-  background: linear-gradient(45deg, #78ba7e, #5e8c64);
-  color: white;
-  padding: 0.6rem 1.5rem;
-  border: none;
-  border-radius: 25px;
-  cursor: pointer;
-  font-weight: 600;
+
+.quantity,
+.unit-price {
+  color: #5a7a5a;
   font-size: 0.95rem;
-  text-decoration: none;
+}
+
+.service-total {
+  color: #2d5a2d;
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* Service Actions */
+.service-actions {
   display: flex;
+  justify-content: flex-end;
+}
+
+.review-btn {
+  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  background: linear-gradient(135deg, #6ba86b 0%, #4a8c4a 100%);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(107, 168, 107, 0.3);
 }
-.btn-rate:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(120, 186, 126, 0.2);
-  background: linear-gradient(45deg, #5e8c64, #78ba7e);
+
+.review-btn:hover {
+  background: linear-gradient(135deg, #4a8c4a 0%, #3a7a3a 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(107, 168, 107, 0.4);
+  color: white;
 }
+
+.review-btn i {
+  font-size: 1rem;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
-  .history-grid {
-    grid-template-columns: 1fr;
+  .spa-history-container {
+    padding: 1rem 0.5rem;
   }
-  .section-title {
-    font-size: 2.2rem;
+
+  .page-title {
+    font-size: 2rem;
+  }
+
+  .card-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .service-main {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .service-total {
+    text-align: left;
+    font-size: 1.2rem;
+  }
+
+  .service-info {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .service-actions {
+    justify-content: stretch;
+  }
+
+  .review-btn {
+    width: 100%;
+    justify-content: center;
   }
 }
-.font-lora {
-  font-family: "Lora", serif;
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 1.7rem;
+  }
+
+  .service-icon {
+    font-size: 1.5rem;
+  }
+
+  .service-name {
+    font-size: 1.1rem;
+  }
 }
 </style>

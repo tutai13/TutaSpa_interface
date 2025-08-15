@@ -435,15 +435,13 @@ const emit = defineEmits(['register-success', 'go-to-login'])
 
 <style scoped>
 .register-container {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  background: #f5faf5;
   padding: 40px;
   width: 100%;
-  max-width: 450px;
+  max-width: 600px;
   margin: 0 auto;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .register-header {
@@ -452,10 +450,10 @@ const emit = defineEmits(['register-success', 'go-to-login'])
 }
 
 .register-header h1 {
-  color: #333;
-  font-size: 28px;
-  font-weight: 600;
-  margin-bottom: 8px;
+  color: #2e7d32;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 10px;
 }
 
 .register-header p {
@@ -464,13 +462,12 @@ const emit = defineEmits(['register-success', 'go-to-login'])
 }
 
 .form-group {
-  position: relative;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
 
 .form-group label {
   display: block;
-  color: #555;
+  color: #2e7d32;
   font-weight: 500;
   margin-bottom: 8px;
   font-size: 14px;
@@ -478,60 +475,55 @@ const emit = defineEmits(['register-success', 'go-to-login'])
 
 .input-wrapper {
   position: relative;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .form-control {
   width: 100%;
-  padding: 15px 20px 15px 50px;
-  border: 2px solid #e1e5e9;
-  border-radius: 12px;
+  padding: 12px 40px;
+  border: none;
+  border-radius: 8px;
   font-size: 16px;
-  transition: all 0.3s ease;
-  background: #fff;
+  background: transparent;
 }
 
 .form-control:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  box-shadow: 0 0 5px rgba(46, 125, 50, 0.3);
 }
 
 .form-control.error {
-  border-color: #e74c3c;
+  border-color: #d32f2f;
 }
 
 .form-control.verified {
-  border-color: #28a745;
-  background-color: #f8fff9;
-}
-
-.form-control:disabled {
-  background-color: #f8f9fa;
-  cursor: not-allowed;
+  border-color: #2e7d32;
 }
 
 .input-icon {
   position: absolute;
-  left: 18px;
+  left: 12px;
   top: 50%;
   transform: translateY(-50%);
-  color: #999;
+  color: #2e7d32;
   font-size: 16px;
 }
 
 .password-toggle {
   position: absolute;
-  right: 18px;
+  right: 12px;
   top: 50%;
   transform: translateY(-50%);
-  color: #999;
+  color: #2e7d32;
   cursor: pointer;
   font-size: 16px;
-  transition: color 0.3s ease;
 }
 
 .password-toggle:hover {
-  color: #667eea;
+  color: #1b5e20;
 }
 
 .otp-section {
@@ -540,27 +532,24 @@ const emit = defineEmits(['register-success', 'go-to-login'])
 
 .send-otp-btn {
   width: 100%;
-  padding: 14px 20px;
-  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  padding: 12px;
+  background: #2e7d32;
   color: white;
   border: none;
-  border-radius: 12px;
-  font-size: 15px;
+  border-radius: 8px;
+  font-size: 16px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
-  margin-bottom: 15px;
+  transition: background 0.3s ease;
 }
 
 .send-otp-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
+  background: #1b5e20;
 }
 
 .send-otp-btn:disabled {
-  opacity: 0.7;
+  background: #a5d6a7;
   cursor: not-allowed;
-  transform: none;
 }
 
 .otp-input-section {
@@ -569,7 +558,7 @@ const emit = defineEmits(['register-success', 'go-to-login'])
 
 .otp-input-section label {
   display: block;
-  color: #555;
+  color: #2e7d32;
   font-weight: 500;
   margin-bottom: 8px;
   font-size: 14px;
@@ -580,16 +569,19 @@ const emit = defineEmits(['register-success', 'go-to-login'])
   right: 80px;
   top: 50%;
   transform: translateY(-50%);
-  background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+  background: #757575;
   color: white;
   border: none;
-  border-radius: 8px;
-  padding: 8px 12px;
+  border-radius: 6px;
+  padding: 6px 12px;
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
-  min-width: 70px;
+  transition: background 0.3s ease;
+}
+
+.resend-btn:hover {
+  background: #616161;
 }
 
 .verify-otp-btn {
@@ -597,16 +589,19 @@ const emit = defineEmits(['register-success', 'go-to-login'])
   right: 8px;
   top: 50%;
   transform: translateY(-50%);
-  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  background: #2e7d32;
   color: white;
   border: none;
-  border-radius: 8px;
-  padding: 8px 12px;
+  border-radius: 6px;
+  padding: 6px 12px;
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
-  min-width: 70px;
+  transition: background 0.3s ease;
+}
+
+.verify-otp-btn:hover {
+  background: #1b5e20;
 }
 
 .verified-badge {
@@ -614,58 +609,41 @@ const emit = defineEmits(['register-success', 'go-to-login'])
   right: 8px;
   top: 50%;
   transform: translateY(-50%);
-  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  background: #2e7d32;
   color: white;
-  border-radius: 8px;
-  padding: 8px 12px;
+  border-radius: 6px;
+  padding: 6px 12px;
   font-size: 12px;
   font-weight: 500;
-  min-width: 100px;
   text-align: center;
-}
-
-.resend-btn:hover, .verify-otp-btn:hover {
-  transform: translateY(-50%) scale(1.05);
-}
-
-.resend-btn:disabled, .verify-otp-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
 }
 
 .register-btn {
   width: 100%;
-  padding: 16px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  padding: 14px;
+  background: #ffca28;
+  color: #fff;
   border: none;
-  border-radius: 12px;
-  font-size: 16px;
+  border-radius: 8px;
+  font-size: 18px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
-  margin-bottom: 20px;
+  transition: background 0.3s ease;
 }
 
 .register-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-}
-
-.register-btn:active {
-  transform: translateY(0);
+  background: #ffb300;
 }
 
 .register-btn:disabled {
-  opacity: 0.7;
+  background: #ffecb3;
   cursor: not-allowed;
-  transform: none;
 }
 
 .login-link {
   text-align: center;
   padding-top: 20px;
-  border-top: 1px solid #e1e5e9;
+  border-top: 1px solid #ccc;
 }
 
 .login-link p {
@@ -675,7 +653,7 @@ const emit = defineEmits(['register-success', 'go-to-login'])
 }
 
 .login-link a {
-  color: #667eea;
+  color: #2e7d32;
   text-decoration: none;
   font-weight: 600;
   font-size: 16px;
@@ -683,12 +661,12 @@ const emit = defineEmits(['register-success', 'go-to-login'])
 }
 
 .login-link a:hover {
-  color: #764ba2;
+  color: #1b5e20;
   text-decoration: underline;
 }
 
 .error-message {
-  color: #e74c3c;
+  color: #d32f2f;
   font-size: 14px;
   margin-top: 5px;
   display: flex;
@@ -698,7 +676,7 @@ const emit = defineEmits(['register-success', 'go-to-login'])
 
 @media (max-width: 480px) {
   .register-container {
-    padding: 30px 20px;
+    padding: 20px;
     margin: 10px;
   }
   
@@ -708,16 +686,16 @@ const emit = defineEmits(['register-success', 'go-to-login'])
 
   .resend-btn, .verify-otp-btn {
     font-size: 11px;
-    padding: 6px 8px;
-    min-width: 60px;
+    padding: 4px 8px;
+    min-width: 50px;
   }
 
   .resend-btn {
-    right: 70px;
+    right: 60px;
   }
 
   .verified-badge {
-    min-width: 90px;
+    min-width: 80px;
     font-size: 11px;
   }
 }
