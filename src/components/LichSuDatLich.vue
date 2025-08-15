@@ -44,10 +44,10 @@
             <div class="service-main">
               <div class="service-icon">🌸</div>
               <div class="service-details">
-                <h4 class="service-name">{{ ct.dichVu.tenDichVu }}</h4>
+                <h4 class="service-name">{{ getTen(ct) }}</h4>
                 <div class="service-info">
                   <span class="quantity">Số lượng: {{ ct.soLuongSP }}</span>
-                  <span class="unit-price">Giá: {{ formatCurrency(ct.dichVu.gia) }}</span>
+                  <span class="unit-price">Giá: {{ formatCurrency(getGia(ct)) }}</span>
                 </div>
               </div>
               <div class="service-total">
@@ -57,13 +57,14 @@
 
             <!-- Action Button -->
             <div class="service-actions">
-              <router-link
+              <router-link v-if="ct.dichVu"
                 :to="`/DanhGia/${ct.dichVu.dichVuID}`"
                 class="review-btn"
               >
                 <i class="fa-regular fa-star"></i>
                 Đánh giá dịch vụ
               </router-link>
+              <span v-else class="review-btn disabled" title="Chỉ áp dụng cho dịch vụ">Đánh giá</span>
             </div>
           </div>
         </div>
@@ -107,6 +108,25 @@ const formatCurrency = (value) =>
     style: "currency",
     currency: "VND",
   }).format(value);
+// --- Safe helpers to handle items that may be service OR product (or missing) ---
+const getTen = (ct) => {
+  if (ct && ct.dichVu) return ct.dichVu.tenDichVu;
+  if (ct && ct.sanPham) return ct.sanPham.tenSanPham || `Sản phẩm #${ct.sanPhamID ?? ""}`;
+  // Fallback if both null
+  const label = ct?.dichVuID ? `Dịch vụ #${ct.dichVuID}` : (ct?.sanPhamID ? `Sản phẩm #${ct.sanPhamID}` : "Mục không xác định");
+  return label;
+};
+
+const getGia = (ct) => {
+  if (ct && ct.dichVu) return ct.dichVu.gia;
+  if (ct && ct.sanPham) {
+    // Prefer explicit price on product if available, otherwise derive from line total
+    return ct.sanPham.gia ?? ((ct?.soLuongSP ? Number(ct.thanhTien) / Number(ct.soLuongSP) : Number(ct.thanhTien)) || 0);
+  }
+  // If neither, try to derive unit price from line
+  return (ct?.soLuongSP ? Number(ct?.thanhTien) / Number(ct?.soLuongSP) : Number(ct?.thanhTien)) || 0;
+};
+// ------------------------------------------------------------------------------
 </script>
 
 <style scoped>
