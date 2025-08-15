@@ -10,7 +10,7 @@ const API_BASE_URL = import.meta.env.VITE_BASE_URL;
 // Tạo axios instance
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  credentials: true, // Cho phép gửi cookie với request
+  withCredentials: true, // Cho phép gửi cookie với request
   timeout: 10000, // 10 seconds timeout
   headers: {
     "Content-Type": "application/json",
@@ -148,16 +148,14 @@ export const authAPI = {
   refreshToken: async () => {
     try {
       const response = await apiClient.post("/account/refresh-token");
-
-      if (response.status == 200) {
-        localStorage.setItem("accessToken", response.accessToken);
-        return true;
-      }
-
-      return false;
+      localStorage.setItem("accessToken", response.accessToken);
+      return true;
+      
     } catch (error) {
+      
       localStorage.removeItem("accessToken");
       throw error;
+
     }
   },
 
