@@ -5,11 +5,9 @@ import Home from "../components/home.vue";
 import DichVu from "../components/DichVu.vue";
 import GioiThieu from "../components/GioiThieu.vue";
 import LienHe from "../components/LienHe.vue";
-import ChiTietDichVu from "../components/ChiTietDichVu.vue";
-import DichVuChiTiet from "../components/DichVuChiTiet.vue";
 import login from "../components/login.vue";
 import register from "../components/register.vue";
-
+import ChiTietDichVu from "../components/Chitiet.vue";
 import DatLich from "../components/DatLich.vue";
 
 import DanhGia from "../components/DanhGia.vue";
@@ -21,14 +19,14 @@ const routes = [
   { path: "/GioiThieu", name: "GioiThieu", component: GioiThieu },
   { path: "/LienHe", name: "LienHe", component: LienHe },
 
-  { path: "/DatLich", name: "DatLich", component: DatLich },
+  { path: "/DatLich/:serviceId?", name: "DatLich", component: DatLich },
   { path: "/ChiTietDichVu", name: "ChiTietDichVu", component: ChiTietDichVu },
   { path: "/DanhGia/:id?", name: "DanhGia", component: DanhGia },
   { path: "/LichSuDatLich", name: "LichSuDatLich", component: LichSuDatLich },
   {
     path: "/DichVuChiTiet/:id",
     name: "DichVuChiTiet",
-    component: DichVuChiTiet,
+    component: ChiTietDichVu,
   },
 
   // {

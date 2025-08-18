@@ -26,13 +26,13 @@
         <ul class="nav-links" :class="{ 'mobile-active': isMenuVisible }">
           <li><router-link to="/" @click="closeMobileMenu">Trang chủ</router-link></li>
           <li><router-link to="/#services" @click="closeMobileMenu">Dịch vụ</router-link></li>
-          <li><router-link to="/#booking" @click="closeMobileMenu">Đặt lịch</router-link></li>
+          <li><router-link to="/DatLich" @click="closeMobileMenu">Đặt lịch</router-link></li>
           <li><router-link to="/#about" @click="closeMobileMenu">Về chúng tôi</router-link></li>
           <li><router-link to="/#contact" @click="closeMobileMenu">Liên hệ</router-link></li>
           
           <!-- Mobile User Actions - Inside Menu -->
           <li class="mobile-user-actions">
-            <router-link
+            <router-link style="background-color: orange;"
               v-if="!state.isAuthenticated"
               to="/login"
               class="mobile-auth-btn login-btn"
@@ -781,7 +781,6 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  overflow: hidden;
 }
 
 .nav-links a::before {
@@ -834,6 +833,24 @@ body {
 
 .nav-links a:active {
   transform: translateY(-1px) scale(1.02);
+}
+
+/* --- Disable header menu button effects, but keep .book-btn effects --- */
+.nav-links a,
+.nav-links a:hover,
+.nav-links a:active {
+  transition: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+  text-shadow: none !important;
+  background: rgba(255,255,255,0.05) !important;
+  color: white !important;
+  border-color: rgba(255,255,255,0.1) !important;
+}
+
+.nav-links a::before,
+.nav-links a::after {
+  display: none !important;
 }
 
 /* Mobile User Actions in Menu */
@@ -1357,6 +1374,31 @@ body {
   color: #8bc792;
 }
 
+/* --- Disable header button effects --- */
+.nav-links a,
+.nav-links a:hover,
+.nav-links a:active,
+.book-btn,
+.book-btn:hover,
+.book-btn:active,
+.mobile-auth-btn,
+.mobile-auth-btn:hover,
+.mobile-auth-btn:active {
+  transition: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+  text-shadow: none !important;
+  background: rgba(255,255,255,0.05) !important;
+  color: white !important;
+  border-color: rgba(255,255,255,0.1) !important;
+}
+
+.nav-links a::before,
+.nav-links a::after,
+.book-btn::before {
+  display: none !important;
+}
+
 /* ===== RESPONSIVE STYLES ===== */
 
 /* Tablets (768px and below) */
@@ -1725,4 +1767,5 @@ body {
     color: white;
     border-color: #4b5563;
   }
-}</style>
+}
+</style>

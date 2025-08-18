@@ -107,43 +107,60 @@
     </section>
 
     <!-- Features Section -->
-    <section class="features">
-      <div class="container">
-        <div class="features-grid">
-          <div class="feature-card">
-            <div class="feature-icon">🌱</div>
-            <h3>100% Tự nhiên</h3>
-            <p>
-              Sử dụng các sản phẩm từ thiên nhiên, không chất hóa học có hại, an
-              toàn cho mọi loại da
-            </p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">👥</div>
-            <h3>Chuyên gia giàu kinh nghiệm</h3>
-            <p>
-              Đội ngũ chuyên viên được đào tạo bài bản, và có kinh nghiệm hơn 5 năm
-            </p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">🛏️</div>
-            <h3>Không gian sang trọng</h3>
-            <p>
-              Thiết kế hiện đại, thoáng mát với âm nhạc thư giãn và hương thơm
-              dễ chịu
-            </p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">🛡️</div>
-            <h3>Đảm bảo vệ sinh</h3>
-            <p>
-              Tuân thủ nghiêm ngặt các tiêu chuẩn vệ sinh, khử trùng dụng cụ sau
-              mỗi lần sử dụng
-            </p>
-          </div>
-        </div>
+<section class="features">
+  <div class="container">
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🌱</div>
+        <h3>100% Tự nhiên</h3>
+        <p>
+          Sử dụng các sản phẩm từ thiên nhiên, không chất hóa học có hại, an
+          toàn cho mọi loại da
+        </p>
       </div>
-    </section>
+      <div class="feature-card">
+        <div class="feature-icon">👥</div>
+        <h3>Chuyên gia giàu kinh nghiệm</h3>
+        <p>
+          Đội ngũ chuyên viên được đào tạo bài bản, và có kinh nghiệm hơn 5 năm
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛏️</div>
+        <h3>Không gian sang trọng</h3>
+        <p>
+          Thiết kế hiện đại, thoáng mát với âm nhạc thư giãn và hương thơm
+          dễ chịu
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <h3>Đảm bảo vệ sinh</h3>
+        <p>
+          Tuân thủ nghiêm ngặt các tiêu chuẩn vệ sinh, khử trùng dụng cụ sau
+          mỗi lần sử dụng
+        </p>
+      </div>
+      <!-- Mục mới 1 -->
+      <div class="feature-card">
+        <div class="feature-icon">💆</div>
+        <h3>Liệu trình đa dạng</h3>
+        <p>
+          Cung cấp nhiều liệu trình chăm sóc phù hợp với nhu cầu và tình trạng da khác nhau
+        </p>
+      </div>
+      <!-- Mục mới 2 -->
+      <div class="feature-card">
+        <div class="feature-icon">⏱️</div>
+        <h3>Đặt lịch linh hoạt</h3>
+        <p>
+          Dễ dàng đặt lịch hẹn theo thời gian bạn mong muốn, kể cả cuối tuần và ngày lễ
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
 
     <!-- Services Section -->
     <section id="services" class="services">
@@ -187,11 +204,13 @@
             class="service-card"
           >
             <div class="service-image-container">
+              <router-link :to="`/DichVuChiTiet/${service.id}`"> 
               <img
                 :src="service.image"
                 :alt="service.name"
                 class="service-image"
               />
+              </router-link>
               <div class="service-rating-overlay">
                 <div class="service-rating">
                   <i
@@ -251,17 +270,15 @@
                 v-for="n in 5"
                 :key="n"
                 class="fa-star fas"
-                :class="n <= item.soSao ? 'text-warning' : 'text-secondary opacity-25'"
+                :class="n <= item.rate ? 'text-warning' : 'text-secondary opacity-25'"
               ></i>
             </div>
             <p class="testimonial-text fst-italic">
-              "{{ item.noiDung || '(Không có nội dung)' }}"
+              "{{ item.content || '(Không có nội dung)' }}"
             </p>
             <div class="testimonial-author mt-2 fw-semibold">
               - 
-              <span v-if="item.anDanh">Ẩn danh</span>
-              <span v-else>{{ item.user?.name || 'Khách hàng' }}</span>,
-              {{ item.user?.tuoi || '...' }} tuổi
+              <span >{{ item.name || 'Khách hàng' }}</span>
             </div>
           </div>
         </div>
@@ -475,7 +492,7 @@
 
 <script setup>
 import { ref, onMounted, watch } from "vue";
-import apiClient from "../utils/axiosClient";
+  import apiClient from "../utils/axiosClient";
 
 // Reactive state
 const services = ref([]);
@@ -534,8 +551,8 @@ const testimonials = ref([]);
 
 onMounted(async () => {
   try {
-    const res = await apiClient.get("/DanhGia/admin");
-    testimonials.value = res.filter((dg) => dg.daDuyet && dg.isActive); // chỉ lấy đánh giá đã duyệt và đang hiển thị
+    const res = await apiClient.get("/DanhGia/approved");
+    testimonials.value = res
   } catch (err) {
     console.error("Lỗi khi tải testimonials:", err);
   } finally {
