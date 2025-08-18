@@ -107,6 +107,7 @@
     </section>
 
     <!-- Features Section -->
+//<<<<<<< feature/ServiceDetail
 <section class="features">
   <div class="container">
     <div class="features-grid">
@@ -117,6 +118,44 @@
           Sử dụng các sản phẩm từ thiên nhiên, không chất hóa học có hại, an
           toàn cho mọi loại da
         </p>
+//=======
+    <section class="features">
+      <div class="container">
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🌱</div>
+            <h3>100% Tự nhiên</h3>
+            <p>
+              Sử dụng các sản phẩm từ thiên nhiên, không chất hóa học có hại, an
+              toàn cho mọi loại da
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">👥</div>
+            <h3>Chuyên gia giàu kinh nghiệm</h3>
+            <p>
+              Đội ngũ chuyên viên được đào tạo bài bản, và có kinh nghiệm hơn 5
+              năm
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🛏️</div>
+            <h3>Không gian sang trọng</h3>
+            <p>
+              Thiết kế hiện đại, thoáng mát với âm nhạc thư giãn và hương thơm
+              dễ chịu
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🛡️</div>
+            <h3>Đảm bảo vệ sinh</h3>
+            <p>
+              Tuân thủ nghiêm ngặt các tiêu chuẩn vệ sinh, khử trùng dụng cụ sau
+              mỗi lần sử dụng
+            </p>
+          </div>
+        </div>
+//>>>>>>> main
       </div>
       <div class="feature-card">
         <div class="feature-icon">👥</div>
@@ -217,10 +256,18 @@
                     v-for="n in 5"
                     :key="n"
                     class="rating-star"
-                    :class="n <= Math.floor(service.rating) ? 'filled' : 
-                             n - 0.5 <= service.rating ? 'half-filled' : ''"
-                  >★</i>
-                  <span class="rating-text">({{ service.rating?.toFixed(1) || '0.0' }})</span>
+                    :class="
+                      n <= Math.floor(service.rating)
+                        ? 'filled'
+                        : n - 0.5 <= service.rating
+                        ? 'half-filled'
+                        : ''
+                    "
+                    >★</i
+                  >
+                  <span class="rating-text"
+                    >({{ service.rating?.toFixed(1) || "0.0" }})</span
+                  >
                 </div>
               </div>
             </div>
@@ -255,7 +302,10 @@
         </h2>
 
         <div v-if="loading" class="text-center text-muted">Đang tải...</div>
-        <div v-else-if="testimonials.length === 0" class="text-center text-muted">
+        <div
+          v-else-if="testimonials.length === 0"
+          class="text-center text-muted"
+        >
           Chưa có đánh giá nào.
         </div>
 
@@ -270,6 +320,7 @@
                 v-for="n in 5"
                 :key="n"
                 class="fa-star fas"
+//<<<<<<< feature/ServiceDetail
                 :class="n <= item.rate ? 'text-warning' : 'text-secondary opacity-25'"
               ></i>
             </div>
@@ -279,6 +330,21 @@
             <div class="testimonial-author mt-2 fw-semibold">
               - 
               <span >{{ item.name || 'Khách hàng' }}</span>
+//=======
+                :class="
+                  n <= item.soSao ? 'text-warning' : 'text-secondary opacity-25'
+                "
+              ></i>
+            </div>
+            <p class="testimonial-text fst-italic">
+              "{{ item.noiDung || "(Không có nội dung)" }}"
+            </p>
+            <div class="testimonial-author mt-2 fw-semibold">
+              -
+              <span v-if="item.anDanh">Ẩn danh</span>
+              <span v-else>{{ item.user?.name || "Khách hàng" }}</span
+              >, {{ item.user?.tuoi || "..." }} tuổi
+//>>>>>>> main
             </div>
           </div>
         </div>
@@ -456,12 +522,13 @@
     <section id="about" class="about-section py-5">
       <div class="container">
         <div class="row align-items-center">
-          
           <!-- Cột trái: Nội dung -->
           <div class="col-lg-6">
             <h2 class="fw-bold mb-4">Về TutaSpa</h2>
             <p class="mb-4">
-              Hãy để TutaSpa mang đến cho bạn những phút giây thư giãn tuyệt vời cùng dịch vụ làm đẹp chuyên nghiệp, kết hợp tinh hoa truyền thống và công nghệ hiện đại.
+              Hãy để TutaSpa mang đến cho bạn những phút giây thư giãn tuyệt vời
+              cùng dịch vụ làm đẹp chuyên nghiệp, kết hợp tinh hoa truyền thống
+              và công nghệ hiện đại.
             </p>
 
             <ul class="list-unstyled about-list">
@@ -482,11 +549,9 @@
               />
             </div>
           </div>
-
         </div>
       </div>
     </section>
-
   </div>
 </template>
 
@@ -549,16 +614,18 @@ const slides = [
 
 const testimonials = ref([]);
 
-onMounted(async () => {
-  try {
-    const res = await apiClient.get("/DanhGia/approved");
-    testimonials.value = res
-  } catch (err) {
-    console.error("Lỗi khi tải testimonials:", err);
-  } finally {
-    loading.value = false;
-  }
-});
+
+// onMounted(async () => {
+//   try {
+//     const res = await apiClient.get("/DanhGia/admin");
+//     testimonials.value = res.filter((dg) => dg.daDuyet && dg.isActive);
+//   } catch (err) {
+//     console.error("Lỗi khi tải testimonials:", err);
+//   } finally {
+//     loading.value = false;
+//   }
+// });
+
 
 const stats = [
   { number: "10+", label: "Năm kinh nghiệm", icon: "🏆" },
@@ -724,15 +791,7 @@ const submitBooking = async () => {
     const res = await apiClient.post("/DatLich", payload);
 
     alert("Đặt lịch thành công!");
-    bookingForm.value = {
-      phone: "",
-      services: [],
-      date: new Date().toISOString().split("T")[0],
-      time: "",
-      notes: "",
-      consultAtStore: false,
-    };
-    selectedService.value = null;
+    resetBookingForm();
   } catch (err) {
     console.error("Lỗi đặt lịch:", err);
     alert("Đặt lịch thất bại!");
@@ -743,7 +802,7 @@ const resetBookingForm = () => {
   bookingForm.value = {
     phone: "",
     services: [],
-    date: "",
+    date: new Date().toISOString().split("T")[0],
     time: "",
     notes: "",
     consultAtStore: false,
@@ -751,26 +810,21 @@ const resetBookingForm = () => {
   selectedService.value = null;
 };
 
-const resetModalForm = () => {
-  modalForm.value = {
-    name: "",
-    phone: "",
-    email: "",
-    date: "",
-    time: "",
-    notes: "",
-  };
-};
-
 // Lifecycle hook
 onMounted(async () => {
-  minDate.value = new Date().toISOString().split("T")[0];
   loading.value = true;
-  await fetchCategories();
-  await fetchServices();
-  loading.value = false;
-  filterServices("all");
-  fetchSlots();
+  try {
+    const res = await apiClient.get("/DanhGia/admin");
+    testimonials.value = res.filter((dg) => dg.daDuyet && dg.isActive);
+    minDate.value = new Date().toISOString().split("T")[0];
+    await Promise.all([fetchCategories(), fetchServices()]);
+    filterServices("all");
+    fetchSlots();
+  } catch (err) {
+    console.error("Lỗi khi tải dữ liệu:", err);
+  } finally {
+    loading.value = false;
+  }
 });
 </script>
 
@@ -1440,7 +1494,7 @@ onMounted(async () => {
 
 /* About Section */
 .about-section {
-  background: linear-gradient(135deg, #029660 5%, #6CA374 95%);
+  background: linear-gradient(135deg, #029660 5%, #6ca374 95%);
   color: #fff;
 }
 
@@ -1481,8 +1535,12 @@ onMounted(async () => {
 
 /* Animations */
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Mobile Responsive Styles */
@@ -1490,7 +1548,7 @@ onMounted(async () => {
   .container {
     max-width: 100%;
   }
-  
+
   .services-grid {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   }
@@ -1500,20 +1558,20 @@ onMounted(async () => {
   .hero-title {
     font-size: 2.8rem;
   }
-  
+
   .hero-subtitle {
     font-size: 1.3rem;
   }
-  
+
   .stats-container {
     gap: 1.5rem;
   }
-  
+
   .booking-content {
     grid-template-columns: 1fr;
     gap: 3rem;
   }
-  
+
   .section-title {
     font-size: 2.3rem;
   }
@@ -1523,15 +1581,15 @@ onMounted(async () => {
   .features {
     padding: 4rem 1rem;
   }
-  
+
   .services {
     padding: 6rem 1rem;
   }
-  
+
   .booking {
     padding: 6rem 1rem;
   }
-  
+
   .features-grid {
     grid-template-columns: 1fr;
     gap: 1.5rem;
@@ -1554,7 +1612,7 @@ onMounted(async () => {
   .section-title {
     font-size: 2rem;
   }
-  
+
   .section-subtitle {
     font-size: 1rem;
   }
@@ -1562,25 +1620,25 @@ onMounted(async () => {
   .service-image {
     height: 180px;
   }
-  
+
   .service-content {
     padding: 1.5rem;
   }
-  
+
   .service-title {
     font-size: 1.2rem;
   }
-  
+
   .service-meta {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
   }
-  
+
   .service-duration {
     font-size: 0.8rem;
   }
-  
+
   .service-price {
     font-size: 1.2rem;
   }
@@ -1593,7 +1651,7 @@ onMounted(async () => {
   .hero-subtitle {
     font-size: 1.1rem;
   }
-  
+
   .hero-description {
     font-size: 1rem;
     padding: 0 1rem;
@@ -1631,26 +1689,26 @@ onMounted(async () => {
   .booking-form {
     padding: 2rem;
   }
-  
+
   .booking-info h2 {
     font-size: 2rem;
   }
-  
+
   .form-actions {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .consult-checkbox {
     justify-content: center;
   }
-  
+
   .selected-service-item {
     flex-direction: column;
     gap: 0.5rem;
     align-items: stretch;
   }
-  
+
   .quantity-control {
     justify-content: space-between;
   }
@@ -1658,7 +1716,7 @@ onMounted(async () => {
   .testimonials-grid {
     flex-direction: column;
   }
-  
+
   .testimonial-card {
     min-width: auto;
   }
