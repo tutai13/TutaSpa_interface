@@ -107,18 +107,6 @@
     </section>
 
     <!-- Features Section -->
-//<<<<<<< feature/ServiceDetail
-<section class="features">
-  <div class="container">
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon">🌱</div>
-        <h3>100% Tự nhiên</h3>
-        <p>
-          Sử dụng các sản phẩm từ thiên nhiên, không chất hóa học có hại, an
-          toàn cho mọi loại da
-        </p>
-//=======
     <section class="features">
       <div class="container">
         <div class="features-grid">
@@ -154,52 +142,25 @@
               mỗi lần sử dụng
             </p>
           </div>
+          <!-- Mục mới 1 -->
+          <div class="feature-card">
+            <div class="feature-icon">💆</div>
+            <h3>Liệu trình đa dạng</h3>
+            <p>
+              Cung cấp nhiều liệu trình chăm sóc phù hợp với nhu cầu và tình trạng da khác nhau
+            </p>
+          </div>
+          <!-- Mục mới 2 -->
+          <div class="feature-card">
+            <div class="feature-icon">⏱️</div>
+            <h3>Đặt lịch linh hoạt</h3>
+            <p>
+              Dễ dàng đặt lịch hẹn theo thời gian bạn mong muốn, kể cả cuối tuần và ngày lễ
+            </p>
+          </div>
         </div>
-//>>>>>>> main
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">👥</div>
-        <h3>Chuyên gia giàu kinh nghiệm</h3>
-        <p>
-          Đội ngũ chuyên viên được đào tạo bài bản, và có kinh nghiệm hơn 5 năm
-        </p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🛏️</div>
-        <h3>Không gian sang trọng</h3>
-        <p>
-          Thiết kế hiện đại, thoáng mát với âm nhạc thư giãn và hương thơm
-          dễ chịu
-        </p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🛡️</div>
-        <h3>Đảm bảo vệ sinh</h3>
-        <p>
-          Tuân thủ nghiêm ngặt các tiêu chuẩn vệ sinh, khử trùng dụng cụ sau
-          mỗi lần sử dụng
-        </p>
-      </div>
-      <!-- Mục mới 1 -->
-      <div class="feature-card">
-        <div class="feature-icon">💆</div>
-        <h3>Liệu trình đa dạng</h3>
-        <p>
-          Cung cấp nhiều liệu trình chăm sóc phù hợp với nhu cầu và tình trạng da khác nhau
-        </p>
-      </div>
-      <!-- Mục mới 2 -->
-      <div class="feature-card">
-        <div class="feature-icon">⏱️</div>
-        <h3>Đặt lịch linh hoạt</h3>
-        <p>
-          Dễ dàng đặt lịch hẹn theo thời gian bạn mong muốn, kể cả cuối tuần và ngày lễ
-        </p>
-      </div>
-    </div>
-  </div>
-</section>
-
+    </section>
 
     <!-- Services Section -->
     <section id="services" class="services">
@@ -320,7 +281,6 @@
                 v-for="n in 5"
                 :key="n"
                 class="fa-star fas"
-//<<<<<<< feature/ServiceDetail
                 :class="n <= item.rate ? 'text-warning' : 'text-secondary opacity-25'"
               ></i>
             </div>
@@ -330,7 +290,7 @@
             <div class="testimonial-author mt-2 fw-semibold">
               - 
               <span >{{ item.name || 'Khách hàng' }}</span>
-//=======
+              <i  
                 :class="
                   n <= item.soSao ? 'text-warning' : 'text-secondary opacity-25'
                 "
@@ -344,7 +304,6 @@
               <span v-if="item.anDanh">Ẩn danh</span>
               <span v-else>{{ item.user?.name || "Khách hàng" }}</span
               >, {{ item.user?.tuoi || "..." }} tuổi
-//>>>>>>> main
             </div>
           </div>
         </div>
