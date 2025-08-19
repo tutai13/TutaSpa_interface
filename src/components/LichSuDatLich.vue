@@ -2,24 +2,24 @@
   <div class="spa-history-container">
     <!-- Header Section -->
     <div class="header-section">
-      <h1 class="page-title">Lịch Sử Sử Dụng Dịch Vụ</h1>
+      <h1 class="page-title">Lịch Sử Đặt Lịch</h1>
       <p class="page-subtitle">
-        Theo dõi hành trình chăm sóc sức khỏe và làm đẹp của bạn
+        Theo dõi các lần đặt lịch và trải nghiệm dịch vụ của bạn
       </p>
     </div>
 
     <!-- Empty State -->
     <div v-if="lichSu.length === 0" class="empty-state">
       <div class="empty-icon">🌿</div>
-      <h3>Chưa có lịch sử sử dụng</h3>
+      <h3>Chưa có lịch sử đặt lịch</h3>
       <p>Hãy trải nghiệm những dịch vụ tuyệt vời của chúng tôi</p>
     </div>
 
     <!-- History Cards -->
     <div class="history-grid">
       <div
-        v-for="hoaDon in lichSu"
-        :key="hoaDon.hoaDonID"
+        v-for="datLich in lichSu"
+        :key="datLich.datLichID"
         class="history-card"
       >
         <!-- Card Header -->
@@ -27,44 +27,48 @@
           <div class="date-info">
             <div class="date-icon">📅</div>
             <div>
-              <div class="date-text">{{ formatDate(hoaDon.ngayTao) }}</div>
-              <div class="payment-method">{{ hoaDon.hinhThucThanhToan }}</div>
+              <div class="date-text">{{ formatDate(datLich.thoiGian) }}</div>
+              <div class="payment-method">
+                {{ datLich.daThanhToan ? "Đã thanh toán" : "Chưa thanh toán" }}
+              </div>
             </div>
           </div>
-          <div class="status-badge">Hoàn thành</div>
+          <div class="status-badge">{{ datLich.trangThai }}</div>
         </div>
 
         <!-- Services List -->
         <div class="services-list">
           <div
-            v-for="ct in hoaDon.chiTietHoaDons"
-            :key="ct.chiTietHoaDonID"
+            v-for="ct in datLich.chiTietDatLichs"
+            :key="ct.chiTietDatLichID"
             class="service-item"
           >
             <div class="service-main">
               <div class="service-icon">🌸</div>
               <div class="service-details">
-                <h4 class="service-name">{{ getTen(ct) }}</h4>
+                <h4 class="service-name">{{ ct.dichVu.tenDichVu }}</h4>
                 <div class="service-info">
-                  <span class="quantity">Số lượng: {{ ct.soLuongSP }}</span>
-                  <span class="unit-price">Giá: {{ formatCurrency(getGia(ct)) }}</span>
+                  <span class="quantity">Số lượng: {{ ct.soLuongDV }}</span>
+                  <span class="unit-price"
+                    >Giá: {{ formatCurrency(ct.dichVu.gia) }}</span
+                  >
                 </div>
               </div>
               <div class="service-total">
-                {{ formatCurrency(ct.thanhTien) }}
+                {{ formatCurrency(ct.dichVu.gia * ct.soLuongDV) }}
               </div>
             </div>
 
             <!-- Action Button -->
             <div class="service-actions">
-              <router-link v-if="ct.dichVu"
+              <router-link
+                v-if="datLich.daThanhToan && ct.dichVu"
                 :to="`/DanhGia/${ct.dichVu.dichVuID}`"
                 class="review-btn"
               >
                 <i class="fa-regular fa-star"></i>
                 Đánh giá dịch vụ
               </router-link>
-              <span v-else class="review-btn disabled" title="Chỉ áp dụng cho dịch vụ">Đánh giá</span>
             </div>
           </div>
         </div>
@@ -85,7 +89,7 @@ onMounted(() => {
 
 const loadLichSu = async () => {
   try {
-    const res = await apiClient.get("/ThanhToan/by-user");
+    const res = await apiClient.get("/DatLich/by-user");
     lichSu.value = res;
   } catch (err) {
     console.error("❌ Lỗi tải lịch sử dịch vụ:", err);
@@ -111,9 +115,14 @@ const formatCurrency = (value) =>
 // --- Safe helpers to handle items that may be service OR product (or missing) ---
 const getTen = (ct) => {
   if (ct && ct.dichVu) return ct.dichVu.tenDichVu;
-  if (ct && ct.sanPham) return ct.sanPham.tenSanPham || `Sản phẩm #${ct.sanPhamID ?? ""}`;
+  if (ct && ct.sanPham)
+    return ct.sanPham.tenSanPham || `Sản phẩm #${ct.sanPhamID ?? ""}`;
   // Fallback if both null
-  const label = ct?.dichVuID ? `Dịch vụ #${ct.dichVuID}` : (ct?.sanPhamID ? `Sản phẩm #${ct.sanPhamID}` : "Mục không xác định");
+  const label = ct?.dichVuID
+    ? `Dịch vụ #${ct.dichVuID}`
+    : ct?.sanPhamID
+    ? `Sản phẩm #${ct.sanPhamID}`
+    : "Mục không xác định";
   return label;
 };
 
@@ -121,10 +130,20 @@ const getGia = (ct) => {
   if (ct && ct.dichVu) return ct.dichVu.gia;
   if (ct && ct.sanPham) {
     // Prefer explicit price on product if available, otherwise derive from line total
-    return ct.sanPham.gia ?? ((ct?.soLuongSP ? Number(ct.thanhTien) / Number(ct.soLuongSP) : Number(ct.thanhTien)) || 0);
+    return (
+      ct.sanPham.gia ??
+      ((ct?.soLuongSP
+        ? Number(ct.thanhTien) / Number(ct.soLuongSP)
+        : Number(ct.thanhTien)) ||
+        0)
+    );
   }
   // If neither, try to derive unit price from line
-  return (ct?.soLuongSP ? Number(ct?.thanhTien) / Number(ct?.soLuongSP) : Number(ct?.thanhTien)) || 0;
+  return (
+    (ct?.soLuongSP
+      ? Number(ct?.thanhTien) / Number(ct?.soLuongSP)
+      : Number(ct?.thanhTien)) || 0
+  );
 };
 // ------------------------------------------------------------------------------
 </script>
@@ -134,7 +153,7 @@ const getGia = (ct) => {
   min-height: 100vh;
   background: linear-gradient(135deg, #f5f9f5 0%, #e8f5e8 100%);
   padding: 2rem 1rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 /* Header Section */
