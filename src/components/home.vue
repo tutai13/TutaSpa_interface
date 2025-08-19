@@ -127,7 +127,7 @@
             </p>
           </div>
           <div class="feature-card">
-            <div class="feature-icon">🏛️</div>
+            <div class="feature-icon">🛏️</div>
             <h3>Không gian sang trọng</h3>
             <p>
               Thiết kế hiện đại, thoáng mát với âm nhạc thư giãn và hương thơm
@@ -149,30 +149,35 @@
     <!-- Services Section -->
     <section id="services" class="services">
       <div class="container">
-        <h2 class="section-title">Dịch vụ của chúng tôi</h2>
-        <p class="section-subtitle">
-          Trải nghiệm những dịch vụ chăm sóc sức khỏe và làm đẹp hàng đầu với
-          công nghệ hiện đại và nguyên liệu tự nhiên
-        </p>
+        <div class="service-header">
+  <div class="service-text">
+    <h2 class="section-title">Dịch vụ của chúng tôi</h2>
+    <p class="section-subtitle">
+      Trải nghiệm những dịch vụ chăm sóc sức khỏe và làm đẹp hàng đầu với
+      công nghệ hiện đại và nguyên liệu tự nhiên
+    </p>
+  </div>
 
-        <div class="service-categories">
-          <button
-            class="category-btn"
-            :class="{ active: currentCategory === 'all' }"
-            @click="filterServices('all')"
-          >
-            Tất cả
-          </button>
-          <button
-            v-for="category in categories"
-            :key="category.loaiDichVuID"
-            class="category-btn"
-            :class="{ active: currentCategory === category.tenLoai }"
-            @click="filterServices(category.tenLoai)"
-          >
-            {{ category.tenLoai }}
-          </button>
-        </div>
+  <div class="service-categories">
+    <button
+      class="category-btn"
+      :class="{ active: currentCategory === 'all' }"
+      @click="filterServices('all')"
+    >
+      Tất cả
+    </button>
+    <button
+      v-for="category in categories"
+      :key="category.loaiDichVuID"
+      class="category-btn"
+      :class="{ active: currentCategory === category.tenLoai }"
+      @click="filterServices(category.tenLoai)"
+    >
+      {{ category.tenLoai }}
+    </button>
+  </div>
+</div>
+
 
         <div v-if="loading" class="loading">
           <div class="loading-spinner"></div>
@@ -206,45 +211,121 @@
         </div>
       </div>
     </section>
-<!-- testimonials -->
-    <section class="testimonials py-5 bg-light">
-    <div class="container">
-      <h2 class="section-title text-center mb-5">
-        Khách hàng nói gì về chúng tôi
-      </h2>
 
-      <div v-if="loading" class="text-center text-muted">Đang tải...</div>
-      <div v-else-if="testimonials.length === 0" class="text-center text-muted">
-        Chưa có đánh giá nào.
+<!-- Improved Testimonials Section -->
+<section class="testimonials-section">
+  <div class="container">
+    <h2 class="section-title text-center mb-5">
+      Khách hàng nói gì về chúng tôi
+    </h2>
+
+    <div v-if="loading" class="text-center text-white">
+      <div class="loading-spinner"></div>
+      <p>Đang tải đánh giá...</p>
+    </div>
+    
+    <div v-else-if="testimonials.length === 0" class="text-center text-white opacity-75">
+      <div class="no-reviews-icon">💬</div>
+      <p class="mt-3">Chưa có đánh giá nào. Hãy là người đầu tiên chia sẻ trải nghiệm của bạn!</p>
+    </div>
+
+    <div v-else class="testimonials-container">
+      <!-- Always visible testimonials (first 3) -->
+      <div class="testimonials-grid">
+        <div
+          v-for="(item, index) in visibleTestimonials"
+          :key="index"
+          class="testimonial-card"
+          :class="{ 'testimonial-featured': index === 0 }"
+        >
+          <div class="testimonial-content">
+            <div class="testimonial-header">
+              <div class="testimonial-avatar">
+                <span>{{ getInitials(item.user?.name || 'Khách hàng') }}</span>
+              </div>
+              <div class="testimonial-info">
+                <h4 class="testimonial-name">
+                  {{ item.anDanh ? 'Ẩn danh' : item.user?.name || 'Khách hàng' }}
+                </h4>
+                <div class="testimonial-rating">
+                  <i
+                    v-for="n in 5"
+                    :key="n"
+                    class="fa-star fas"
+                    :class="n <= item.soSao ? 'text-warning' : 'text-secondary opacity-25'"
+                  ></i>
+                </div>
+              </div>
+            </div>
+            <p class="testimonial-text">
+              "{{ item.noiDung || 'Dịch vụ tuyệt vời, tôi rất hài lòng!' }}"
+            </p>
+            <div class="testimonial-footer">
+              <span class="testimonial-age">{{ item.user?.tuoi || '...' }} tuổi</span>
+              <div class="testimonial-decoration"></div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div v-else class="testimonials-grid row g-4">
-        <div
-          v-for="(item, index) in testimonials"
-          :key="index"
-          class="testimonial-card col-md-4"
+      <!-- Show more button if there are more than 3 testimonials -->
+      <div v-if="testimonials.length > 3" class="text-center mt-4">
+        <button 
+          class="show-more-btn"
+          @click="toggleShowAll"
         >
-          <div class="testimonial-rating mb-2">
-            <i
-              v-for="n in 5"
-              :key="n"
-              class="fa-star fas"
-              :class="n <= item.soSao ? 'text-warning' : 'text-secondary opacity-25'"
-            ></i>
-          </div>
-          <p class="testimonial-text fst-italic">
-            "{{ item.noiDung || '(Không có nội dung)' }}"
-          </p>
-          <div class="testimonial-author mt-2 fw-semibold">
-            - 
-            <span v-if="item.anDanh">Ẩn danh</span>
-            <span v-else>{{ item.user?.name || 'Khách hàng' }}</span>,
-            {{ item.user?.tuoi || '...' }} tuổi
+          <span v-if="!showAllTestimonials">
+            Xem thêm {{ testimonials.length - 3 }} đánh giá khác
+            <i class="fas fa-chevron-down ml-2"></i>
+          </span>
+          <span v-else>
+            Thu gọn
+            <i class="fas fa-chevron-up ml-2"></i>
+          </span>
+        </button>
+      </div>
+
+      <!-- Additional testimonials (hidden by default) -->
+      <div v-if="showAllTestimonials && testimonials.length > 3" class="additional-testimonials">
+        <div class="testimonials-grid mt-4">
+          <div
+            v-for="(item, index) in additionalTestimonials"
+            :key="index + 3"
+            class="testimonial-card testimonial-fade-in"
+          >
+            <div class="testimonial-content">
+              <div class="testimonial-header">
+                <div class="testimonial-avatar">
+                  <span>{{ getInitials(item.user?.name || 'Khách hàng') }}</span>
+                </div>
+                <div class="testimonial-info">
+                  <h4 class="testimonial-name">
+                    {{ item.anDanh ? 'Ẩn danh' : item.user?.name || 'Khách hàng' }}
+                  </h4>
+                  <div class="testimonial-rating">
+                    <i
+                      v-for="n in 5"
+                      :key="n"
+                      class="fa-star fas"
+                      :class="n <= item.soSao ? 'text-warning' : 'text-secondary opacity-25'"
+                    ></i>
+                  </div>
+                </div>
+              </div>
+              <p class="testimonial-text">
+                "{{ item.noiDung || 'Dịch vụ tuyệt vời, tôi rất hài lòng!' }}"
+              </p>
+              <!-- <div class="testimonial-footer">
+                <span class="testimonial-age">{{ item.user?.tuoi || '...' }} tuổi</span>
+                <div class="testimonial-decoration"></div>
+              </div> -->
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
     <!-- Booking Section -->
     <section id="booking" class="booking">
@@ -321,35 +402,43 @@
               class="selected-services"
               v-if="bookingForm.services.length && !bookingForm.consultAtStore"
             >
-              <h4>Dịch vụ đã chọn:</h4>
-              <ul>
-                <li
-                  v-for="(service, index) in bookingForm.services"
-                  :key="index"
-                  class="selected-service-item"
-                >
-                  <span>{{ service.name }} - {{ service.price }} VNĐ</span>
-                  <div class="quantity-control">
-                    <label :for="'quantity-' + index">Số lượng:</label>
-                    <input
-                      type="number"
-                      :id="'quantity-' + index"
-                      v-model.number="service.soLuong"
-                      min="1"
-                      max="10"
-                      required
-                      class="quantity-input"
-                    />
-                    <button
-                      type="button"
-                      class="remove-service-btn"
-                      @click="removeService(index)"
-                    >
-                      &times;
-                    </button>
-                  </div>
-                </li>
-              </ul>
+              <h4 class="section-title">Dịch vụ đã chọn:</h4>
+<ul class="selected-services-list">
+  <li
+    v-for="(service, index) in bookingForm.services"
+    :key="index"
+    class="selected-service-card"
+  >
+    <!-- Thông tin dịch vụ -->
+    <div class="service-info">
+      <span class="service-name">{{ service.name }}</span>
+      <span class="service-price">{{ service.price.toLocaleString() }} VNĐ</span>
+    </div>
+
+    <!-- Số lượng + nút xoá -->
+    <div class="service-actions">
+      <label :for="'quantity-' + index" class="quantity-label">Số lượng:</label>
+      <input
+        type="number"
+        :id="'quantity-' + index"
+        v-model.number="service.soLuong"
+        min="1"
+        max="10"
+        required
+        class="quantity-input"
+      />
+      <button
+        type="button"
+        class="remove-service-btn"
+        @click="removeService(index)"
+        title="Xóa dịch vụ"
+      >
+        &times;
+      </button>
+    </div>
+  </li>
+</ul>
+
             </div>
 
             <div class="form-row">
@@ -409,51 +498,126 @@
       </div>
     </section>
 
-<!-- About Section -->
-<section id="about" class="about-section py-5">
+<!-- Improved About Section -->
+<section id="about" class="about-section">
   <div class="container">
     <div class="row align-items-center">
       
       <!-- Cột trái: Nội dung -->
       <div class="col-lg-6">
-        <h2 class="fw-bold mb-4">Về TutaSpa</h2>
-        <p class="mb-4">
-          Hãy để TutaSpa mang đến cho bạn những phút giây thư giãn tuyệt vời cùng dịch vụ làm đẹp chuyên nghiệp, kết hợp tinh hoa truyền thống và công nghệ hiện đại.
-        </p>
+        <div class="about-content-wrapper">
+          <h2 class="about-title">
+            <span class="title-accent">Về</span> TutaSpa
+          </h2>
+          <div class="about-subtitle">
+            Điểm đến hoàn hảo cho sự thư giãn và làm đẹp
+          </div>
+          
+          <p class="about-description">
+            Với hơn <strong>10 năm kinh nghiệm</strong> trong ngành làm đẹp, TutaSpa tự hào mang đến 
+            cho khách hàng những trải nghiệm thư giãn tuyệt vời nhất. Chúng tôi kết hợp tinh hoa 
+            truyền thống với công nghệ hiện đại, sử dụng 100% sản phẩm từ thiên nhiên.
+          </p>
 
-        <ul class="list-unstyled about-list">
-          <li>🌿 Sản phẩm hữu cơ cao cấp</li>
-          <li>💆‍♀️ Đội ngũ chuyên gia quốc tế</li>
-          <li>🏆 Chứng nhận ISO 9001:2015</li>
-          <li>💯 Cam kết hài lòng 100%</li>
-        </ul>
-      </div>
-
-      <!-- Cột phải: Hình ảnh -->
-      <div class="col-lg-6 text-center">
-        <div class="about-image-box p-3 rounded">
-          <img
-            src=""
-            alt="TutaSpa"
-            class="img-fluid rounded shadow"
-          />
+          <div class="about-features">
+            <div class="feature-item">
+              <div class="feature-icon-wrapper">
+                <span class="feature-emoji">🌿</span>
+              </div>
+              <div class="feature-content">
+                <h4>Sản phẩm hữu cơ cao cấp</h4>
+                <p>Nhập khẩu trực tiếp từ các thương hiệu uy tín</p>
+              </div>
+            </div>
+            
+            <div class="feature-item">
+              <div class="feature-icon-wrapper">
+                <span class="feature-emoji">💆‍♀️</span>
+              </div>
+              <div class="feature-content">
+                <h4>Đội ngũ chuyên gia quốc tế</h4>
+                <p>Được đào tạo bài bản tại Hàn Quốc và Nhật Bản</p>
+              </div>
+            </div>
+            
+            <div class="feature-item">
+              <div class="feature-icon-wrapper">
+                <span class="feature-emoji">🏆</span>
+              </div>
+              <div class="feature-content">
+                <h4>Chứng nhận ISO 9001:2015</h4>
+                <p>Đảm bảo chất lượng dịch vụ quốc tế</p>
+              </div>
+            </div>
+            
+            <div class="feature-item">
+              <div class="feature-icon-wrapper">
+                <span class="feature-emoji">💯</span>
+              </div>
+              <div class="feature-content">
+                <h4>Cam kết hài lòng 100%</h4>
+                <p>Hoàn tiền nếu không hài lòng với dịch vụ</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
+      <!-- Cột phải: Hình ảnh -->
+      <div class="col-lg-6">
+        <div class="about-visual">
+          <div class="about-image-main">
+            <img
+              src="https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+              alt="TutaSpa Interior"
+              class="img-fluid rounded-4 shadow-lg"
+            />
+            <div class="image-overlay">
+              <div class="overlay-content">
+                <h3>Không gian thư giãn</h3>
+                <p>Thiết kế sang trọng, yên tĩnh</p>
+              </div>
+            </div>
+          </div>
+          
+
+          <div class="about-stats">
+            <div class="stat-item">
+              <div class="stat-number">5000+</div>
+              <div class="stat-label">Khách hàng tin tưởng</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">50+</div>
+              <div class="stat-label">Dịch vụ chuyên nghiệp</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">98%</div>
+              <div class="stat-label">Tỷ lệ hài lòng</div>
+            </div>
+          </div>
+          
+          <div class="floating-badge">
+            <div class="badge-content">
+              <span class="badge-icon">⭐</span>
+              <div class="badge-text">
+                <div class="badge-title">Top Rated</div>
+                <div class="badge-subtitle">Spa in Da Nang</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
     </div>
   </div>
 </section>
-
-
 
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 import apiClient from "../utils/axiosClient";
-
-
 
 // Reactive state
 const services = ref([]);
@@ -481,46 +645,36 @@ const modalForm = ref({
   notes: "",
 });
 const availableSlots = ref([]);
-// Base URL for images
+const showAllTestimonials = ref(false);
+
 const IMAGE_BASE_URL =
   import.meta.env.VITE_BASE_URL.replace("/api", "") + "/images/";
 
 const currentSlide = ref(0);
 
 const slides = [
-  {
-    image:
-      "https://images.unsplash.com/photo-1540555700478-4be289fbecef?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-    title: "Thư Giãn & Tái Tạo",
-    subtitle: "Trải nghiệm không gian yên bình",
-  },
-  {
-    image:
-      "https://images.unsplash.com/photo-1596178065887-1198b6148b2b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-    title: "Chăm Sóc Chuyên Nghiệp",
-    subtitle: "Với đội ngũ chuyên gia giàu kinh nghiệm",
-  },
-  {
-    image:
-      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-    title: "Làm Đẹp Tự Nhiên",
-    subtitle: "Sử dụng 100% sản phẩm thiên nhiên",
-  },
+  { image: "...", title: "Thư Giãn & Tái Tạo", subtitle: "Trải nghiệm không gian yên bình" },
+  { image: "...", title: "Chăm Sóc Chuyên Nghiệp", subtitle: "Với đội ngũ chuyên gia giàu kinh nghiệm" },
+  { image: "...", title: "Làm Đẹp Tự Nhiên", subtitle: "Sử dụng 100% sản phẩm thiên nhiên" },
 ];
 
 const testimonials = ref([]);
 
+// Computed testimonials
+const visibleTestimonials = computed(() => testimonials.value.slice(0, 3));
+const additionalTestimonials = computed(() => testimonials.value.slice(3));
 
-onMounted(async () => {
-  try {
-    const res = await apiClient.get("/DanhGia/admin");
-    testimonials.value = res.filter((dg) => dg.daDuyet && dg.isActive); // chỉ lấy đánh giá đã duyệt và đang hiển thị
-  } catch (err) {
-    console.error("Lỗi khi tải testimonials:", err);
-  } finally {
-    loading.value = false;
-  }
-});
+const getInitials = (name) =>
+  name
+    .split(" ")
+    .map((word) => word.charAt(0))
+    .join("")
+    .toUpperCase()
+    .substring(0, 2);
+
+const toggleShowAll = () => {
+  showAllTestimonials.value = !showAllTestimonials.value;
+};
 
 const stats = [
   { number: "10+", label: "Năm kinh nghiệm", icon: "🏆" },
@@ -541,12 +695,8 @@ const addServiceFromCard = (service) => {
     !bookingForm.value.services.some((s) => s.id === service.id) &&
     !bookingForm.value.consultAtStore
   ) {
-    bookingForm.value.services.push({
-      ...service,
-      soLuong: 1,
-    });
+    bookingForm.value.services.push({ ...service, soLuong: 1 });
   }
-  // Scroll to booking section
   const bookingSection = document.getElementById("booking");
   if (bookingSection) {
     bookingSection.scrollIntoView({ behavior: "smooth" });
@@ -566,7 +716,7 @@ const fetchSlots = async () => {
   }
 };
 
-// Gọi API khi đổi ngày
+// Watch đổi ngày để lấy slot
 watch(
   () => bookingForm.value.date,
   () => {
@@ -580,12 +730,10 @@ const fetchCategories = async () => {
     const response = await apiClient.get("/LoaiDichVu");
     const data = response;
     categories.value = Array.isArray(data) ? data : data.data || [];
-    if (categories.value.length === 0) {
-      throw new Error("Không có danh mục dịch vụ nào được trả về");
-    }
+    if (categories.value.length === 0) throw new Error("Không có danh mục dịch vụ nào");
   } catch (err) {
     console.error("Lỗi khi tải danh mục:", err);
-    error.value = "Không thể tải danh mục dịch vụ. Hiển thị danh mục mặc định.";
+    error.value = "Không thể tải danh mục dịch vụ. Hiển thị mặc định.";
     categories.value = [
       { loaiDichVuID: 1, tenLoai: "Triệt lông" },
       { loaiDichVuID: 2, tenLoai: "Massage" },
@@ -605,20 +753,16 @@ const fetchServices = async () => {
         id: service.dichVuID,
         name: service.tenDichVu,
         category:
-          categories.value.find(
-            (cat) => cat.loaiDichVuID === service.loaiDichVuID
-          )?.tenLoai || "Khác",
+          categories.value.find((cat) => cat.loaiDichVuID === service.loaiDichVuID)?.tenLoai || "Khác",
         price: service.gia.toLocaleString("vi-VN"),
         duration: service.thoiGian,
         description: service.moTa,
         image: `${IMAGE_BASE_URL}${service.hinhAnh}`,
       }));
-    if (services.value.length === 0) {
-      throw new Error("Không có dịch vụ nào được trả về");
-    }
+    if (services.value.length === 0) throw new Error("Không có dịch vụ nào");
   } catch (err) {
     console.error("Lỗi khi tải dịch vụ:", err);
-    error.value = "Không thể tải danh sách dịch vụ. Hiển thị dịch vụ mặc định.";
+    error.value = "Không thể tải dịch vụ. Hiển thị mặc định.";
     services.value = [
       {
         id: 1,
@@ -626,8 +770,7 @@ const fetchServices = async () => {
         category: "Triệt lông",
         price: "500.000",
         duration: 45,
-        description:
-          "Triệt lông vùng chân bằng công nghệ ánh sáng SHR không đau rát, hiệu quả cao",
+        description: "Triệt lông SHR không đau rát, hiệu quả cao",
         image: `${IMAGE_BASE_URL}triet_long_full_chan.jpg`,
       },
     ];
@@ -645,26 +788,20 @@ const filterServices = (category) => {
 const addService = () => {
   if (
     selectedService.value &&
-    !bookingForm.value.services.some(
-      (s) => s.id === selectedService.value.id
-    ) &&
+    !bookingForm.value.services.some((s) => s.id === selectedService.value.id) &&
     !bookingForm.value.consultAtStore
   ) {
     bookingForm.value.services.push({ ...selectedService.value, soLuong: 1 });
-    selectedService.value = null; // Reset dropdown
+    selectedService.value = null;
   }
 };
 
-const removeService = (index) => {
-  bookingForm.value.services.splice(index, 1);
-};
+const removeService = (index) => bookingForm.value.services.splice(index, 1);
 
 const submitBooking = async () => {
   try {
     const thoiGian = new Date(
-      new Date(
-        `${bookingForm.value.date}T${bookingForm.value.time}`
-      ).getTime() +
+      new Date(`${bookingForm.value.date}T${bookingForm.value.time}`).getTime() +
         7 * 60 * 60 * 1000
     ).toISOString();
 
@@ -683,18 +820,10 @@ const submitBooking = async () => {
       datTruoc: true,
     };
 
-    const res = await apiClient.post("/DatLich", payload);
-
+    await apiClient.post("/DatLich", payload);
     alert("Đặt lịch thành công!");
-    bookingForm.value = {
-      phone: "",
-      services: [],
-      date: new Date().toISOString().split("T")[0],
-      time: "",
-      notes: "",
-      consultAtStore: false,
-    };
-    selectedService.value = null;
+
+    resetBookingForm();
   } catch (err) {
     console.error("Lỗi đặt lịch:", err);
     alert("Đặt lịch thất bại!");
@@ -705,7 +834,7 @@ const resetBookingForm = () => {
   bookingForm.value = {
     phone: "",
     services: [],
-    date: "",
+    date: new Date().toISOString().split("T")[0],
     time: "",
     notes: "",
     consultAtStore: false,
@@ -714,27 +843,32 @@ const resetBookingForm = () => {
 };
 
 const resetModalForm = () => {
-  modalForm.value = {
-    name: "",
-    phone: "",
-    email: "",
-    date: "",
-    time: "",
-    notes: "",
-  };
+  modalForm.value = { name: "", phone: "", email: "", date: "", time: "", notes: "" };
 };
 
-// Lifecycle hook
+// ✅ Gom tất cả vào một onMounted duy nhất
 onMounted(async () => {
-  minDate.value = new Date().toISOString().split("T")[0];
-  loading.value = true;
-  await fetchCategories();
-  await fetchServices();
-  loading.value = false;
-  filterServices("all");
-  fetchSlots();
+  try {
+    minDate.value = new Date().toISOString().split("T")[0];
+    loading.value = true;
+
+    // Load dữ liệu
+    await fetchCategories();
+    await fetchServices();
+    filterServices("all");
+    await fetchSlots();
+
+    // Load testimonials
+    const res = await apiClient.get("/DanhGia/admin");
+    testimonials.value = res.filter((dg) => dg.daDuyet && dg.isActive);
+  } catch (err) {
+    console.error("Lỗi khi khởi tạo:", err);
+  } finally {
+    loading.value = false;
+  }
 });
 </script>
+
 
 <style>
 .carousel-item {
@@ -968,31 +1102,430 @@ onMounted(async () => {
   box-shadow: 0 6px 20px rgba(120, 186, 126, 0.5);
 }
 
-/* Testimonials */
+
+
+/* Improved Testimonials Section */
+.testimonials-section {
+  padding: 8rem 2rem;
+  background: linear-gradient(135deg, #cef8d2 20%, #6ba371 50%, #95dda0 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.testimonials-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.05"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.05"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.03"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.03"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  pointer-events: none;
+}
+
+.testimonials-section .section-title {
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.testimonials-section .section-title::after {
+  background: linear-gradient(45deg, #fbbf24, #f59e0b);
+}
+
+.testimonials-container {
+  position: relative;
+  z-index: 2;
+}
+
 .testimonials-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
 }
+
 .testimonial-card {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 1rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s, box-shadow 0.3s;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
 }
+
+.testimonial-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #78ba7e, #fbbf24, #78ba7e);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.testimonial-card:hover::before {
+  transform: scaleX(1);
+}
+
 .testimonial-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  transform: translateY(-10px);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 1);
 }
+
+.testimonial-featured {
+  grid-column: span 1;
+  background: rgba(255, 255, 255, 1);
+  border: 2px solid #fbbf24;
+}
+
+.testimonial-content {
+  position: relative;
+  z-index: 2;
+}
+
+.testimonial-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.testimonial-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #78ba7e, #5e8c64);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+  flex-shrink: 0;
+}
+
+.testimonial-avatar span {
+  color: white;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.testimonial-info {
+  flex: 1;
+}
+
+.testimonial-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2d4a2d;
+  margin: 0 0 0.5rem 0;
+}
+
+.testimonial-rating {
+  display: flex;
+  gap: 2px;
+}
+
 .testimonial-rating i {
-  margin-right: 2px;
+  font-size: 1rem;
+}
+
+.testimonial-text {
+  color: #4b5563;
+  font-style: italic;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+  position: relative;
+  padding-left: 1rem;
+}
+
+.testimonial-text::before {
+  content: '"';
+  position: absolute;
+  left: -0.2rem;
+  top: -0.5rem;
+  font-size: 3rem;
+  color: #78ba7e;
+  opacity: 0.3;
+  line-height: 1;
+}
+
+.testimonial-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.testimonial-age {
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.testimonial-decoration {
+  width: 30px;
+  height: 2px;
+  background: linear-gradient(90deg, #78ba7e, #fbbf24);
+  border-radius: 1px;
+}
+
+.show-more-btn {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.show-more-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.no-reviews-icon {
+  font-size: 4rem;
+  opacity: 0.5;
+  margin-bottom: 1rem;
+}
+
+.additional-testimonials {
+  animation: fadeInUp 0.5s ease;
+}
+
+.testimonial-fade-in {
+  animation: fadeInUp 0.5s ease;
+}
+
+/* Improved About Section */
+.about-section {
+  padding: 6rem 0rem;
+  background: linear-gradient(135deg, #f8fdf8 0%, #f0fdf4 50%, #e8f5e8 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.about-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="%2378ba7e" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
+  pointer-events: none;
+}
+
+.about-content-wrapper {
+  position: relative;
+  z-index: 2;
+}
+
+.about-title {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #2d4a2d;
+  margin-bottom: 1rem;
+  font-family: "Lora", serif;
+}
+
+.title-accent {
+  background: linear-gradient(45deg, #78ba7e, #5e8c64);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.about-subtitle {
+  font-size: 1.3rem;
+  color: #6b7280;
+  margin-bottom: 2rem;
+  font-style: italic;
+}
+
+.about-description {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #374151;
+  margin-bottom: 3rem;
+}
+
+.about-features {
+  display: grid;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 15px;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(120, 186, 126, 0.1);
+}
+
+.feature-item:hover {
+  transform: translateX(10px);
+  box-shadow: 0 10px 25px rgba(120, 186, 126, 0.15);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.feature-icon-wrapper {
+  width: 60px;
+  height: 60px;
+  border-radius: 15px;
+  background: linear-gradient(135deg, #78ba7e, #5e8c64);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.feature-emoji {
+  font-size: 1.8rem;
+}
+
+.feature-content h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #2d4a2d;
+  margin-bottom: 0.5rem;
+}
+
+.feature-content p {
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.about-stats {
+  display: flex;
+  justify-content: space-between;
+  padding: 2rem;
+  background: linear-gradient(135deg, #78ba7e, #5e8c64);
+  border-radius: 20px;
+  color: white;
+  box-shadow: 0 15px 35px rgba(120, 186, 126, 0.3);
+}
+
+.stat-item {
+  text-align: center;
+  flex: 1;
+}
+
+.stat-number {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #fbbf24;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.about-visual {
+  position: relative;
+  z-index: 2;
+}
+
+.about-image-main {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.about-image-main img {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+}
+
+.image-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  color: white;
+  padding: 2rem;
+  border-radius: 0 0 1rem 1rem;
+}
+
+.overlay-content h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.overlay-content p {
+  margin: 0;
+  opacity: 0.9;
+}
+
+.about-image-secondary {
+  position: relative;
+  max-width: 200px;
+  margin-left: auto;
+}
+
+.about-image-secondary img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+.floating-badge {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 1rem;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.badge-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.badge-icon {
+  font-size: 1.5rem;
+}
+
+.badge-title {
+  font-weight: 600;
+  color: #2d4a2d;
+  font-size: 0.9rem;
+}
+
+.badge-subtitle {
+  color: #6b7280;
+  font-size: 0.8rem;
 }
 
 /* Booking Section */
 .booking {
   padding: 8rem 2rem;
-  background: linear-gradient(135deg, #78ba7e 0%, #6ba371 50%, #5e8c64 100%);
+  background: linear-gradient(135deg, #a6ecab 0%, #6ba371 50%, #5e8c64 100%);
   color: white;
 }
 
@@ -1109,301 +1642,93 @@ onMounted(async () => {
   border: none;
   border-radius: 25px;
   margin-top: 1rem;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  display: block;
-  width: fit-content;
+  cursor: pointer
 }
 
-.add-service-btn:disabled {
-  background: #d1d5db;
-  cursor: not-allowed;
-}
 
-.add-service-btn:hover:not(:disabled) {
-  transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(120, 186, 126, 0.5);
-}
-
-.selected-services {
-  margin-bottom: 2rem;
-}
-
-.selected-services h4 {
+.section-title {
   font-size: 1.2rem;
-  color: white;
+  font-weight: 600;
+  color: #f6f9f7;
   margin-bottom: 1rem;
 }
 
-.selected-services ul {
+.selected-services-list {
   list-style: none;
   padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-.selected-service-item {
+.selected-service-card {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 0.8rem 1rem;
-  border-radius: 10px;
-  margin-bottom: 0.5rem;
-  color: white;
+  background: #f6f9f7;
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
 }
 
-.remove-service-btn {
-  background: #ef4444;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
+.selected-service-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.service-info {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.service-name {
+  font-weight: 600;
   font-size: 1rem;
-  transition: all 0.3s ease;
+  color: #333;
 }
 
-.remove-service-btn:hover {
-  background: #dc2626;
-  transform: scale(1.1);
+.service-price {
+  color: #4a8c4a;
+  font-size: 0.95rem;
 }
 
-/* About Section */
-.about {
-  padding: 8rem 2rem;
-  background: white;
-}
-
-.about-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 5rem;
-  align-items: center;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.about-text h2 {
-  font-size: 2.5rem;
-  margin-bottom: 2rem;
-  color: #2d4a2d;
-  font-family: "Lora", serif;
-}
-
-.about-text p {
-  font-size: 1.1rem;
-  margin-bottom: 2rem;
-  color: #374151;
-  line-height: 1.8;
-}
-
-.about-features {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.about-feature {
+.service-actions {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  color: #78ba7e;
-  font-weight: 500;
+  gap: 0.6rem;
 }
 
-.about-image {
-  background: linear-gradient(
-    135deg,
-    #78ba7e 0%,
-    #8bc792 30%,
-    #6ba371 70%,
-    #5e8c64 100%
-  );
-  height: 500px;
-  border-radius: 20px;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 15px 35px rgba(120, 186, 126, 0.25);
-}
-
-/* Modal */
-.modal {
-  display: block;
-  position: fixed;
-  z-index: 2000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(5px);
-}
-
-.modal-content {
-  background-color: white;
-  margin: 3% auto;
-  padding: 2.5rem;
-  border-radius: 20px;
-  width: 90%;
-  max-width: 500px;
-  position: relative;
-  animation: slideIn 0.3s ease;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.close {
-  color: #6b7280;
-  float: right;
-  font-size: 2rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: color 0.3s;
-}
-
-.close:hover {
-  color: #78ba7e;
-}
-
-/* Error */
-.error {
-  text-align: center;
-  padding: 2rem;
-  color: #ef4444;
-}
-
-/* Loading */
-.loading {
-  text-align: center;
-  padding: 2rem;
-  color: #6b7280;
-}
-
-.loading-spinner {
-  border: 4px solid #f3f4f6;
-  border-top: 4px solid #78ba7e;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 1rem;
-}
-
-/* Animations */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateY(-50px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .features-grid {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  }
-
-  .services-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .about-content,
-  .booking-content {
-    grid-template-columns: 1fr;
-    gap: 3rem;
-  }
-
-  .form-row {
-    grid-template-columns: 1fr;
-  }
-
-  .category-btn {
-    font-size: 0.9rem;
-    padding: 0.6rem 1.5rem;
-  }
-
-  .section-title {
-    font-size: 2.2rem;
-  }
-
-  .service-image {
-    height: 150px;
-  }
-}
-.quantity-control {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.quantity-label {
+  font-size: 0.85rem;
+  color: #555;
 }
 
 .quantity-input {
   width: 60px;
-  border-radius: 5px;
+  padding: 0.3rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
   text-align: center;
 }
 
-.selected-service-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 0.8rem 1rem;
-  border-radius: 10px;
-  margin-bottom: 0.5rem;
+.remove-service-btn {
+  background: #ff4d4d;
+  border: none;
   color: white;
+  font-size: 1.2rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.3s ease;
 }
 
-.quantity-control label {
-  color: white;
-  font-size: 0.9rem;
+.remove-service-btn:hover {
+  background: #e60000;
 }
-
-/* giớ thiệu */
-.about-section {
-  background: linear-gradient(135deg, #029660 5%, #6CA374 95% );
-  color: #fff;
-}
-
-.about-list li {
-  margin-bottom: 10px;
-  font-size: 1.1rem;
-}
-
-.about-image-box {
-  background-color: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(6px);
-  display: inline-block;
-}
-
 
 
 </style>
