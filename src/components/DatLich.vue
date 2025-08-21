@@ -33,11 +33,19 @@
               />
               <i class="search-icon">🔍</i>
             </div>
-            
+
             <div class="filter-section">
-              <select v-model="selectedCategoryId" @change="searchServices" class="category-filter">
+              <select
+                v-model="selectedCategoryId"
+                @change="searchServices"
+                class="category-filter"
+              >
                 <option value="">Tất cả danh mục</option>
-                <option v-for="category in categories" :key="category.loaiDichVuID" :value="category.loaiDichVuID">
+                <option
+                  v-for="category in categories"
+                  :key="category.loaiDichVuID"
+                  :value="category.loaiDichVuID"
+                >
                   {{ category.tenLoai }}
                 </option>
               </select>
@@ -62,33 +70,51 @@
               :class="{ selected: isServiceSelected(service.id) }"
             >
               <div class="service-image-container">
-                  <router-link class="detail-service-link" :to="`/DichVuChiTiet/${service.id}`  "> 
-                <img :src="service.image" :alt="service.name" class="service-image" />
-                  </router-link >
+                <router-link
+                  class="detail-service-link"
+                  :to="`/DichVuChiTiet/${service.id}`"
+                >
+                  <img
+                    :src="service.image"
+                    :alt="service.name"
+                    class="service-image"
+                  />
+                </router-link>
                 <div class="service-rating-overlay">
                   <div class="service-rating">
                     <i
                       v-for="n in 5"
                       :key="n"
                       class="rating-star"
-                      :class="n <= Math.floor(service.rating) ? 'filled' : 
-                               n - 0.5 <= service.rating ? 'half-filled' : ''"
-                    >★</i>
-                    <span class="rating-text">({{ service.rating?.toFixed(1) || '0.0' }})</span>
+                      :class="
+                        n <= Math.floor(service.rating)
+                          ? 'filled'
+                          : n - 0.5 <= service.rating
+                          ? 'half-filled'
+                          : ''
+                      "
+                      >★</i
+                    >
+                    <span class="rating-text"
+                      >({{ service.rating?.toFixed(1) || "0.0" }})</span
+                    >
                   </div>
                 </div>
               </div>
               <div class="service-content">
-                <router-link class="detail-service-link" :to="`/DichVuChiTiet/${service.id}`">
-                <h3 class="service-title">{{ service.name }}</h3>
-                <div class="service-meta">
-                  <div class="service-duration">
-                    <i class="duration-icon">⏱</i>
-                    {{ service.duration }} phút
+                <router-link
+                  class="detail-service-link"
+                  :to="`/DichVuChiTiet/${service.id}`"
+                >
+                  <h3 class="service-title">{{ service.name }}</h3>
+                  <div class="service-meta">
+                    <div class="service-duration">
+                      <i class="duration-icon">⏱</i>
+                      {{ service.duration }} phút
+                    </div>
+                    <div class="service-price">{{ service.price }} VNĐ</div>
                   </div>
-                  <div class="service-price">{{ service.price }} VNĐ</div>
-                </div>
-                <p class="service-description">{{ service.description }}</p>
+                  <p class="service-description">{{ service.description }}</p>
                 </router-link>
                 <button
                   class="service-select-btn"
@@ -111,7 +137,7 @@
             >
               ‹ Trước
             </button>
-            
+
             <button
               v-for="page in visiblePages"
               :key="page"
@@ -121,7 +147,7 @@
             >
               {{ page }}
             </button>
-            
+
             <button
               class="page-btn"
               :disabled="currentPage === totalPages"
@@ -132,7 +158,7 @@
           </div>
         </div>
 
-               <!-- Right Side - Booking Form -->
+        <!-- Right Side - Booking Form -->
         <div class="booking-section">
           <div class="booking-card">
             <h2>Thông tin đặt lịch</h2>
@@ -153,7 +179,7 @@
                       <span class="price">{{ service.price }} VNĐ</span>
                     </div>
                   </div>
-                  <div class="quantity-controls-compact">
+                  <!-- <div class="quantity-controls-compact">
                     <input
                       type="number"
                       v-model.number="service.soLuong"
@@ -162,12 +188,14 @@
                       class="quantity-input-compact"
                     />
                     <button class="remove-btn-compact" @click="removeService(index)">×</button>
-                  </div>
+                  </div> -->
                 </div>
               </div>
               <div class="total-info-compact">
                 <div class="total-duration">{{ totalDuration }}p</div>
-                <div class="total-price">{{ totalPrice.toLocaleString('vi-VN') }} VNĐ</div>
+                <div class="total-price">
+                  {{ totalPrice.toLocaleString("vi-VN") }} VNĐ
+                </div>
               </div>
             </div>
 
@@ -213,7 +241,12 @@
 
                 <div class="form-group">
                   <label for="time">Giờ hẹn *</label>
-                  <select id="time" v-model="bookingForm.time" required class="form-input">
+                  <select
+                    id="time"
+                    v-model="bookingForm.time"
+                    required
+                    class="form-input"
+                  >
                     <option value="">-- Chọn giờ --</option>
                     <option
                       v-for="slot in availableSlots"
@@ -221,7 +254,6 @@
                       :value="slot.khungGio"
                     >
                       {{ slot.khungGio }}
-                      <span v-if="slot.conLai <= 2">(Còn {{ slot.conLai }} chỗ)</span>
                     </option>
                   </select>
                 </div>
@@ -261,7 +293,7 @@
 import { ref, onMounted, watch, computed } from "vue";
 import { useRoute } from "vue-router";
 import apiClient from "../utils/axiosClient";
-
+import dayjs from "dayjs";
 const route = useRoute();
 
 // Reactive state
@@ -283,7 +315,7 @@ const pageSize = 12;
 // Booking form
 const bookingForm = ref({
   phone: "",
-  date: new Date().toISOString().split("T")[0],
+  date: dayjs().format("YYYY-MM-DD"),
   time: "",
   notes: "",
   consultAtStore: false,
@@ -293,7 +325,8 @@ const availableSlots = ref([]);
 const minDate = ref("");
 
 // Base URL for images
-const IMAGE_BASE_URL = import.meta.env.VITE_BASE_URL.replace("/api", "") + "/images/";
+const IMAGE_BASE_URL =
+  import.meta.env.VITE_BASE_URL.replace("/api", "") + "/images/";
 
 // Debounce timer
 let searchTimer = null;
@@ -301,22 +334,24 @@ let searchTimer = null;
 // Computed properties
 const totalDuration = computed(() => {
   return selectedServices.value.reduce((total, service) => {
-    return total + (service.duration * service.soLuong);
+    return total + service.duration * service.soLuong;
   }, 0);
 });
 
 const totalPrice = computed(() => {
   return selectedServices.value.reduce((total, service) => {
-    const price = parseInt(service.price.replace(/[^\d]/g, ''));
-    return total + (price * service.soLuong);
+    const price = parseInt(service.price.replace(/[^\d]/g, ""));
+    return total + price * service.soLuong;
   }, 0);
 });
 
 const canSubmit = computed(() => {
-  return bookingForm.value.phone &&
-         bookingForm.value.date &&
-         bookingForm.value.time &&
-         (selectedServices.value.length > 0 || bookingForm.value.consultAtStore);
+  return (
+    bookingForm.value.phone &&
+    bookingForm.value.date &&
+    bookingForm.value.time &&
+    (selectedServices.value.length > 0 || bookingForm.value.consultAtStore)
+  );
 });
 
 const visiblePages = computed(() => {
@@ -324,15 +359,15 @@ const visiblePages = computed(() => {
   const maxVisible = 5;
   let start = Math.max(1, currentPage.value - Math.floor(maxVisible / 2));
   let end = Math.min(totalPages.value, start + maxVisible - 1);
-  
+
   if (end - start < maxVisible - 1) {
     start = Math.max(1, end - maxVisible + 1);
   }
-  
+
   for (let i = start; i <= end; i++) {
     pages.push(i);
   }
-  
+
   return pages;
 });
 
@@ -358,23 +393,26 @@ const searchServices = async () => {
   try {
     servicesLoading.value = true;
     servicesError.value = null;
-    
+
     const params = {
       keyword: searchKeyword.value,
       cateId: selectedCategoryId.value,
-      page: currentPage.value
+      page: currentPage.value,
     };
-    
+
     const response = await apiClient.get("/DichVu/filter", { params });
     const data = response;
-    
+
     // Process services data
     services.value = (data.data || data || [])
-      .filter(service => service.trangThai === 1)
-      .map(service => ({
+      .filter((service) => service.trangThai === 1)
+      .map((service) => ({
         id: service.dichVuID,
         name: service.tenDichVu,
-        category: categories.value.find(cat => cat.loaiDichVuID === service.loaiDichVuID)?.tenLoai || "Khác",
+        category:
+          categories.value.find(
+            (cat) => cat.loaiDichVuID === service.loaiDichVuID
+          )?.tenLoai || "Khác",
         price: service.gia.toLocaleString("vi-VN"),
         duration: service.thoiGian,
         description: service.moTa,
@@ -385,7 +423,6 @@ const searchServices = async () => {
     // Update pagination info
     totalItems.value = data.pagination.totalItems || services.value.length;
     totalPages.value = Math.ceil(totalItems.value / pageSize);
-    
   } catch (err) {
     console.error("Lỗi khi tải dịch vụ:", err);
     servicesError.value = "Không thể tải danh sách dịch vụ";
@@ -400,20 +437,22 @@ const changePage = (page) => {
 };
 
 const isServiceSelected = (serviceId) => {
-  return selectedServices.value.some(s => s.id === serviceId);
+  return selectedServices.value.some((s) => s.id === serviceId);
 };
 
 const toggleService = (service) => {
   if (bookingForm.value.consultAtStore) return;
-  
-  const existingIndex = selectedServices.value.findIndex(s => s.id === service.id);
-  
+
+  const existingIndex = selectedServices.value.findIndex(
+    (s) => s.id === service.id
+  );
+
   if (existingIndex >= 0) {
     selectedServices.value.splice(existingIndex, 1);
   } else {
     selectedServices.value.push({
       ...service,
-      soLuong: 1
+      soLuong: 1,
     });
   }
 };
@@ -444,17 +483,19 @@ const fetchSlots = async () => {
 const submitBooking = async () => {
   try {
     submitting.value = true;
-    
+
     const thoiGian = new Date(
-      new Date(`${bookingForm.value.date}T${bookingForm.value.time}`).getTime() +
-      7 * 60 * 60 * 1000
+      new Date(
+        `${bookingForm.value.date}T${bookingForm.value.time}`
+      ).getTime() +
+        7 * 60 * 60 * 1000
     ).toISOString();
 
     const dichVus = bookingForm.value.consultAtStore
       ? []
       : selectedServices.value.map((s) => ({
           dichVuID: s.id,
-          soLuong: s.soLuong,
+          soLuong: 1,
         }));
 
     const payload = {
@@ -468,17 +509,16 @@ const submitBooking = async () => {
     await apiClient.post("/DatLich", payload);
 
     alert("Đặt lịch thành công! Chúng tôi sẽ liên hệ với bạn sớm nhất.");
-    
+    fetchSlots();
     // Reset form
     bookingForm.value = {
       phone: "",
-      date: new Date().toISOString().split("T")[0],
+      date: dayjs().format("YYYY-MM-DD"),
       time: "",
       notes: "",
       consultAtStore: false,
     };
     selectedServices.value = [];
-    
   } catch (err) {
     console.error("Lỗi đặt lịch:", err);
     alert("Đặt lịch thất bại! Vui lòng thử lại.");
@@ -492,20 +532,23 @@ const loadPreselectedService = async (serviceId) => {
   try {
     const response = await apiClient.get(`/DichVu/${serviceId}`);
     const serviceData = response;
-    
+
     if (serviceData && serviceData.trangThai === 1) {
       const service = {
         id: serviceData.dichVuID,
         name: serviceData.tenDichVu,
-        category: categories.value.find(cat => cat.loaiDichVuID === serviceData.loaiDichVuID)?.tenLoai || "Khác",
+        category:
+          categories.value.find(
+            (cat) => cat.loaiDichVuID === serviceData.loaiDichVuID
+          )?.tenLoai || "Khác",
         price: serviceData.gia.toLocaleString("vi-VN"),
         duration: serviceData.thoiGian,
         description: serviceData.moTa,
         rating: serviceData.mucDanhGia || 0,
         image: `${IMAGE_BASE_URL}${serviceData.hinhAnh}`,
-        soLuong: 1
+        soLuong: 1,
       };
-      
+
       selectedServices.value = [service];
     }
   } catch (err) {
@@ -514,22 +557,25 @@ const loadPreselectedService = async (serviceId) => {
 };
 
 // Watchers
-watch(() => bookingForm.value.date, () => {
-  fetchSlots();
-  bookingForm.value.time = "";
-});
+watch(
+  () => bookingForm.value.date,
+  () => {
+    fetchSlots();
+    bookingForm.value.time = "";
+  }
+);
 
 // Lifecycle
 onMounted(async () => {
-  minDate.value = new Date().toISOString().split("T")[0];
-  
+  minDate.value = dayjs().format("YYYY-MM-DD");
+
   await fetchCategories();
-  
+
   // Check if there's a preselected service from route
   if (route.params.serviceId) {
     await loadPreselectedService(route.params.serviceId);
   }
-  
+
   await searchServices();
   fetchSlots();
 });
@@ -708,9 +754,8 @@ onMounted(async () => {
   position: relative;
   overflow: hidden;
 }
-.detail-service-link{
+.detail-service-link {
   text-decoration: none;
-
 }
 .service-image {
   width: 100%;
@@ -1123,8 +1168,12 @@ onMounted(async () => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .error {
@@ -1149,19 +1198,19 @@ onMounted(async () => {
     grid-template-columns: 1fr;
     gap: 3rem;
   }
-  
+
   .booking-section {
     position: static;
   }
-  
+
   .services-grid {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   }
-  
+
   .hero-title {
     font-size: 2.5rem;
   }
-  
+
   .hero-subtitle {
     font-size: 1.1rem;
   }
@@ -1171,51 +1220,51 @@ onMounted(async () => {
   .main-content {
     padding: 2rem 0;
   }
-  
+
   .hero-section {
     padding: 3rem 1rem 1.5rem;
   }
-  
+
   .hero-title {
     font-size: 2rem;
   }
-  
+
   .services-section {
     padding: 2rem;
   }
-  
+
   .booking-card {
     padding: 2rem;
   }
-  
+
   .search-filter-section {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-  
+
   .category-filter {
     min-width: auto;
   }
-  
+
   .services-grid {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1.5rem;
   }
-  
+
   .form-row {
     grid-template-columns: 1fr;
   }
-  
+
   .selected-item {
     flex-direction: column;
     align-items: stretch;
     gap: 0.8rem;
   }
-  
+
   .quantity-controls {
     justify-content: space-between;
   }
-  
+
   .total-info {
     flex-direction: column;
     gap: 0.5rem;
@@ -1228,84 +1277,84 @@ onMounted(async () => {
   .hero-title {
     font-size: 1.8rem;
   }
-  
+
   .hero-subtitle {
     font-size: 1rem;
   }
-  
+
   .services-section {
     padding: 1.5rem;
   }
-  
+
   .booking-card {
     padding: 1.5rem;
   }
-  
+
   .services-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .service-card {
     margin-bottom: 1rem;
   }
-  
+
   .service-image {
     height: 150px;
   }
-  
+
   .service-content {
     padding: 1.2rem;
   }
-  
+
   .service-title {
     font-size: 1.1rem;
   }
-  
+
   .service-meta {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
   }
-  
+
   .booking-card h2 {
     font-size: 1.5rem;
   }
-  
+
   .selected-services {
     padding: 1.2rem;
   }
-  
+
   .selected-item {
     padding: 0.8rem;
   }
-  
+
   .service-info h4 {
     font-size: 0.9rem;
   }
-  
+
   .service-details {
     flex-direction: column;
     gap: 0.3rem;
   }
-  
+
   .pagination {
     flex-wrap: wrap;
     gap: 0.3rem;
   }
-  
+
   .page-btn {
     padding: 0.5rem 0.8rem;
     font-size: 0.9rem;
   }
-  
+
   .consult-checkbox {
     font-size: 0.9rem;
   }
-  
+
   .form-input {
     padding: 0.8rem;
   }
-  
+
   .submit-btn {
     padding: 1rem 1.5rem;
     font-size: 1rem;
@@ -1317,10 +1366,18 @@ onMounted(async () => {
   text-align: center;
 }
 
-.mb-0 { margin-bottom: 0; }
-.mb-1 { margin-bottom: 0.5rem; }
-.mb-2 { margin-bottom: 1rem; }
-.mb-3 { margin-bottom: 1.5rem; }
+.mb-0 {
+  margin-bottom: 0;
+}
+.mb-1 {
+  margin-bottom: 0.5rem;
+}
+.mb-2 {
+  margin-bottom: 1rem;
+}
+.mb-3 {
+  margin-bottom: 1.5rem;
+}
 
 .font-bold {
   font-weight: 700;
