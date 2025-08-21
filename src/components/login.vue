@@ -67,7 +67,7 @@
           :disabled="isLoading"
         >
           <div v-if="isLoading" class="btn-content">
-            <div class="loading-spinner"></div>
+             <div class="loading-spinner"></div>
             <span>Đang đăng nhập...</span>
           </div>
           <div v-else class="btn-content">
