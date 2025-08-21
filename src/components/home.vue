@@ -358,7 +358,7 @@ Khám phá dịch vụ
           <div class="booking-info">
             <h2>Đặt lịch hẹn</h2>
             <p>
-Hãy để chúng tôi chăm sóc bạn với những dịch vụ tốt nhất. Đặt lịch
+              Hãy để chúng tôi chăm sóc bạn với những dịch vụ tốt nhất. Đặt lịch
               ngay hôm nay để nhận được ưu đãi đặc biệt và trải nghiệm không
               gian thư giãn tuyệt vời.
             </p>
@@ -536,7 +536,7 @@ Hãy để chúng tôi chăm sóc bạn với những dịch vụ tốt nhất. 
           <div class="about-subtitle">
             Điểm đến hoàn hảo cho sự thư giãn và làm đẹp
           </div>
-<p class="about-description">
+          <p class="about-description">
             Với hơn <strong>10 năm kinh nghiệm</strong> trong ngành làm đẹp, TutaSpa tự hào mang đến 
             cho khách hàng những trải nghiệm thư giãn tuyệt vời nhất. Chúng tôi kết hợp tinh hoa 
             truyền thống với công nghệ hiện đại, sử dụng 100% sản phẩm từ thiên nhiên.
@@ -602,23 +602,48 @@ Hãy để chúng tôi chăm sóc bạn với những dịch vụ tốt nhất. 
               </div>
             </div>
           </div>
-          
-
-          <div class="about-stats">
+  
+          <!-- <div class="about-stats">
             <div class="stat-item">
               <div class="stat-number">5000+</div>
               <div class="stat-label">Khách hàng tin tưởng</div>
             </div>
             <div class="stat-item">
               <div class="stat-number">50+</div>
-<div class="stat-label">Dịch vụ chuyên nghiệp</div>
+            <div class="stat-label">Dịch vụ chuyên nghiệp</div>
             </div>
             <div class="stat-item">
               <div class="stat-number">98%</div>
               <div class="stat-label">Tỷ lệ hài lòng</div>
             </div>
+          </div> -->
+
+          <!-- Google Map -->
+        <div class="col-lg-12">
+          <div class="map-wrapper rounded-4 overflow-hidden shadow h-100">
+            <a
+              href="https://www.google.com/maps/place/31+Nguyễn+Mộng+Tuân,+Hoà+Minh,+Liên+Chiểu,+Đà+Nẵng+550000"
+              target="_blank"
+              class="d-block w-100 h-100" 
+            >
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3834.168381775547!2d108.1698262!3d16.0633039!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3142191ed695fc89%3A0xb837389a53933ca9!2zMzEgTmfDtG4gTeG7mW5nIFR1w6puLCBIb8OgIE1pbmgsIExpw6puIENow61hLCDEkMOgIE5hbmc!5e0!3m2!1svi!2s!4v1721903400000"
+                width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                title="31 Nguyễn Mộng Tuân, Đà Nẵng"
+              ></iframe>
+            </a>
           </div>
-          
+          <a
+            href="https://www.google.com/maps/place/31+Nguyễn+Mộng+Tuân,+Hoà+Minh,+Liên+Chiểu,+Đà+Nẵng+550000"
+            target="_blank"
+            class="text-decoration-none text-dark mt-2 d-block" 
+          >
+            <i class="fa-solid fa-map-location-dot me-2 text-primary-green"></i>Xem bản đồ
+          </a>
+        </div>
+
+        
           <div class="floating-badge">
             <div class="badge-content">
               <span class="badge-icon">⭐</span>
@@ -1012,7 +1037,7 @@ onMounted(async () => {
   text-align: center;
   font-size: 2.8rem;
   margin-bottom: 1rem;
-  color: #2d4a2d;
+  color: #335333;
   position: relative;
   font-family: "Lora", serif;
 }
@@ -1328,7 +1353,7 @@ onMounted(async () => {
 .testimonial-featured {
   grid-column: span 1;
   background: rgba(255, 255, 255, 1);
-  border: 2px solid #fbbf24;
+  border: 2px solid rgb(255, 255, 255);
 }
 
 .testimonial-content {
@@ -1568,6 +1593,13 @@ onMounted(async () => {
   color: white;
   box-shadow: 0 15px 35px rgba(120, 186, 126, 0.3);
 }
+/* map */
+.map-wrapper iframe {
+  width: 100%;
+  height: 430px; 
+  border: 0;
+}
+
 
 .stat-item {
   text-align: center;
@@ -1793,9 +1825,9 @@ onMounted(async () => {
 }
 
 .section-title {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #f6f9f7;
+  font-size: 3rem;
+  font-weight: 800;
+  color: #1f5932;
   margin-bottom: 1rem;
 }
 
@@ -1837,7 +1869,7 @@ onMounted(async () => {
 }
 
 .service-price {
-  color: #4a8c4a;
+  color: #ffaa16;
   font-size: 0.95rem;
 }
 
@@ -2650,7 +2682,10 @@ onMounted(async () => {
     padding: 0.6rem 1.2rem !important;
     font-size: 0.75rem !important;
   }
+ 
 }
+
+
 
 
 </style>

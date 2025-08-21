@@ -209,7 +209,7 @@
       <div class="footer-content">
         <div class="footer-section">
           <h3>Liên hệ</h3>
-          <p>📍 123 Đường Nguyễn Huệ, Quận 1, TP.HCM</p>
+          <p>📍 31 Nguyễn Mộng Tuân, Phường Liên Chiểu, TP Đà Nẵng</p>
           <p>📞 Hotline: 0123 456 789</p>
           <p>✉️ Email: info@serenityspa.vn</p>
           <p>🌐 Website: www.serenityspa.vn</p>
@@ -991,7 +991,7 @@ body {
 /* Main Content */
 .main-content {
   margin-top: 80px;
-  padding: 20px 0;
+  padding: 0px 0;
 }
 
 /* Chat Popup Styles */
@@ -1599,7 +1599,7 @@ body {
 
   .main-content {
     margin-top: 70px;
-    padding: 10px 0;
+    padding: 20px 0;
   }
 }
 
