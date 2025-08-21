@@ -854,6 +854,10 @@ onMounted(async () => {
   gap: 0.5rem;
 }
 
+.detail-service-link{
+  text-decoration: none;
+
+}
 .quick-booking-form {
   background: rgba(255, 255, 255, 0.15);
   padding: 2.5rem;

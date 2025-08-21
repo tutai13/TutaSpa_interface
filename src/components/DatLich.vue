@@ -62,7 +62,9 @@
               :class="{ selected: isServiceSelected(service.id) }"
             >
               <div class="service-image-container">
+                  <router-link class="detail-service-link" :to="`/DichVuChiTiet/${service.id}`  "> 
                 <img :src="service.image" :alt="service.name" class="service-image" />
+                  </router-link >
                 <div class="service-rating-overlay">
                   <div class="service-rating">
                     <i
@@ -77,6 +79,7 @@
                 </div>
               </div>
               <div class="service-content">
+                <router-link class="detail-service-link" :to="`/DichVuChiTiet/${service.id}`">
                 <h3 class="service-title">{{ service.name }}</h3>
                 <div class="service-meta">
                   <div class="service-duration">
@@ -86,6 +89,7 @@
                   <div class="service-price">{{ service.price }} VNĐ</div>
                 </div>
                 <p class="service-description">{{ service.description }}</p>
+                </router-link>
                 <button
                   class="service-select-btn"
                   :class="{ selected: isServiceSelected(service.id) }"
@@ -704,7 +708,10 @@ onMounted(async () => {
   position: relative;
   overflow: hidden;
 }
+.detail-service-link{
+  text-decoration: none;
 
+}
 .service-image {
   width: 100%;
   height: 180px;

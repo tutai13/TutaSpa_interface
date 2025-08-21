@@ -68,18 +68,18 @@
               <div
                 class="d-flex flex-column flex-sm-row justify-content-center gap-3 animate__animated animate__fadeInUp animate__delay-4s"
               >
-                <router-link
-                  to="/#services"
+                <button
+                  @click="scrollToServices"
                   class="btn btn-primary btn-lg rounded-pill px-5 py-3 fw-bold"
                 >
-Khám phá dịch vụ
-                </router-link>
-                <router-link
-                  to="/#booking"
+                  Khám phá dịch vụ
+                </button>
+                <button
+                  @click="scrollToBooking"
                   class="btn btn-outline-light btn-lg rounded-pill px-5 py-3"
                 >
                   Đặt lịch ngay
-                </router-link>
+                </button>
               </div>
             </div>
           </div>
@@ -111,36 +111,10 @@ Khám phá dịch vụ
     <section class="features">
       <div class="container">
         <div class="features-grid">
-          <div class="feature-card">
-            <div class="feature-icon">🌱</div>
-            <h3>100% Tự nhiên</h3>
-            <p>
-              Sử dụng các sản phẩm từ thiên nhiên, không chất hóa học có hại, an
-              toàn cho mọi loại da
-            </p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">👥</div>
-            <h3>Chuyên gia giàu kinh nghiệm</h3>
-            <p>
-              Đội ngũ chuyên viên được đào tạo bài bản, và có kinh nghiệm hơn 5 năm
-            </p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">🛏️</div>
-            <h3>Không gian sang trọng</h3>
-            <p>
-              Thiết kế hiện đại, thoáng mát với âm nhạc thư giãn và hương thơm
-              dễ chịu
-            </p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">🛡️</div>
-            <h3>Đảm bảo vệ sinh</h3>
-            <p>
-              Tuân thủ nghiêm ngặt các tiêu chuẩn vệ sinh, khử trùng dụng cụ sau
-              mỗi lần sử dụng
-            </p>
+          <div class="feature-card" v-for="(feature, index) in features" :key="index">
+            <div class="feature-icon">{{ feature.icon }}</div>
+            <h3>{{ feature.title }}</h3>
+            <p>{{ feature.description }}</p>
           </div>
         </div>
       </div>
@@ -187,36 +161,39 @@ Khám phá dịch vụ
             :key="service.id"
             class="service-card"
           >
+         
             <div class="service-image-container">
-              <router-link :to="`/DichVuChiTiet/${service.id}`"> 
+               <router-link class="detail-service-link" :to="`/DichVuChiTiet/${service.id}`"> 
               <img
                 :src="service.image"
                 :alt="service.name"
                 class="service-image"
+                loading="lazy"
               />
-              </router-link>
-              <div class="service-rating-overlay">
+                </router-link>
+              <div class="service-rating-overlay" v-if="service.rating">
                 <div class="service-rating">
                   <i
                     v-for="n in 5"
                     :key="n"
                     class="rating-star"
                     :class="
-                      n <= Math.floor(service.mucDanhGia)
+                      n <= Math.floor(service.rating)
                         ? 'filled'
-                        : n - 0.5 <= service.mucDanhGia
+                        : n - 0.5 <= service.rating
                         ? 'half-filled'
                         : ''
                     "
                     >★</i
                   >
                   <span class="rating-text"
-                    >({{ service.mucDanhGia?.toFixed(1) || "0.0" }})</span
+                    >({{ service.rating?.toFixed(1) || "0.0" }})</span
                   >
                 </div>
               </div>
             </div>
             <div class="service-content">
+              <router-link class="detail-service-link" :to="`/DichVuChiTiet/${service.id}`  "> 
               <h3 class="service-title">{{ service.name }}</h3>
               <div class="service-meta">
                 <div class="service-duration">
@@ -225,131 +202,133 @@ Khám phá dịch vụ
                 </div>
                 <div class="service-price">{{ service.price }} VNĐ</div>
               </div>
-              <!-- <p class="service-description">{{ service.description }}</p> -->
+              </router-link> 
               <button
                 class="service-book-btn"
                 @click="addServiceFromCard(service)"
+                :disabled="bookingForm.consultAtStore"
               >
                 <span>Đặt lịch ngay</span>
                 <i class="btn-arrow">→</i>
               </button>
+              
+            </div>
+
+          </div>
+          
+        </div>
+        
+      </div>
+      
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials-section">
+      <div class="container">
+        <h2 class="section-title text-center mb-5">
+          Khách hàng nói gì về chúng tôi
+        </h2>
+
+        <div v-if="testimonialsLoading" class="text-center text-white">
+          <div class="loading-spinner"></div>
+          <p>Đang tải đánh giá...</p>
+        </div>
+        
+        <div v-else-if="testimonials.length === 0" class="text-center text-white opacity-75">
+          <div class="no-reviews-icon">💬</div>
+          <p class="mt-3">Chưa có đánh giá nào. Hãy là người đầu tiên chia sẻ trải nghiệm của bạn!</p>
+        </div>
+
+        <div v-else class="testimonials-container">
+          <div class="testimonials-grid">
+            <div
+              v-for="(item, index) in visibleTestimonials"
+              :key="item.id || index"
+              class="testimonial-card"
+              :class="{ 'testimonial-featured': index === 0 }"
+            >
+              <div class="testimonial-content">
+                <div class="testimonial-header">
+                  <div class="testimonial-avatar">
+                    <span>{{ getInitials(item.user?.name || 'Khách hàng') }}</span>
+                  </div>
+                  <div class="testimonial-info">
+                    <h4 class="testimonial-name">
+                      {{ item.anDanh ? 'Ẩn danh' : item.user?.name || 'Khách hàng' }}
+                    </h4>
+                    <div class="testimonial-rating">
+                      <i
+                        v-for="n in 5"
+                        :key="n"
+                        class="fa-star fas"
+                        :class="n <= item.soSao ? 'text-warning' : 'text-secondary opacity-25'"
+                      ></i>
+                    </div>
+                  </div>
+                </div>
+                <p class="testimonial-text">
+                  "{{ item.noiDung || 'Dịch vụ tuyệt vời, tôi rất hài lòng!' }}"
+                </p>
+                <div class="testimonial-footer">
+                  <span class="testimonial-age">{{ item.user?.tuoi || '...' }} tuổi</span>
+                  <div class="testimonial-decoration"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div v-if="testimonials.length > 3" class="text-center mt-4">
+            <button 
+              class="show-more-btn"
+              @click="toggleShowAll"
+            >
+              <span v-if="!showAllTestimonials">
+                Xem thêm {{ testimonials.length - 3 }} đánh giá khác
+                <i class="fas fa-chevron-down ml-2"></i>
+              </span>
+              <span v-else>
+                Thu gọn
+                <i class="fas fa-chevron-up ml-2"></i>
+              </span>
+            </button>
+          </div>
+
+          <div v-if="showAllTestimonials && testimonials.length > 3" class="additional-testimonials">
+            <div class="testimonials-grid mt-4">
+              <div
+                v-for="(item, index) in additionalTestimonials"
+                :key="item.id || (index + 3)"
+                class="testimonial-card testimonial-fade-in"
+              >
+                <div class="testimonial-content">
+                  <div class="testimonial-header">
+                    <div class="testimonial-avatar">
+                      <span>{{ getInitials(item.user?.name || 'Khách hàng') }}</span>
+                    </div>
+                    <div class="testimonial-info">
+                      <h4 class="testimonial-name">
+                        {{ item.anDanh ? 'Ẩn danh' : item.user?.name || 'Khách hàng' }}
+                      </h4>
+                      <div class="testimonial-rating">
+                        <i
+                          v-for="n in 5"
+                          :key="n"
+                          class="fa-star fas"
+                          :class="n <= item.soSao ? 'text-warning' : 'text-secondary opacity-25'"
+                        ></i>
+                      </div>
+                    </div>
+                  </div>
+                  <p class="testimonial-text">
+                    "{{ item.noiDung || 'Dịch vụ tuyệt vời, tôi rất hài lòng!' }}"
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </section>
-
-
-<!-- Improved Testimonials Section -->
-<section class="testimonials-section">
-  <div class="container">
-    <h2 class="section-title text-center mb-5">
-      Khách hàng nói gì về chúng tôi
-    </h2>
-
-    <div v-if="loading" class="text-center text-white">
-      <div class="loading-spinner"></div>
-      <p>Đang tải đánh giá...</p>
-    </div>
-    
-    <div v-else-if="testimonials.length === 0" class="text-center text-white opacity-75">
-      <div class="no-reviews-icon">💬</div>
-      <p class="mt-3">Chưa có đánh giá nào. Hãy là người đầu tiên chia sẻ trải nghiệm của bạn!</p>
-    </div>
-
-    <div v-else class="testimonials-container">
-      <!-- Always visible testimonials (first 3) -->
-      <div class="testimonials-grid">
-        <div
-          v-for="(item, index) in visibleTestimonials"
-          :key="index"
-          class="testimonial-card"
-          :class="{ 'testimonial-featured': index === 0 }"
-        >
-          <div class="testimonial-content">
-            <div class="testimonial-header">
-              <div class="testimonial-avatar">
-                <span>{{ getInitials(item.name || 'Khách hàng') }}</span>
-              </div>
-              <div class="testimonial-info">
-                <h4 class="testimonial-name">
-                  {{  item.name || 'Khách hàng' }}
-                </h4>
-                <div class="testimonial-rating">
-                  <i
-                    v-for="n in 5"
-                    :key="n"
-                    class="fa-star fas"
-                    :class="n <= item.rate ? 'text-warning' : 'text-secondary opacity-25'"
-                  ></i>
-</div>
-              </div>
-            </div>
-            <p class="testimonial-text">
-              "{{ item.content || 'Dịch vụ tuyệt vời, tôi rất hài lòng!' }}"
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Show more button if there are more than 3 testimonials -->
-      <div v-if="testimonials.length > 3" class="text-center mt-4">
-        <button 
-          class="show-more-btn"
-          @click="toggleShowAll"
-        >
-          <span v-if="!showAllTestimonials">
-            Xem thêm {{ testimonials.length - 3 }} đánh giá khác
-            <i class="fas fa-chevron-down ml-2"></i>
-          </span>
-          <span v-else>
-            Thu gọn
-            <i class="fas fa-chevron-up ml-2"></i>
-          </span>
-        </button>
-      </div>
-
-      <!-- Additional testimonials (hidden by default) -->
-      <div v-if="showAllTestimonials && testimonials.length > 3" class="additional-testimonials">
-        <div class="testimonials-grid mt-4">
-          <div
-            v-for="(item, index) in additionalTestimonials"
-            :key="index + 3"
-            class="testimonial-card testimonial-fade-in"
-          >
-            <div class="testimonial-content">
-              <div class="testimonial-header">
-                <div class="testimonial-avatar">
-                  <span>{{ getInitials(item.user?.name || 'Khách hàng') }}</span>
-                </div>
-                <div class="testimonial-info">
-                  <h4 class="testimonial-name">
-                    {{  item.name || 'Khách hàng' }}
-                  </h4>
-                  <div class="testimonial-rating">
-                    <i
-                      v-for="n in 5"
-                      :key="n"
-                      class="fa-star fas"
-                      :class="n <= item.rate ? 'text-warning' : 'text-secondary opacity-25'"
-                    ></i>
-                  </div>
-                </div>
-              </div>
-              <p class="testimonial-text">
-                "{{ item.content || 'Dịch vụ tuyệt vời, tôi rất hài lòng!' }}"
-              </p>
-              <!-- <div class="testimonial-footer">
-                <span class="testimonial-age">{{ item.user?.tuoi || '...' }} tuổi</span>
-                <div class="testimonial-decoration"></div>
-              </div> -->
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
     <!-- Booking Section -->
     <section id="booking" class="booking">
@@ -380,6 +359,7 @@ Khám phá dịch vụ
                 v-model="bookingForm.phone"
                 required
                 placeholder="0123 456 789"
+                pattern="[0-9]{10,11}"
               />
             </div>
 
@@ -408,7 +388,6 @@ Khám phá dịch vụ
                 >
                   Thêm dịch vụ
                 </button>
-                <!-- Checkbox tư vấn tại quán -->
                 <label class="consult-checkbox">
                   <input
                     type="checkbox"
@@ -427,42 +406,38 @@ Khám phá dịch vụ
               v-if="bookingForm.services.length && !bookingForm.consultAtStore"
             >
               <h4 class="section-title">Dịch vụ đã chọn:</h4>
-<ul class="selected-services-list">
-  <li
-    v-for="(service, index) in bookingForm.services"
-    :key="index"
-    class="selected-service-card"
-  >
-    <!-- Thông tin dịch vụ -->
-    <div class="service-info">
-      <span class="service-name">{{ service.name }}</span>
-<span class="service-price">{{ service.price.toLocaleString() }} VNĐ</span>
-    </div>
-
-    <!-- Số lượng + nút xoá -->
-    <div class="service-actions">
-      <label :for="'quantity-' + index" class="quantity-label">Số lượng:</label>
-      <input
-        type="number"
-        :id="'quantity-' + index"
-        v-model.number="service.soLuong"
-        min="1"
-        max="10"
-        required
-        class="quantity-input"
-      />
-      <button
-        type="button"
-        class="remove-service-btn"
-        @click="removeService(index)"
-        title="Xóa dịch vụ"
-      >
-        &times;
-      </button>
-    </div>
-  </li>
-</ul>
-
+              <ul class="selected-services-list">
+                <li
+                  v-for="(service, index) in bookingForm.services"
+                  :key="service.id + '_' + index"
+                  class="selected-service-card"
+                >
+                  <div class="service-info">
+                    <span class="service-name">{{ service.name }}</span>
+                    <span class="service-price">{{ service.price.toLocaleString() }} VNĐ</span>
+                  </div>
+                  <div class="service-actions">
+                    <label :for="'quantity-' + index" class="quantity-label">Số lượng:</label>
+                    <input
+                      type="number"
+                      :id="'quantity-' + index"
+                      v-model.number="service.soLuong"
+                      min="1"
+                      max="10"
+                      required
+                      class="quantity-input"
+                    />
+                    <button
+                      type="button"
+                      class="remove-service-btn"
+                      @click="removeService(index)"
+                      title="Xóa dịch vụ"
+                    >
+                      &times;
+                    </button>
+                  </div>
+                </li>
+              </ul>
             </div>
 
             <div class="form-row">
@@ -502,164 +477,92 @@ Khám phá dịch vụ
                 v-model="bookingForm.notes"
                 rows="4"
                 placeholder="Những yêu cầu đặc biệt hoặc ghi chú khác..."
+                maxlength="500"
               ></textarea>
             </div>
 
             <button
               type="submit"
               class="submit-btn"
-              :disabled="
-                !bookingForm.phone ||
-                (!bookingForm.services.length && !bookingForm.consultAtStore) ||
-                !bookingForm.date ||
-                !bookingForm.time
-              "
+              :disabled="isSubmitting || !isFormValid"
             >
-              Đặt lịch hẹn
+              {{ isSubmitting ? 'Đang xử lý...' : 'Đặt lịch hẹn' }}
             </button>
           </form>
         </div>
       </div>
     </section>
 
-<!-- Improved About Section -->
-<section id="about" class="about-section">
-  <div class="container">
-    <div class="row align-items-center">
-      
-      <!-- Cột trái: Nội dung -->
-      <div class="col-lg-6">
-        <div class="about-content-wrapper">
-          <h2 class="about-title">
-            <span class="title-accent">Về</span> TutaSpa
-          </h2>
-          <div class="about-subtitle">
-            Điểm đến hoàn hảo cho sự thư giãn và làm đẹp
-          </div>
-          <p class="about-description">
-            Với hơn <strong>10 năm kinh nghiệm</strong> trong ngành làm đẹp, TutaSpa tự hào mang đến 
-            cho khách hàng những trải nghiệm thư giãn tuyệt vời nhất. Chúng tôi kết hợp tinh hoa 
-            truyền thống với công nghệ hiện đại, sử dụng 100% sản phẩm từ thiên nhiên.
-          </p>
+    <!-- About Section -->
+    <section id="about" class="about-section">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-6">
+            <div class="about-content-wrapper">
+              <h2 class="about-title">
+                <span class="title-accent">Về</span> TutaSpa
+              </h2>
+              <div class="about-subtitle">
+                Điểm đến hoàn hảo cho sự thư giãn và làm đẹp
+              </div>
+              <p class="about-description">
+                Với hơn <strong>10 năm kinh nghiệm</strong> trong ngành làm đẹp, TutaSpa tự hào mang đến 
+                cho khách hàng những trải nghiệm thư giãn tuyệt vời nhất. Chúng tôi kết hợp tinh hoa 
+                truyền thống với công nghệ hiện đại, sử dụng 100% sản phẩm từ thiên nhiên.
+              </p>
 
-          <div class="about-features">
-            <div class="feature-item">
-              <div class="feature-icon-wrapper">
-                <span class="feature-emoji">🌿</span>
-              </div>
-              <div class="feature-content">
-                <h4>Sản phẩm hữu cơ cao cấp</h4>
-                <p>Nhập khẩu trực tiếp từ các thương hiệu uy tín</p>
-              </div>
-            </div>
-            
-            <div class="feature-item">
-              <div class="feature-icon-wrapper">
-                <span class="feature-emoji">💆‍♀️</span>
-              </div>
-              <div class="feature-content">
-                <h4>Đội ngũ chuyên gia quốc tế</h4>
-                <p>Được đào tạo bài bản tại Hàn Quốc và Nhật Bản</p>
-              </div>
-            </div>
-            
-            <div class="feature-item">
-              <div class="feature-icon-wrapper">
-                <span class="feature-emoji">🏆</span>
-              </div>
-              <div class="feature-content">
-                <h4>Chứng nhận ISO 9001:2015</h4>
-                <p>Đảm bảo chất lượng dịch vụ quốc tế</p>
-              </div>
-            </div>
-            
-            <div class="feature-item">
-              <div class="feature-icon-wrapper">
-                <span class="feature-emoji">💯</span>
-              </div>
-              <div class="feature-content">
-                <h4>Cam kết hài lòng 100%</h4>
-                <p>Hoàn tiền nếu không hài lòng với dịch vụ</p>
+              <div class="about-features">
+                <div class="feature-item" v-for="(feature, index) in aboutFeatures" :key="index">
+                  <div class="feature-icon-wrapper">
+                    <span class="feature-emoji">{{ feature.emoji }}</span>
+                  </div>
+                  <div class="feature-content">
+                    <h4>{{ feature.title }}</h4>
+                    <p>{{ feature.description }}</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- Cột phải: Hình ảnh -->
-      <div class="col-lg-6">
-        <div class="about-visual">
-          <div class="about-image-main">
-            <img
-              src="https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8...070&q=80"
-              alt="TutaSpa Interior"
-              class="img-fluid rounded-4 shadow-lg"
-            />
-            <div class="image-overlay">
-              <div class="overlay-content">
-                <h3>Không gian thư giãn</h3>
-                <p>Thiết kế sang trọng, yên tĩnh</p>
+          <div class="col-lg-6">
+            <div class="about-visual">
+              <div class="about-image-main">
+                <img
+                  src="https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
+                  alt="TutaSpa Interior"
+                  class="img-fluid rounded-4 shadow-lg"
+                  loading="lazy"
+                />
+                <div class="image-overlay">
+                  <div class="overlay-content">
+                    <h3>Không gian thư giãn</h3>
+                    <p>Thiết kế sang trọng, yên tĩnh</p>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-  
-          <!-- <div class="about-stats">
-            <div class="stat-item">
-              <div class="stat-number">5000+</div>
-              <div class="stat-label">Khách hàng tin tưởng</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-number">50+</div>
-            <div class="stat-label">Dịch vụ chuyên nghiệp</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-number">98%</div>
-              <div class="stat-label">Tỷ lệ hài lòng</div>
-            </div>
-          </div> -->
-
-          <!-- Google Map -->
-        <div class="col-lg-12">
-          <div class="map-wrapper rounded-4 overflow-hidden shadow h-100">
-            <a
-              href="https://www.google.com/maps/place/31+Nguyễn+Mộng+Tuân,+Hoà+Minh,+Liên+Chiểu,+Đà+Nẵng+550000"
-              target="_blank"
-              class="d-block w-100 h-100" 
-            >
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3834.168381775547!2d108.1698262!3d16.0633039!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3142191ed695fc89%3A0xb837389a53933ca9!2zMzEgTmfDtG4gTeG7mW5nIFR1w6puLCBIb8OgIE1pbmgsIExpw6puIENow61hLCDEkMOgIE5hbmc!5e0!3m2!1svi!2s!4v1721903400000"
-                width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade"
-                title="31 Nguyễn Mộng Tuân, Đà Nẵng"
-              ></iframe>
-            </a>
-          </div>
-          <a
-            href="https://www.google.com/maps/place/31+Nguyễn+Mộng+Tuân,+Hoà+Minh,+Liên+Chiểu,+Đà+Nẵng+550000"
-            target="_blank"
-            class="text-decoration-none text-dark mt-2 d-block" 
-          >
-            <i class="fa-solid fa-map-location-dot me-2 text-primary-green"></i>Xem bản đồ
-          </a>
-        </div>
-
-        
-          <div class="floating-badge">
-            <div class="badge-content">
-              <span class="badge-icon">⭐</span>
-              <div class="badge-text">
-                <div class="badge-title">Top Rated</div>
-                <div class="badge-subtitle">Spa in Da Nang</div>
+              
+              <div class="about-stats">
+                <div class="stat-item" v-for="(stat, index) in aboutStats" :key="index">
+                  <div class="stat-number">{{ stat.number }}</div>
+                  <div class="stat-label">{{ stat.label }}</div>
+                </div>
+              </div>
+              
+              <div class="floating-badge">
+                <div class="badge-content">
+                  <span class="badge-icon">⭐</span>
+                  <div class="badge-text">
+                    <div class="badge-title">Top Rated</div>
+                    <div class="badge-subtitle">Spa in Da Nang</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      
-    </div>
-  </div>
-</section>
-
+    </section>
   </div>
 </template>
 
@@ -673,9 +576,16 @@ const categories = ref([]);
 const currentCategory = ref("all");
 const filteredServices = ref([]);
 const loading = ref(true);
+const testimonialsLoading = ref(true);
 const error = ref(null);
 const minDate = ref("");
 const selectedService = ref(null);
+const isSubmitting = ref(false);
+const showAllTestimonials = ref(false);
+const testimonials = ref([]);
+const availableSlots = ref([]);
+const currentSlide = ref(0);
+
 const bookingForm = ref({
   phone: "",
   services: [],
@@ -684,46 +594,27 @@ const bookingForm = ref({
   notes: "",
   consultAtStore: false,
 });
-const modalForm = ref({
-  name: "",
-  phone: "",
-  email: "",
-  date: "",
-  time: "",
-  notes: "",
-});
 
-const showAllTestimonials = ref(false);
-
-const availableSlots = ref([]);
-// Base URL for images
-const IMAGE_BASE_URL =
-  import.meta.env.VITE_BASE_URL.replace("/api", "") + "/images/";
-
-const currentSlide = ref(0);
+// Constants
+const IMAGE_BASE_URL = import.meta.env.VITE_BASE_URL.replace("/api", "") + "/images/";
 
 const slides = [
   {
-    image:
-      "https://images.unsplash.com/photo-1540555700478-4be289fbecef?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+    image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
     title: "Thư Giãn & Tái Tạo",
     subtitle: "Trải nghiệm không gian yên bình",
   },
   {
-    image:
-      "https://images.unsplash.com/photo-1596178065887-1198b6148b2b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-    title: " Chăm Sóc Chuyên Nghiệp",
+    image: "https://images.unsplash.com/photo-1596178065887-1198b6148b2b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+    title: "Chăm Sóc Chuyên Nghiệp",
     subtitle: "Với đội ngũ chuyên gia giàu kinh nghiệm",
   },
   {
-    image:
-      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+    image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
     title: "Làm Đẹp Tự Nhiên",
     subtitle: "Sử dụng 100% sản phẩm thiên nhiên",
   },
 ];
-
-
 
 const stats = [
   { number: "10+", label: "Năm kinh nghiệm", icon: "🏆" },
@@ -731,12 +622,79 @@ const stats = [
   { number: "24", label: "Dịch vụ chuyên nghiệp", icon: "🌿" },
 ];
 
+const features = [
+  {
+    icon: "🌱",
+    title: "100% Tự nhiên",
+    description: "Sử dụng các sản phẩm từ thiên nhiên, không chất hóa học có hại, an toàn cho mọi loại da"
+  },
+  {
+    icon: "👥",
+    title: "Chuyên gia giàu kinh nghiệm",
+    description: "Đội ngũ chuyên viên được đào tạo bài bản, và có kinh nghiệm hơn 5 năm"
+  },
+  {
+    icon: "🏛️",
+    title: "Không gian sang trọng",
+    description: "Thiết kế hiện đại, thoáng mát với âm nhạc thư giãn và hương thơm dễ chịu"
+  },
+  {
+    icon: "🛡️",
+    title: "Đảm bảo vệ sinh",
+    description: "Tuân thủ nghiêm ngặt các tiêu chuẩn vệ sinh, khử trùng dụng cụ sau mỗi lần sử dụng"
+  }
+];
 
-const testimonials = ref([]);
+const aboutFeatures = [
+  {
+    emoji: "🌿",
+    title: "Sản phẩm hữu cơ cao cấp",
+    description: "Nhập khẩu trực tiếp từ các thương hiệu uy tín"
+  },
+  {
+    emoji: "👩‍⚕️",
+    title: "Đội ngũ chuyên gia quốc tế",
+    description: "Được đào tạo bài bản tại Hàn Quốc và Nhật Bản"
+  },
+  {
+    emoji: "🏆",
+    title: "Chứng nhận ISO 9001:2015",
+    description: "Đảm bảo chất lượng dịch vụ quốc tế"
+  },
+  {
+    emoji: "💯",
+    title: "Cam kết hài lòng 100%",
+    description: "Hoàn tiền nếu không hài lòng với dịch vụ"
+  }
+];
 
-// Computed testimonials
+const aboutStats = [
+  { number: "5000+", label: "Khách hàng tin tưởng" },
+  { number: "50+", label: "Dịch vụ chuyên nghiệp" },
+  { number: "98%", label: "Tỷ lệ hài lòng" }
+];
+
+// Computed properties
 const visibleTestimonials = computed(() => testimonials.value.slice(0, 3));
 const additionalTestimonials = computed(() => testimonials.value.slice(3));
+
+const isFormValid = computed(() => {
+  return (
+    bookingForm.value.phone &&
+    (bookingForm.value.services.length > 0 || bookingForm.value.consultAtStore) &&
+    bookingForm.value.date &&
+    bookingForm.value.time
+  );
+});
+
+// Methods
+const scrollToServices = () => {
+  document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' });
+};
+
+const scrollToBooking = () => {
+  document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth' });
+};
 
 const getInitials = (name) =>
   name
@@ -750,9 +708,6 @@ const toggleShowAll = () => {
   showAllTestimonials.value = !showAllTestimonials.value;
 };
 
-
-
-// Methods
 const handleConsultAtStore = () => {
   if (bookingForm.value.consultAtStore) {
     bookingForm.value.services = [];
@@ -767,10 +722,7 @@ const addServiceFromCard = (service) => {
   ) {
     bookingForm.value.services.push({ ...service, soLuong: 1 });
   }
-  const bookingSection = document.getElementById("booking");
-if (bookingSection) {
-    bookingSection.scrollIntoView({ behavior: "smooth" });
-  }
+  scrollToBooking();
 };
 
 const fetchSlots = async () => {
@@ -786,7 +738,7 @@ const fetchSlots = async () => {
   }
 };
 
-// Watch đổi ngày để lấy slot
+// Watch for date changes to fetch available slots
 watch(
   () => bookingForm.value.date,
   () => {
@@ -823,17 +775,29 @@ const fetchServices = async () => {
         id: service.dichVuID,
         name: service.tenDichVu,
         category:
-        categories.value.find((cat) => cat.loaiDichVuID === service.loaiDichVuID)?.tenLoai || "Khác",
+          categories.value.find((cat) => cat.loaiDichVuID === service.loaiDichVuID)?.tenLoai || "Khác",
         price: service.gia.toLocaleString("vi-VN"),
         duration: service.thoiGian,
         description: service.moTa,
         image: `${IMAGE_BASE_URL}${service.hinhAnh}`,
-        mucDanhGia: service.mucDanhGia || 0,
+        rating: service.danhGiaTrungBinh || 0
       }));
     if (services.value.length === 0) throw new Error("Không có dịch vụ nào");
   } catch (err) {
     console.error("Lỗi khi tải dịch vụ:", err);
     error.value = "Không thể tải dịch vụ. Hiển thị mặc định.";
+    services.value = [
+      {
+        id: 1,
+        name: "Triệt lông full chân",
+        category: "Triệt lông",
+        price: "500.000",
+        duration: 45,
+        description: "Triệt lông SHR không đau rát, hiệu quả cao",
+        image: `${IMAGE_BASE_URL}triet_long_full_chan.jpg`,
+        rating: 4.5
+      },
+    ];
   }
 };
 
@@ -854,7 +818,7 @@ const addService = () => {
     !bookingForm.value.consultAtStore
   ) {
     bookingForm.value.services.push({ ...selectedService.value, soLuong: 1 });
-    selectedService.value = null; // Reset dropdown
+    selectedService.value = null;
   }
 };
 
@@ -863,6 +827,9 @@ const removeService = (index) => {
 };
 
 const submitBooking = async () => {
+  if (!isFormValid.value || isSubmitting.value) return;
+  
+  isSubmitting.value = true;
   try {
     const thoiGian = new Date(
       new Date(
@@ -886,13 +853,15 @@ const submitBooking = async () => {
       datTruoc: true,
     };
 
-    const res = await apiClient.post("/DatLich", payload);
-
-    alert("Đặt lịch thành công!");
+    await apiClient.post("/DatLich", payload);
+    alert("Đặt lịch thành công! Chúng tôi sẽ liên hệ với bạn sớm nhất.");
     resetBookingForm();
   } catch (err) {
     console.error("Lỗi đặt lịch:", err);
-    alert("Đặt lịch thất bại!");
+    const errorMessage = err.response?.data?.message || "Đặt lịch thất bại. Vui lòng thử lại!";
+    alert(errorMessage);
+  } finally {
+    isSubmitting.value = false;
   }
 };
 
@@ -908,73 +877,60 @@ const resetBookingForm = () => {
   selectedService.value = null;
 };
 
-// Lifecycle hook
-
-
-const resetModalForm = () => {
-  modalForm.value = { name: "", phone: "", email: "", date: "", time: "", notes: "" };
+const fetchTestimonials = async () => {
+  testimonialsLoading.value = true;
+  try {
+    const res = await apiClient.get("/DanhGia/admin");
+    testimonials.value = res
+      .filter((dg) => dg.daDuyet && dg.isActive)
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .slice(0, 20); // Limit to 20 testimonials for performance
+  } catch (err) {
+    console.error("Lỗi khi tải đánh giá:", err);
+    testimonials.value = [];
+  } finally {
+    testimonialsLoading.value = false;
+  }
 };
 
-// ✅ Gom tất cả vào một onMounted duy nhất
+// Lifecycle hooks
 onMounted(async () => {
   try {
     minDate.value = new Date().toISOString().split("T")[0];
     loading.value = true;
 
-    // Load dữ liệu
-    await fetchCategories();
-    await fetchServices();
-    filterServices("all");
-    await fetchSlots();
+    // Load data concurrently for better performance
+    await Promise.all([
+      fetchCategories(),
+      fetchServices(),
+      fetchSlots(),
+      fetchTestimonials()
+    ]);
 
-    // Load testimonials
-    const res = await apiClient.get("/DanhGia/admin");
-    testimonials.value = res
+    filterServices("all");
   } catch (err) {
     console.error("Lỗi khi khởi tạo:", err);
+    error.value = "Có lỗi xảy ra khi tải dữ liệu. Vui lòng tải lại trang.";
   } finally {
     loading.value = false;
   }
 });
 </script>
 
-
-<style>
+<style scoped>
+/* Hero Section */
 .carousel-item {
   height: 100vh;
   background-size: cover !important;
   background-position: center !important;
-  position: relative;
 }
 
 .carousel-caption {
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 90%;
-  max-width: 1200px;
 }
 
 .font-lora {
   font-family: "Lora", serif;
-}
-
-/* Stats container improvements - FIXED */
-.d-flex.flex-wrap.justify-content-center.gap-4.mb-5 {
-  gap: 2rem !important;
-  margin-bottom: 2rem !important;
-  padding: 0 1rem;
-}
-
-.d-flex.flex-wrap.justify-content-center.gap-4.mb-5 > div {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border-radius: 15px;
-  padding: 1.5rem;
-  min-width: 150px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .stat-number {
@@ -996,7 +952,7 @@ onMounted(async () => {
 
 .features-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 3rem;
   max-width: 1200px;
   margin: 0 auto;
@@ -1037,7 +993,7 @@ onMounted(async () => {
   text-align: center;
   font-size: 2.8rem;
   margin-bottom: 1rem;
-  color: #335333;
+  color: #2d4a2d;
   position: relative;
   font-family: "Lora", serif;
 }
@@ -1231,17 +1187,9 @@ onMounted(async () => {
 }
 
 .service-price {
-  gap: 1.3rem;
   font-weight: bold;
   color: #f59e0b;
   font-family: "Lora", serif;
-}
-
-.service-description {
-  color: #6b7280;
-  margin-bottom: auto;
-  line-height: 1.6;
-  flex: 1;
 }
 
 .service-book-btn {
@@ -1258,13 +1206,19 @@ onMounted(async () => {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  margin-top: 1rem;
-  bottom: 10px;
+  margin-top: auto;
 }
 
-.service-book-btn:hover {
+.service-book-btn:hover:not(:disabled) {
   transform: scale(1.05);
   box-shadow: 0 6px 20px rgba(120, 186, 126, 0.5);
+}
+
+.service-book-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .btn-arrow {
@@ -1272,11 +1226,41 @@ onMounted(async () => {
   transition: transform 0.3s ease;
 }
 
-.service-book-btn:hover .btn-arrow {
+.service-book-btn:hover:not(:disabled) .btn-arrow {
   transform: translateX(3px);
 }
 
-/* Improved Testimonials Section */
+/* Loading States */
+.loading {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #78ba7e;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error {
+  text-align: center;
+  padding: 2rem;
+  color: #dc2626;
+  background: #fef2f2;
+  border-radius: 10px;
+  margin: 2rem 0;
+}
+
+/* Testimonials Section */
 .testimonials-section {
   padding: 8rem 2rem;
   background: linear-gradient(135deg, #cef8d2 20%, #6ba371 50%, #95dda0 100%);
@@ -1353,7 +1337,7 @@ onMounted(async () => {
 .testimonial-featured {
   grid-column: span 1;
   background: rgba(255, 255, 255, 1);
-  border: 2px solid rgb(255, 255, 255);
+  border: 2px solid #fbbf24;
 }
 
 .testimonial-content {
@@ -1480,225 +1464,15 @@ onMounted(async () => {
   animation: fadeInUp 0.5s ease;
 }
 
-/* Improved About Section */
-.about-section {
-  padding: 6rem 0rem;
-  background: linear-gradient(135deg, #f8fdf8 0%, #f0fdf4 50%, #e8f5e8 100%);
-  position: relative;
-  overflow: hidden;
-}
-
-.about-section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="%2378ba7e" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
-  pointer-events: none;
-}
-
-.about-content-wrapper {
-  position: relative;
-  z-index: 2;
-}
-
-.about-title {
-  font-size: 3rem;
-  font-weight: 700;
-  color: #2d4a2d;
-  margin-bottom: 1rem;
-  font-family: "Lora", serif;
-}
-
-.title-accent {
-  background: linear-gradient(45deg, #78ba7e, #5e8c64);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.about-subtitle {
-  font-size: 1.3rem;
-  color: #6b7280;
-  margin-bottom: 2rem;
-  font-style: italic;
-}
-
-.about-description {
-  font-size: 1.1rem;
-  line-height: 1.8;
-  color: #374151;
-  margin-bottom: 3rem;
-}
-
-.about-features {
-  display: grid;
-  gap: 2rem;
-  margin-bottom: 3rem;
-}
-
-.feature-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.7);
-  border-radius: 15px;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(120, 186, 126, 0.1);
-}
-
-.feature-item:hover {
-  transform: translateX(10px);
-  box-shadow: 0 10px 25px rgba(120, 186, 126, 0.15);
-  background: rgba(255, 255, 255, 0.9);
-}
-
-.feature-icon-wrapper {
-  width: 60px;
-  height: 60px;
-  border-radius: 15px;
-  background: linear-gradient(135deg, #78ba7e, #5e8c64);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.feature-emoji {
-  font-size: 1.8rem;
-}
-
-.feature-content h4 {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #2d4a2d;
-  margin-bottom: 0.5rem;
-}
-
-.feature-content p {
-  color: #6b7280;
-  margin: 0;
-  line-height: 1.5;
-}
-
-.about-stats {
-  display: flex;
-  justify-content: space-between;
-  padding: 2rem;
-  background: linear-gradient(135deg, #78ba7e, #5e8c64);
-  border-radius: 20px;
-  color: white;
-  box-shadow: 0 15px 35px rgba(120, 186, 126, 0.3);
-}
-/* map */
-.map-wrapper iframe {
-  width: 100%;
-  height: 430px; 
-  border: 0;
-}
-
-
-.stat-item {
-  text-align: center;
-  flex: 1;
-}
-
-.stat-number {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: #fbbf24;
-  display: block;
-  margin-bottom: 0.5rem;
-}
-
-.stat-label {
-  font-size: 0.9rem;
-  opacity: 0.9;
-}
-
-.about-visual {
-  position: relative;
-  z-index: 2;
-}
-
-.about-image-main {
-  position: relative;
-  margin-bottom: 2rem;
-}
-
-.about-image-main img {
-  width: 100%;
-  height: 400px;
-  object-fit: cover;
-}
-
-.image-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
-  color: white;
-  padding: 2rem;
-  border-radius: 0 0 1rem 1rem;
-}
-
-.overlay-content h3 {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.overlay-content p {
-  margin: 0;
-  opacity: 0.9;
-}
-
-.about-image-secondary {
-  position: relative;
-  max-width: 200px;
-  margin-left: auto;
-}
-
-.about-image-secondary img {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-}
-
-.floating-badge {
-  position: absolute;
-  top: 2rem;
-  right: 2rem;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  padding: 1rem;
-  border-radius: 15px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.badge-content {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.badge-icon {
-  font-size: 1.5rem;
-}
-
-.badge-title {
-  font-weight: 600;
-  color: #2d4a2d;
-  font-size: 0.9rem;
-}
-
-.badge-subtitle {
-  color: #6b7280;
-  font-size: 0.8rem;
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Booking Section */
@@ -1732,6 +1506,7 @@ onMounted(async () => {
 .booking-benefits {
   list-style: none;
   margin-bottom: 2rem;
+  padding: 0;
 }
 
 .booking-benefits li {
@@ -1809,9 +1584,16 @@ onMounted(async () => {
   margin-top: 1rem;
 }
 
-.submit-btn:hover {
+.submit-btn:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4);
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .add-service-btn {
@@ -1822,13 +1604,48 @@ onMounted(async () => {
   border-radius: 25px;
   margin-top: 1rem;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.section-title {
-  font-size: 3rem;
-  font-weight: 800;
-  color: #1f5932;
+.add-service-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(120, 186, 126, 0.4);
+}
+
+.add-service-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.consult-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.consult-checkbox input[type="checkbox"] {
+  width: 15px !important;
+  height: 15px !important;
+  cursor: pointer;
+}
+
+.selected-services {
+  margin-bottom: 2rem;
+}
+
+.selected-services .section-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: white;
   margin-bottom: 1rem;
+  text-align: left;
+}
+
+.selected-services .section-title::after {
+  display: none;
 }
 
 .selected-services-list {
@@ -1844,7 +1661,7 @@ onMounted(async () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #f6f9f7;
+  background: rgba(255, 255, 255, 0.9);
   border-radius: 12px;
   padding: 1rem 1.5rem;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
@@ -1865,11 +1682,11 @@ onMounted(async () => {
 .service-name {
   font-weight: 600;
   font-size: 1rem;
-  color: #333;
+  color: #2d4a2d;
 }
 
 .service-price {
-  color: #ffaa16;
+  color: #4a8c4a;
   font-size: 0.95rem;
 }
 
@@ -1885,11 +1702,12 @@ onMounted(async () => {
 }
 
 .quantity-input {
-  width: 60px;
-  padding: 0.3rem;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+  width: 60px !important;
+  padding: 0.3rem !important;
+  border: 1px solid #ddd !important;
+  border-radius: 6px !important;
   text-align: center;
+  background: white !important;
 }
 
 .remove-service-btn {
@@ -1902,128 +1720,243 @@ onMounted(async () => {
   border-radius: 50%;
   cursor: pointer;
   transition: background 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .remove-service-btn:hover {
   background: #e60000;
 }
 
-/* Loading and Error States */
-.loading {
+/* About Section */
+.about-section {
+  padding: 6rem 2rem;
+  background: linear-gradient(135deg, #f8fdf8 0%, #f0fdf4 50%, #e8f5e8 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.about-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="%2378ba7e" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
+  pointer-events: none;
+}
+
+.about-content-wrapper {
+  position: relative;
+  z-index: 2;
+}
+
+.about-title {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #2d4a2d;
+  margin-bottom: 1rem;
+  font-family: "Lora", serif;
+}
+
+.title-accent {
+  background: linear-gradient(45deg, #78ba7e, #5e8c64);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.about-subtitle {
+  font-size: 1.3rem;
+  color: #6b7280;
+  margin-bottom: 2rem;
+  font-style: italic;
+}
+
+.about-description {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #374151;
+  margin-bottom: 3rem;
+}
+
+.about-features {
+  display: grid;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 15px;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(120, 186, 126, 0.1);
+}
+.detail-service-link{
+  text-decoration: none;
+
+}
+
+.feature-item:hover {
+  transform: translateX(10px);
+  box-shadow: 0 10px 25px rgba(120, 186, 126, 0.15);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.feature-icon-wrapper {
+  width: 60px;
+  height: 60px;
+  border-radius: 15px;
+  background: linear-gradient(135deg, #78ba7e, #5e8c64);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.feature-emoji {
+  font-size: 1.8rem;
+}
+
+.feature-content h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #2d4a2d;
+  margin-bottom: 0.5rem;
+}
+
+.feature-content p {
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.about-stats {
+  display: flex;
+  justify-content: space-between;
+  padding: 2rem;
+  background: linear-gradient(135deg, #78ba7e, #5e8c64);
+  border-radius: 20px;
+  color: white;
+  box-shadow: 0 15px 35px rgba(120, 186, 126, 0.3);
+}
+
+.stat-item {
   text-align: center;
-  padding: 4rem 0;
-  color: #78ba7e;
+  flex: 1;
 }
 
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #e8f5e8;
-  border-top: 4px solid #78ba7e;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 1rem;
+.stat-number {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #fbbf24;
+  display: block;
+  margin-bottom: 0.5rem;
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.stat-label {
+  font-size: 0.9rem;
+  opacity: 0.9;
 }
 
-.error {
-  text-align: center;
-  padding: 4rem 0;
-  color: #dc2626;
-  background: #fef2f2;
-  border-radius: 10px;
-  margin: 2rem 0;
+.about-visual {
+  position: relative;
+  z-index: 2;
 }
 
-/* Animations */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.about-image-main {
+  position: relative;
+  margin-bottom: 2rem;
 }
 
-/* RESPONSIVE STYLES - FIXED CAROUSEL */
+.about-image-main img {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+}
 
-/* Desktop Large */
-@media (max-width: 1200px) {
-  .container {
-    max-width: 100%;
-  }
-  
-  .carousel-caption {
-    width: 95%;
+.image-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  color: white;
+  padding: 2rem;
+  border-radius: 0 0 1rem 1rem;
+}
+
+.overlay-content h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.overlay-content p {
+  margin: 0;
+  opacity: 0.9;
+}
+
+.floating-badge {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 1rem;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.badge-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.badge-icon {
+  font-size: 1.5rem;
+}
+
+.badge-title {
+  font-weight: 600;
+  color: #2d4a2d;
+  font-size: 0.9rem;
+}
+
+.badge-subtitle {
+  color: #6b7280;
+  font-size: 0.8rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .carousel-item {
+    height: 70vh;
   }
   
   .display-2 {
-    font-size: 2.5rem !important;
+    font-size: 2rem !important;
   }
   
-  .fs-3 {
-    font-size: 1.4rem !important;
-  }
-  
-  .lead {
-    font-size: 1rem !important;
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
   }
   
   .services-grid {
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  }
-}
-
-/* Desktop Medium */
-@media (max-width: 992px) {
-  .carousel-item {
-    height: 90vh;
+    grid-template-columns: 1fr;
   }
   
-  .display-2 {
-    font-size: 2.2rem !important;
-    line-height: 1.2;
-  }
-  
-  .fs-3 {
-    font-size: 1.2rem !important;
-  }
-  
-  .lead {
-    font-size: 0.95rem !important;
-    max-width: 600px !important;
-  }
-  
-  .d-flex.flex-wrap.justify-content-center.gap-4.mb-5 {
-    gap: 1.5rem !important;
-    flex-wrap: wrap;
-  }
-  
-  .d-flex.flex-wrap.justify-content-center.gap-4.mb-5 > div {
-    min-width: 120px;
-    padding: 1rem;
-  }
-  
-  .stat-number {
-    font-size: 2rem;
-  }
-
-  .hero-title {
-    font-size: 2.8rem;
-  }
-  
-  .hero-subtitle {
-    font-size: 1.3rem;
-  }
-  
-  .stats-container {
-    gap: 1.5rem;
+  .service-categories {
+    flex-direction: column;
+    align-items: center;
   }
   
   .booking-content {
@@ -2031,661 +1964,102 @@ onMounted(async () => {
     gap: 3rem;
   }
   
-  .section-title {
-    font-size: 2.3rem;
-  }
-}
-
-/* Tablet */
-@media (max-width: 768px) {
-  .carousel-item {
-    height: 85vh;
-  }
-  
-  .carousel-caption {
-    width: 95%;
-    padding: 0 1rem;
-  }
-  
-  .display-2 {
-    font-size: 1.8rem !important;
-    margin-bottom: 1rem !important;
-  }
-  
-  .fs-3 {
-    font-size: 1rem !important;
-    margin-bottom: 1rem !important;
-  }
-  
-  .lead {
-    font-size: 0.9rem !important;
-    margin-bottom: 1.5rem !important;
-    line-height: 1.5;
-  }
-  
-  /* Stats layout for tablet - FIXED */
-  .d-flex.flex-wrap.justify-content-center.gap-4.mb-5 {
-    display: grid !important;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem !important;
-    margin-bottom: 1.5rem !important;
-    padding: 0 0.5rem;
-  }
-  
-  .d-flex.flex-wrap.justify-content-center.gap-4.mb-5 > div {
-    min-width: auto;
-    padding: 0.8rem 0.5rem;
-    text-align: center;
-  }
-  
-  .stat-number {
-    font-size: 1.5rem;
-    margin-bottom: 0.2rem;
-  }
-  
-  .stat-label {
-    font-size: 0.75rem;
-    line-height: 1.2;
-  }
-  
-  /* Button adjustments */
-  .d-flex.flex-column.flex-sm-row.justify-content-center.gap-3 {
-    flex-direction: column !important;
-    gap: 1rem !important;
-    padding: 0 1rem;
-  }
-  
-  .btn-lg {
-    padding: 0.8rem 2rem !important;
-    font-size: 0.9rem !important;
-  }
-
-  .features {
-    padding: 4rem 1rem;
-  }
-  
-  .services {
-    padding: 6rem 1rem;
-  }
-  
-  .booking {
-    padding: 6rem 1rem;
-  }
-  
-  .features-grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-
-  .services-grid {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2rem;
-  }
-
   .form-row {
     grid-template-columns: 1fr;
   }
-
-  .category-btn {
-    font-size: 0.9rem;
-    padding: 0.6rem 1.5rem;
+  
+  .testimonials-grid {
+    grid-template-columns: 1fr;
   }
+  
+  .about-stats {
+    flex-direction: column;
+    gap: 1.5rem;
+    text-align: center;
+  }
+  
+  .about-title {
+    font-size: 2.5rem;
+  }
+  
+  .about-features {
+    gap: 1.5rem;
+  }
+  
+  .feature-item {
+    padding: 1rem;
+  }
+  
+  .feature-item:hover {
+    transform: translateY(-5px) translateX(0);
+  }
+}
 
+@media (max-width: 480px) {
+  .carousel-item {
+    height: 60vh;
+  }
+  
+  .display-2 {
+    font-size: 1.5rem !important;
+  }
+  
   .section-title {
     font-size: 2rem;
   }
   
-  .section-subtitle {
-    font-size: 1rem;
-  }
-
-  .service-image {
-    height: 180px;
+  .service-card {
+    margin: 0 1rem;
   }
   
-  .service-content {
-    padding: 1.5rem;
-  }
-  
-  .service-title {
-    font-size: 1.2rem;
-  }
-  
-  .service-meta {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
-  
-  .service-duration {
-    font-size: 0.8rem;
-  }
-  
-  .service-price {
-    font-size: 1.2rem;
-  }
-
-  .hero-title {
-    font-size: 2.2rem;
-    line-height: 1.1;
-  }
-
-  .hero-subtitle {
-    font-size: 1.1rem;
-  }
-  
-  .hero-description {
-    font-size: 1rem;
-    padding: 0 1rem;
-  }
-
-  .stats-container {
-    gap: 1rem;
-  }
-
-  .stat-item {
-    min-width: 100px;
-  }
-
-  .stat-icon {
-    font-size: 2rem;
-  }
-
-  .stat-number {
-    font-size: 1.5rem;
-  }
-
-  .stat-label {
-    font-size: 0.8rem;
-  }
-
-  .hero-buttons {
-    padding: 0 1rem;
-  }
-
-  .hero-buttons .btn {
-    font-size: 0.95rem;
-    padding: 0.8rem 2rem;
-  }
-
   .booking-form {
     padding: 2rem;
   }
   
-  .booking-info h2 {
+  .about-title {
     font-size: 2rem;
   }
-  
-  .form-actions {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  
-  .consult-checkbox {
-    justify-content: center;
-  }
-  
-  .selected-service-item {
-    flex-direction: column;
-    gap: 0.5rem;
-    align-items: stretch;
-  }
-  
-  .quantity-control {
-    justify-content: space-between;
-  }
+}
 
-  .testimonials-grid {
-    flex-direction: column;
-  }
-  
-  .testimonial-card {
-    min-width: auto;
-  }
-
-  /* Carousel controls adjustments */
-  .carousel-control-prev,
-  .carousel-control-next {
-    width: 8%;
-  }
-  
-  .carousel-control-prev-icon,
-  .carousel-control-next-icon {
-    width: 20px;
-    height: 20px;
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
 
-/* Mobile Large */
-@media (max-width: 576px) {
-  .carousel-item {
-    height: 80vh;
-    min-height: 500px;
-  }
-  
-  .carousel-caption {
-    width: 100%;
-    padding: 0 0.5rem;
-    top: 45%;
-  }
-  
-  .display-2 {
-    font-size: 1.4rem !important;
-    margin-bottom: 0.5rem !important;
-    line-height: 1.3;
-  }
-  
-  .fs-3 {
-    font-size: 0.9rem !important;
-    margin-bottom: 0.8rem !important;
-  }
-  
-  .lead {
-    font-size: 0.8rem !important;
-    margin-bottom: 1rem !important;
-    line-height: 1.4;
-    padding: 0 !important;
-  }
-  
-  /* Stats - vertical stack on mobile - FIXED */
-  .d-flex.flex-wrap.justify-content-center.gap-4.mb-5 {
-    display: flex !important;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.8rem !important;
-    margin-bottom: 1rem !important;
-    padding: 0;
-  }
-  
-  .d-flex.flex-wrap.justify-content-center.gap-4.mb-5 > div {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    width: 100%;
-    max-width: 280px;
-    padding: 0.6rem 1rem;
-    margin: 0;
-    justify-content: center;
-  }
-  
-  .d-flex.flex-wrap.justify-content-center.gap-4.mb-5 > div .fs-1 {
-    font-size: 1.2rem !important;
-    margin: 0 !important;
-  }
-  
-  .d-flex.flex-wrap.justify-content-center.gap-4.mb-5 > div .fs-3 {
-    font-size: 1rem !important;
-    margin: 0 0.3rem 0 0 !important;
-  }
-  
-  .d-flex.flex-wrap.justify-content-center.gap-4.mb-5 > div .text-white {
-    font-size: 0.7rem !important;
-    margin: 0 !important;
-    line-height: 1.2;
-  }
-  
-  /* Buttons */
-  .d-flex.flex-column.flex-sm-row.justify-content-center.gap-3 {
-    padding: 0 0.5rem;
-    gap: 0.8rem !important;
-  }
-  
-  .btn-lg {
-    padding: 0.7rem 1.5rem !important;
-    font-size: 0.8rem !important;
-    border-radius: 20px !important;
-  }
+/* Focus styles for keyboard navigation */
+.category-btn:focus,
+.service-book-btn:focus,
+.submit-btn:focus,
+.add-service-btn:focus {
+  outline: 2px solid #fbbf24;
+  outline-offset: 2px;
+}
 
-  /* Hero Section */
-  .carousel-item {
-    min-height: 360px;
-    height: 80vh;
-  }
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: 2px solid #78ba7e;
+  outline-offset: 2px;
+}
 
-  .carousel-caption {
-    padding: 0.8rem;
-  }
-
-  .hero-title {
-    font-size: 1.6rem;
-  }
-
-  .hero-subtitle {
-    font-size: 0.9rem;
-  }
-
-  .hero-description {
-    font-size: 0.85rem;
-    padding: 0 0.5rem;
-  }
-
-  .stats-container {
-    flex-direction: column;
-    align-items: center;
-    gap: 0.8rem;
-  }
-
-  .stat-item {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    min-width: auto;
-  }
-
-  .stat-icon {
-    font-size: 1.5rem;
-    margin: 0;
-  }
-
-  .stat-number {
-    font-size: 1.2rem;
-    margin: 0;
-  }
-
-  .stat-label {
-    font-size: 0.75rem;
-    margin: 0;
-  }
-
-  .hero-buttons {
-    padding: 0 0.5rem;
-  }
-
-  .hero-buttons .btn {
-    font-size: 0.85rem;
-    padding: 0.6rem 1.5rem;
-  }
-
-  /* Features Section */
-  .features {
-    padding: 2.5rem 0.8rem;
-  }
-
-  .feature-card {
-    padding: 1.2rem;
-  }
-
-  .feature-card h3 {
-    font-size: 1.1rem;
-  }
-
-  .feature-card p {
-    font-size: 0.85rem;
-  }
-
-  .feature-icon {
-    font-size: 2.5rem;
-  }
-
-  /* Services Section */
-  .services {
-    padding: 3rem 0.8rem;
-  }
-
-  .service-categories {
-    gap: 0.4rem;
-    justify-content: center;
-  }
-
-  .category-btn {
-    font-size: 0.75rem;
-    padding: 0.4rem 0.8rem;
-    border-radius: 20px;
-  }
-
-  .section-title {
-    font-size: 1.6rem;
-  }
-
-  .section-subtitle {
-    font-size: 0.9rem;
-  }
-
-  .services-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-  }
-
+/* High contrast mode support */
+@media (prefers-contrast: high) {
   .service-card {
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(120, 186, 126, 0.1);
+    border: 2px solid #000;
   }
-
-  .service-image {
-    height: 90px;
-  }
-
-  .service-content {
-    padding: 0.8rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    flex: 1;
-  }
-
-  .service-title {
-    font-size: 0.9rem;
-    margin-bottom: 0.4rem;
-    line-height: 1.3;
-  }
-
-  .service-meta {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.2rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .service-duration {
-    font-size: 0.65rem;
-    padding: 0.15rem 0.5rem;
-  }
-
-  .service-price {
-    font-size: 0.85rem;
-  }
-
-  .service-description {
-    font-size: 0.75rem;
-    line-height: 1.3;
-    margin-bottom: 0.5rem;
-  }
-
-  .service-book-btn {
-    font-size: 0.8rem;
-    padding: 0.5rem 0.8rem;
-    border-radius: 15px;
-    margin-top: 0;
-    align-self: center;
-  }
-
-  .service-rating-overlay {
-    top: 0.2rem;
-    right: 0.2rem;
-    padding: 0.15rem 0.3rem;
-  }
-
-  .service-rating {
-    font-size: 0.65rem;
-  }
-
-  .rating-star {
-    font-size: 0.7rem;
-  }
-
-  .rating-text {
-    font-size: 0.6rem;
-  }
-
-  /* Testimonials Section */
-  .testimonials {
-    padding: 3rem 0.8rem;
-  }
-
+  
   .testimonial-card {
-    padding: 1rem;
-  }
-
-  .testimonial-text {
-    font-size: 0.9rem;
-  }
-
-  .testimonial-author {
-    font-size: 0.85rem;
-  }
-
-  .testimonial-rating i {
-    font-size: 0.8rem;
-  }
-
-  /* Booking Section */
-  .booking {
-    padding: 3rem 0.8rem;
-  }
-
-  .booking-info h2 {
-    font-size: 1.8rem;
-  }
-
-  .booking-info p {
-    font-size: 0.9rem;
-  }
-
-  .booking-benefits li {
-    font-size: 0.85rem;
-  }
-
-  .booking-form {
-    padding: 1.2rem;
-  }
-
-  .form-group label {
-    font-size: 0.85rem;
-  }
-
-  .form-group input,
-  .form-group select,
-  .form-group textarea {
-    padding: 0.7rem;
-    font-size: 0.9rem;
-  }
-
-  .form-actions {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.8rem;
-  }
-
-  .add-service-btn {
-    font-size: 0.85rem;
-    padding: 0.6rem 1.2rem;
-  }
-
-  .consult-checkbox {
-    font-size: 0.85rem;
-  }
-
-  .selected-services h4 {
-    font-size: 1rem;
-  }
-
-  .selected-service-item {
-    padding: 0.6rem;
-  }
-
-  .service-name {
-    font-size: 0.9rem;
-  }
-
-  .service-price {
-    font-size: 0.8rem;
-  }
-
-  .quantity-input {
-    width: 40px;
-    font-size: 0.8rem;
-  }
-
-  .remove-service-btn {
-    width: 24px;
-    height: 24px;
-    font-size: 1rem;
-  }
-
-  .submit-btn {
-    font-size: 0.95rem;
-    padding: 0.9rem 2rem;
-  }
-
-  /* About Section */
-  .about-section {
-    padding: 3rem 0.8rem;
-  }
-
-  .about-section h2 {
-    font-size: 1.8rem;
-  }
-
-  .about-list li {
-    font-size: 0.9rem;
-  }
-
-  .about-image-box {
-    padding: 1.5rem;
-  }
-
-  .about-image-box img {
-    max-width: 80%;
-  }
-
-  /* Carousel indicators */
-  .carousel-indicators {
-    bottom: 10px;
+    border: 2px solid #000;
   }
   
-  .carousel-indicators button {
-    width: 8px;
-    height: 8px;
-    margin: 0 2px;
+  .category-btn {
+    border: 2px solid #000;
   }
 }
-
-/* Mobile Extra Small */
-@media (max-width: 400px) {
-  .carousel-item {
-    height: 75vh;
-    min-height: 450px;
-  }
-  
-  .carousel-caption {
-    top: 40%;
-  }
-  
-  .display-2 {
-    font-size: 1.2rem !important;
-  }
-  
-  .fs-3 {
-    font-size: 0.8rem !important;
-  }
-  
-  .lead {
-    font-size: 0.75rem !important;
-  }
-  
-  .d-flex.flex-wrap.justify-content-center.gap-4.mb-5 > div {
-    max-width: 260px;
-    padding: 0.5rem 0.8rem;
-  }
-  
-  .btn-lg {
-    padding: 0.6rem 1.2rem !important;
-    font-size: 0.75rem !important;
-  }
- 
-}
-
-
-
-
 </style>
