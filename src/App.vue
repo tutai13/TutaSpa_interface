@@ -212,7 +212,7 @@
           <p>📍 31 Nguyễn Mộng Tuân, Phường Liên Chiểu, TP Đà Nẵng</p>
           <p>📞 Hotline: 0123 456 789</p>
           <p>✉️ Email: info@serenityspa.vn</p>
-          <p>🌐 Website: www.serenityspa.vn</p>
+          <p>🌐 Website: tutaspa.vercel.app</p>
         </div>
         <div class="footer-section">
           <h3>Giờ mở cửa</h3>
@@ -232,9 +232,9 @@
         </div>
         <div class="footer-section">
           <h3>Theo dõi chúng tôi</h3>
-          <p><a href="#">📘 Facebook: Serenity Spa VN</a></p>
+          <p><a href="#">📘 Facebook: Tuta Spa</a></p>
           <p><a href="#">📷 Instagram: @serenityspa_vn</a></p>
-          <p><a href="#">💬 Zalo: 0123 456 789</a></p>
+          <p><a href="#">💬 Zalo: 0903209925</a></p>
           <p><a href="#">📺 YouTube: Serenity Spa Vietnam</a></p>
         </div>
       </div>
