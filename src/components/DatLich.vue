@@ -753,6 +753,7 @@ onMounted(async () => {
   background: linear-gradient(90deg, #fbbf24 50%, #d1d5db 50%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;        /* chuẩn W3C cho các trình duyệt mới */
 }
 
 .rating-text {

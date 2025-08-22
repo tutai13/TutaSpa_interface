@@ -1,108 +1,104 @@
 <template>
   <div class="spa-login-wrapper">
-    <div class="spa-login-container">
-      <!-- Header Section -->
-      <div class="login-header">
-        <div class="welcome-icon">🌿</div>
-        <h1 class="login-title">Chào mừng trở lại</h1>
-        <p class="login-subtitle">Đăng nhập để tiếp tục hành trình chăm sóc sức khỏe của bạn</p>
-      </div>
-
-      <!-- Login Form -->
-      <form @submit.prevent="handleLogin" class="login-form">
-        <!-- Phone Input -->
-        <div class="form-group">
-          <label for="phone" class="form-label">Số điện thoại</label>
-          <div class="input-container">
-            <div class="input-icon">📱</div>
-            <input 
-              type="tel" 
-              id="phone"
-              class="form-input"
-              v-model="form.phone"
-              placeholder="Nhập số điện thoại"
-              :class="{ 'error': errors.phone }"
-            >
-          </div>
-          <transition name="fade">
-            <div v-if="errors.phone" class="error-message">
-              <i class="fas fa-exclamation-circle"></i>
-              {{ errors.phone }}
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+          <div class="spa-login-container">
+            <!-- Header Section -->
+            <div class="login-header text-center mb-4">
+              <div class="welcome-icon mb-3">🌿</div>
+              <h1 class="login-title">Chào mừng trở lại</h1>
+              <p class="login-subtitle">Đăng nhập để tiếp tục hành trình chăm sóc sức khỏe của bạn</p>
             </div>
-          </transition>
-        </div>
 
-        <!-- Password Input -->
-        <div class="form-group">
-          <label for="password" class="form-label">Mật khẩu</label>
-          <div class="input-container">
-            <div class="input-icon">🔒</div>
-            <input 
-              :type="showPassword ? 'text' : 'password'"
-              id="password"
-              class="form-input"
-              v-model="form.password"
-              placeholder="Nhập mật khẩu"
-              :class="{ 'error': errors.password }"
-            >
-            <div 
-              class="password-toggle"
-              @click="togglePassword"
-            >
-              {{ showPassword ? '🙈' : '👁️' }}
-            </div>
+            <!-- Login Form -->
+            <form @submit.prevent="handleLogin" class="login-form">
+              <!-- Phone Input -->
+              <div class="mb-3">
+                <label for="phone" class="form-label">Số điện thoại</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0">📱</span>
+                  <input 
+                    type="tel" 
+                    id="phone"
+                    class="form-control border-start-0"
+                    v-model="form.phone"
+                    placeholder="Nhập số điện thoại"
+                    :class="{ 'is-invalid': errors.phone }"
+                  >
+                </div>
+                <div v-if="errors.phone" class="invalid-feedback d-block">
+                  <i class="fas fa-exclamation-circle me-1"></i>
+                  {{ errors.phone }}
+                </div>
+              </div>
+
+              <!-- Password Input -->
+              <div class="mb-3">
+                <label for="password" class="form-label">Mật khẩu</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0">🔒</span>
+                  <input 
+                    :type="showPassword ? 'text' : 'password'"
+                    id="password"
+                    class="form-control border-start-0 border-end-0"
+                    v-model="form.password"
+                    placeholder="Nhập mật khẩu"
+                    :class="{ 'is-invalid': errors.password }"
+                  >
+                  <button 
+                    class="btn btn-outline-secondary border-start-0"
+                    type="button"
+                    @click="togglePassword"
+                  >
+                    {{ showPassword ? '🙈' : '👁️' }}
+                  </button>
+                </div>
+                <div v-if="errors.password" class="invalid-feedback d-block">
+                  <i class="fas fa-exclamation-circle me-1"></i>
+                  {{ errors.password }}
+                </div>
+              </div>
+
+              <!-- Login Button -->
+              <button 
+                type="submit" 
+                class="btn btn-success w-100 mb-3 login-btn"
+                :disabled="isLoading"
+              >
+                <span v-if="isLoading" class="d-flex align-items-center justify-content-center">
+                  <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  Đang đăng nhập...
+                </span>
+                <span v-else class="d-flex align-items-center justify-content-center">
+                  <span class="me-2">🌸</span>
+                  Đăng nhập
+                </span>
+              </button>
+
+              <!-- Forgot Password -->
+              <div class="text-center mb-3">
+                <a href="#" @click.prevent="forgotPassword" class="text-success text-decoration-none">
+                  Quên mật khẩu?
+                </a>
+              </div>
+
+              <!-- Divider -->
+              <div class="text-center mb-3">
+                <span class="text-muted">Hoặc</span>
+              </div>
+
+              <!-- Register Link -->
+              <div class="text-center">
+                <p class="text-muted mb-2">Chưa có tài khoản?</p>
+                <a href="#" @click.prevent="goToRegister" class="btn btn-outline-success">
+                  <span class="me-2">✨</span>
+                  Đăng ký ngay
+                </a>
+              </div>
+            </form>
           </div>
-          <transition name="fade">
-            <div v-if="errors.password" class="error-message">
-              <i class="fas fa-exclamation-circle"></i>
-              {{ errors.password }}
-            </div>
-          </transition>
         </div>
-
-        <!-- Login Button -->
-        <button 
-          type="submit" 
-          class="login-btn"
-          :disabled="isLoading"
-        >
-          <div v-if="isLoading" class="btn-content">
-             <div class="loading-spinner"></div>
-            <span>Đang đăng nhập...</span>
-          </div>
-          <div v-else class="btn-content">
-            <span>🌸</span>
-            <span>Đăng nhập</span>
-          </div>
-        </button>
-
-        <!-- Forgot Password -->
-        <div class="forgot-password">
-          <a href="#" @click.prevent="forgotPassword" class="forgot-link">
-            Quên mật khẩu?
-          </a>
-        </div>
-
-        <!-- Divider -->
-        <div class="divider">
-          <span>Hoặc</span>
-        </div>
-
-        <!-- Register Link -->
-        <div class="register-section">
-          <p class="register-text">Chưa có tài khoản?</p>
-          <a href="#" @click.prevent="goToRegister" class="register-btn">
-            <span>✨</span>
-            <span>Đăng ký ngay</span>
-          </a>
-        </div>
-      </form>
-
-      <!-- Decorative Elements -->
-      <div class="decorative-elements">
-        <div class="leaf leaf-1">🍃</div>
-        <div class="leaf leaf-2">🌱</div>
-        <div class="leaf leaf-3">🌿</div>
       </div>
     </div>
   </div>
@@ -212,414 +208,119 @@ const emit = defineEmits(['login-success', 'forgot-password', 'go-to-register'])
 </script>
 
 <style scoped>
+/* Import Bootstrap CSS nếu chưa có */
+@import url('https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css');
+
 .spa-login-wrapper {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f5f9f5 0%, #e8f5e8 100%);
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 2rem 1rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  position: relative;
-  overflow: hidden;
-}
-
-.spa-login-wrapper::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(107, 168, 107, 0.05) 0%, transparent 70%);
-  animation: float 20s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  33% { transform: translate(30px, -30px) rotate(120deg); }
-  66% { transform: translate(-20px, 20px) rotate(240deg); }
+  padding: 2rem 0;
 }
 
 .spa-login-container {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  border-radius: 24px;
-  box-shadow: 
-    0 20px 40px rgba(45, 90, 45, 0.1),
-    0 0 0 1px rgba(255, 255, 255, 0.2);
-  padding: 2.5rem;
-  width: 100%;
-  max-width: 450px;
-  position: relative;
-  z-index: 2;
-  overflow: hidden;
-}
-
-.spa-login-container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #6ba86b, #4a8c4a, #6ba86b);
-  background-size: 200% 100%;
-  animation: gradient 3s ease infinite;
-}
-
-@keyframes gradient {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
-
-/* Header */
-.login-header {
-  text-align: center;
-  margin-bottom: 2rem;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  border: 1px solid #e9ecef;
 }
 
 .welcome-icon {
   font-size: 3rem;
-  margin-bottom: 1rem;
-  animation: bounce 2s ease-in-out infinite;
+  animation: pulse 2s infinite;
 }
 
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-  40% { transform: translateY(-10px); }
-  60% { transform: translateY(-5px); }
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
 .login-title {
-  color: #2d5a2d;
-  font-size: 2rem;
+  color: #198754;
   font-weight: 700;
   margin-bottom: 0.5rem;
-  letter-spacing: -0.02em;
 }
 
 .login-subtitle {
-  color: #5a7a5a;
-  font-size: 1rem;
-  line-height: 1.5;
-  margin-bottom: 0;
-}
-
-/* Form */
-.login-form {
-  position: relative;
-}
-
-.form-group {
-  margin-bottom: 1.5rem;
-}
-
-.form-label {
-  display: block;
-  color: #2d5a2d;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
+  color: #6c757d;
   font-size: 0.95rem;
 }
 
-.input-container {
-  position: relative;
-  display: flex;
-  align-items: center;
+.input-group-text {
+  background-color: #f8f9fa !important;
+  border-color: #dee2e6;
 }
 
-.input-icon {
-  position: absolute;
-  left: 1rem;
-  font-size: 1.2rem;
-  z-index: 1;
-  opacity: 0.7;
+.form-control {
+  border-color: #dee2e6;
+  padding: 0.75rem;
 }
 
-.form-input {
-  width: 100%;
-  padding: 1rem 1rem 1rem 3rem;
-  border: 2px solid #e8f5e8;
-  border-radius: 16px;
-  font-size: 1rem;
-  background: rgba(255, 255, 255, 0.8);
-  transition: all 0.3s ease;
-  color: #2d5a2d;
+.form-control:focus {
+  border-color: #198754;
+  box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
 }
 
-.form-input::placeholder {
-  color: #9db29d;
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: #6ba86b;
-  background: rgba(255, 255, 255, 1);
-  box-shadow: 0 0 0 4px rgba(107, 168, 107, 0.1);
-  transform: translateY(-1px);
-}
-
-.form-input.error {
-  border-color: #e74c3c;
-  box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.1);
-}
-
-.password-toggle {
-  position: absolute;
-  right: 1rem;
-  font-size: 1.2rem;
-  cursor: pointer;
-  z-index: 1;
-  padding: 0.25rem;
-  border-radius: 50%;
-  transition: all 0.3s ease;
-}
-
-.password-toggle:hover {
-  background: rgba(107, 168, 107, 0.1);
-  transform: scale(1.1);
-}
-
-/* Login Button */
 .login-btn {
-  width: 100%;
-  padding: 1rem 1.5rem;
-  background: linear-gradient(135deg, #6ba86b 0%, #4a8c4a 100%);
-  color: white;
-  border: none;
-  border-radius: 16px;
-  font-size: 1.1rem;
+  padding: 0.75rem 1.5rem;
   font-weight: 600;
-  cursor: pointer;
+  font-size: 1.1rem;
+  border-radius: 10px;
+  background: linear-gradient(45deg, #198754, #20c997);
+  border: none;
   transition: all 0.3s ease;
-  margin-bottom: 1.5rem;
   position: relative;
   overflow: hidden;
 }
 
-.login-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s ease;
-}
-
-.login-btn:hover::before {
-  left: 100%;
-}
-
-.login-btn:hover {
+.login-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(107, 168, 107, 0.3);
+  box-shadow: 0 5px 15px rgba(25, 135, 84, 0.4);
+  background: linear-gradient(45deg, #157347, #0dcaf0);
 }
 
-.login-btn:active {
+.login-btn:active:not(:disabled) {
   transform: translateY(0);
 }
 
 .login-btn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-  transform: none;
+  opacity: 0.8;
+  transform: none !important;
+  box-shadow: none !important;
 }
 
-.btn-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.loading-spinner {
-  width: 20px;
-  height: 20px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top: 2px solid white;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Forgot Password */
-.forgot-password {
-  text-align: center;
-  margin-bottom: 1.5rem;
-}
-
-.forgot-link {
-  color: #6ba86b;
-  text-decoration: none;
-  font-size: 0.95rem;
-  font-weight: 500;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  transition: all 0.3s ease;
-  display: inline-block;
-}
-
-.forgot-link:hover {
-  background: rgba(107, 168, 107, 0.1);
-  color: #4a8c4a;
-  transform: scale(1.05);
-}
-
-/* Divider */
-.divider {
-  position: relative;
-  text-align: center;
-  margin: 1.5rem 0;
-}
-
-.divider::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(to right, transparent, #e8f5e8, transparent);
-}
-
-.divider span {
-  background: rgba(255, 255, 255, 0.95);
-  color: #5a7a5a;
-  padding: 0 1rem;
-  font-size: 0.9rem;
-  position: relative;
-}
-
-/* Register Section */
-.register-section {
-  text-align: center;
-}
-
-.register-text {
-  color: #5a7a5a;
-  font-size: 0.95rem;
-  margin-bottom: 1rem;
-}
-
-.register-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #6ba86b;
-  text-decoration: none;
+.btn-outline-success {
+  border-radius: 10px;
   font-weight: 600;
-  font-size: 1rem;
-  padding: 0.75rem 1.5rem;
-  border: 2px solid #6ba86b;
-  border-radius: 16px;
-  transition: all 0.3s ease;
-  background: rgba(107, 168, 107, 0.05);
-}
-
-.register-btn:hover {
-  background: #6ba86b;
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(107, 168, 107, 0.3);
-}
-
-/* Error Message */
-.error-message {
-  color: #e74c3c;
-  font-size: 0.85rem;
-  margin-top: 0.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  padding: 0.5rem 0.75rem;
-  background: rgba(231, 76, 60, 0.05);
-  border-radius: 8px;
-  border-left: 3px solid #e74c3c;
-}
-
-/* Decorative Elements */
-.decorative-elements {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-  z-index: -1;
-}
-
-.leaf {
-  position: absolute;
-  font-size: 1.5rem;
-  opacity: 0.3;
-  animation: float-leaf 6s ease-in-out infinite;
-}
-
-.leaf-1 {
-  top: 20%;
-  left: 10%;
-  animation-delay: 0s;
-}
-
-.leaf-2 {
-  top: 60%;
-  right: 15%;
-  animation-delay: 2s;
-}
-
-.leaf-3 {
-  bottom: 30%;
-  left: 20%;
-  animation-delay: 4s;
-}
-
-@keyframes float-leaf {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  25% { transform: translate(10px, -10px) rotate(90deg); }
-  50% { transform: translate(-5px, 5px) rotate(180deg); }
-  75% { transform: translate(5px, -5px) rotate(270deg); }
-}
-
-/* Transitions */
-.fade-enter-active, .fade-leave-active {
   transition: all 0.3s ease;
 }
 
-.fade-enter-from, .fade-leave-to {
-  opacity: 0;
-  transform: translateY(-10px);
+.btn-outline-success:hover {
+  transform: translateY(-1px);
+}
+
+.text-success {
+  transition: all 0.3s ease;
+}
+
+.text-success:hover {
+  color: #157347 !important;
+  text-decoration: underline !important;
+}
+
+.invalid-feedback {
+  font-size: 0.875rem;
+  color: #dc3545;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .spa-login-wrapper {
-    padding: 1rem;
-  }
-  
   .spa-login-container {
-    padding: 2rem 1.5rem;
-    max-width: 100%;
-  }
-  
-  .login-title {
-    font-size: 1.7rem;
-  }
-  
-  .form-input {
-    font-size: 16px; /* Prevent zoom on iOS */
-  }
-}
-
-@media (max-width: 480px) {
-  .spa-login-container {
-    padding: 1.5rem 1rem;
+    margin: 1rem;
+    padding: 1.5rem;
   }
   
   .login-title {

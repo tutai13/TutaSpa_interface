@@ -593,7 +593,7 @@
         <div class="about-visual">
           <div class="about-image-main">
             <img
-              src="https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8...070&q=80"
+              src="https://images.unsplash.com/photo-1630595271375-5073a6c0638b?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzZ8fHNwYXxlbnwwfHwwfHx8MA%3D%3D"
               alt="TutaSpa Interior"
               class="img-fluid rounded-4 shadow-lg"
             />
@@ -713,7 +713,7 @@ const slides = [
   },
   {
     image:
-      "https://images.unsplash.com/photo-1596178065887-1198b6148b2b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+      "https://plus.unsplash.com/premium_photo-1723867490491-10519f8ed969?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjF8fHNwYXxlbnwwfHwwfHx8MA%3D%3D",
     title: " Chăm Sóc Chuyên Nghiệp",
     subtitle: "Với đội ngũ chuyên gia giàu kinh nghiệm",
   },
@@ -950,14 +950,17 @@ onMounted(async () => {
 }
 
 .carousel-caption {
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 90%;
-  max-width: 1200px;
+  top: 0;   /* chiếm toàn bộ */
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  text-align: center;
+  padding: 0 15px;
 }
+
+
 
 .font-lora {
   font-family: "Lora", serif;
