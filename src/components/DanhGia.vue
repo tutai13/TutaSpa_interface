@@ -23,7 +23,7 @@
             <div class="card-header bg-gradient-primary text-white text-center py-4">
               <h4 class="mb-0">
                 <i class="fas fa-edit me-2"></i>
-                Viết đánh giá của bạn
+                {{ editingId ? "Chỉnh sửa đánh giá" : "Viết đánh giá của bạn" }}
               </h4>
             </div>
             <div class="card-body p-4">
@@ -74,7 +74,7 @@
                         v-for="i in 5"
                         :key="i"
                         class="star-btn"
-:class="{
+                        :class="{
                           active: i <= (hoveredRating || danhGia.soSao),
                           inactive: i > (hoveredRating || danhGia.soSao),
                         }"
@@ -103,7 +103,7 @@
                     class="form-control"
                     rows="6"
                     v-model="danhGia.noiDung"
-                    placeholder="Hãy chia sẻ trải nghiệm của bạn về dịch vụ này...&#10;&#10;Điều gì khiến bạn hài lòng?&#10;Có điều gì cần cải thiện không?"
+                    placeholder="Hãy chia sẻ trải nghiệm của bạn..."
                     maxlength="500"
                   ></textarea>
                   <div class="form-text text-end">
@@ -139,24 +139,20 @@
                   </div>
                 </div>
 
+                
+
                 <!-- Submit button -->
                 <div class="d-grid">
                   <button
                     type="submit"
-class="btn btn-primary btn-lg submit-button"
-                    :class="{ 
-                      'btn-secondary': isSubmitting, 
-                      'btn-success': showSuccess 
-                    }"
+                    class="btn btn-primary btn-lg submit-button"
                     :disabled="isSubmitting"
                   >
                     <span v-if="isSubmitting" class="spinner-border spinner-border-sm me-2"></span>
-                    <i v-else-if="showSuccess" class="fas fa-check me-2"></i>
                     <i v-else class="fas fa-paper-plane me-2"></i>
                     
                     <span v-if="isSubmitting">Đang gửi...</span>
-                    <span v-else-if="showSuccess">Gửi thành công!</span>
-                    <span v-else>Gửi đánh giá</span>
+                    <span v-else>{{ editingId ? "Cập nhật đánh giá" : "Gửi đánh giá" }}</span>
                   </button>
                 </div>
               </form>
@@ -203,7 +199,7 @@ class="btn btn-primary btn-lg submit-button"
                   <p class="mb-0">{{ dg.noiDung }}</p>
                 </div>
                 
-                <div class="review-author d-flex align-items-center">
+                <div class="review-author d-flex align-items-center mb-2">
                   <i class="fas fa-user-circle text-primary me-2"></i>
                   <span class="text-muted">Người đánh giá:</span>
                   <span v-if="dg.anDanh" class="badge bg-secondary ms-2">
@@ -214,22 +210,32 @@ class="btn btn-primary btn-lg submit-button"
                     {{ dg.user?.name || "Không rõ" }}
                   </span>
                 </div>
+
+                <!-- Nút Sửa -->
+                <div class="review-actions text-end">
+                  <button
+                    v-if="dg.userId === userId"
+                    class="btn btn-sm btn-outline-primary"
+                    @click="editDanhGia(dg)"
+                  >
+                    <i class="fas fa-edit me-1"></i> Sửa
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-</div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch, nextTick } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { ref, onMounted, watch } from "vue";
+import { useRoute } from "vue-router";
 import axiosClient from "../utils/axiosClient";
 
 const route = useRoute();
-const router = useRouter();
 
 // Reactive data
 const danhGia = ref({
@@ -238,17 +244,25 @@ const danhGia = ref({
   noiDung: "",
   anDanh: false,
 });
-
+const editingId = ref(null);
 const dichVus = ref([]);
 const danhSach = ref([]);
 const isSubmitting = ref(false);
-const showSuccess = ref(false);
-const isLoading = ref(false);
 const hoveredRating = ref(0);
 
 const userInfoStr = localStorage.getItem("user_info");
 const userInfo = JSON.parse(userInfoStr);
 const userId = userInfo.id;
+
+function editDanhGia(dg) {
+  editingId.value = dg.id;
+  danhGia.value = {
+    maDichVu: dg.maDichVu,
+    soSao: dg.soSao,
+    noiDung: dg.noiDung,
+    anDanh: dg.anDanh,
+  };
+}
 
 // Rating text mapping
 const ratingTexts = {
@@ -259,85 +273,61 @@ const ratingTexts = {
   5: "🤩 Rất hài lòng",
 };
 
-// Methods
 const getRatingText = (rating) => ratingTexts[rating] || "";
-
-const setRating = (rating) => {
-  danhGia.value.soSao = rating;
-};
-
-const hoverRating = (rating) => {
-  hoveredRating.value = rating;
-};
-
-const resetHover = () => {
-  hoveredRating.value = 0;
-};
+const setRating = (rating) => (danhGia.value.soSao = rating);
+const hoverRating = (rating) => (hoveredRating.value = rating);
+const resetHover = () => (hoveredRating.value = 0);
 
 const formatDate = (dateString) => {
   if (!dateString) return "";
-  const date = new Date(dateString);
-  return date.toLocaleDateString("vi-VN");
+  return new Date(dateString).toLocaleDateString("vi-VN");
 };
 
-// Load data
+// Load dịch vụ + đánh giá
 onMounted(async () => {
-  try {
-    isLoading.value = true;
-    const res = await axiosClient.get("DichVu");
-    dichVus.value = res;
+  const res = await axiosClient.get("DichVu");
+  dichVus.value = res;
 
-    const idFromRoute = route.params.id;
-    if (idFromRoute) {
-      danhGia.value.maDichVu = parseInt(idFromRoute);
-      await loadDanhGia(idFromRoute);
-    }
-  } catch (err) {
-    console.error("❌ Lỗi khi tải dịch vụ:", err);
-  } finally {
-    isLoading.value = false;
+  const idFromRoute = route.params.id;
+  if (idFromRoute) {
+    danhGia.value.maDichVu = parseInt(idFromRoute);
+    await loadDanhGia(idFromRoute);
   }
 });
 
 watch(
   () => danhGia.value.maDichVu,
   async (newVal) => {
-    if (newVal) {
-      await loadDanhGia(newVal);
-    }
+    if (newVal) await loadDanhGia(newVal);
   }
 );
 
 async function loadDanhGia(maDichVu) {
-  try {
-    isLoading.value = true;
-    const res = await axiosClient.get(`DanhGia/dichvu/${maDichVu}`);
-    danhSach.value = res;
-  } catch (err) {
-    console.error("❌ Lỗi khi tải đánh giá:", err);
-  } finally {
-    isLoading.value = false;
-  }
+  const res = await axiosClient.get(`DanhGia/dichvu/${maDichVu}`);
+  danhSach.value = res;
 }
 
 async function submitDanhGia() {
   try {
     isSubmitting.value = true;
 
-    console.log("🚀 Submit payload:", { ...danhGia.value, userId });
+    if (editingId.value) {
+      // Update
+      await axiosClient.put(`/DanhGia/update/${editingId.value}`, {
+        ...danhGia.value,
+        userId,
+      });
+      alert("✅ Đã cập nhật đánh giá.");
+      editingId.value = null;
+    } else {
+      // Create new
+      await axiosClient.post("/DanhGia", {
+        ...danhGia.value,
+        userId,
+      });
+      alert("✅ Đã gửi đánh giá.");
+    }
 
-    await axiosClient.post("/DanhGia", {
-      ...danhGia.value,
-      userId,
-    });
-
-    // Success animation
-    showSuccess.value = true;
-    setTimeout(() => {
-      showSuccess.value = false;
-    }, 2000);
-
-    // Reset form
     const currentDichVuID = danhGia.value.maDichVu;
     danhGia.value = {
       maDichVu: currentDichVuID,
@@ -345,12 +335,10 @@ async function submitDanhGia() {
       noiDung: "",
       anDanh: false,
     };
-
     await loadDanhGia(currentDichVuID);
-    router.push("/");
   } catch (err) {
     console.error(err);
-    alert("❌ Đánh giá thất bại.");
+    alert("❌ Gửi đánh giá thất bại.");
   } finally {
     isSubmitting.value = false;
   }

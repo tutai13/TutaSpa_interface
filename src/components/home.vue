@@ -72,7 +72,7 @@
                   to="/#services"
                   class="btn btn-primary btn-lg rounded-pill px-5 py-3 fw-bold"
                 >
-                  Khám phá dịch vụ
+                Khám phá dịch vụ
                 </router-link>
                 <router-link
                   to="/#booking"
@@ -123,8 +123,7 @@
             <div class="feature-icon">👥</div>
             <h3>Chuyên gia giàu kinh nghiệm</h3>
             <p>
-              Đội ngũ chuyên viên được đào tạo bài bản, và có kinh nghiệm hơn 5
-              năm
+              Đội ngũ chuyên viên được đào tạo bài bản, và có kinh nghiệm hơn 5 năm
             </p>
           </div>
           <div class="feature-card">
@@ -189,15 +188,12 @@
             class="service-card"
           >
             <div class="service-image-container">
-              <router-link
-                class="detail-service-link"
-                :to="`/DichVuChiTiet/${service.id}`"
-              >
-                <img
-                  :src="service.image"
-                  :alt="service.name"
-                  class="service-image"
-                />
+              <router-link class="detail-service-link" :to="`/DichVuChiTiet/${service.id}`  "> 
+              <img
+                :src="service.image"
+                :alt="service.name"
+                class="service-image"
+              />
               </router-link>
               <div class="service-rating-overlay">
                 <div class="service-rating">
@@ -221,18 +217,15 @@
               </div>
             </div>
             <div class="service-content">
-              <router-link
-                class="detail-service-link"
-                :to="`/DichVuChiTiet/${service.id}`"
-              >
-                <h3 class="service-title">{{ service.name }}</h3>
-                <div class="service-meta">
-                  <div class="service-duration">
-                    <i class="duration-icon">⏱</i>
-                    {{ service.duration }} phút
-                  </div>
-                  <div class="service-price">{{ service.price }} VNĐ</div>
+              <router-link class="detail-service-link" :to="`/DichVuChiTiet/${service.id}`  "> 
+              <h3 class="service-title">{{ service.name }}</h3>
+              <div class="service-meta">
+                <div class="service-duration">
+                  <i class="duration-icon">⏱</i>
+                  {{ service.duration }} phút
                 </div>
+                <div class="service-price">{{ service.price }} VNĐ</div>
+              </div>
               </router-link>
               <!-- <p class="service-description">{{ service.description }}</p> -->
               <button
@@ -248,134 +241,117 @@
       </div>
     </section>
 
-    <!-- Improved Testimonials Section -->
-    <section class="testimonials-section">
-      <div class="container">
-        <h2 class="section-title text-center mb-5">
-          Khách hàng nói gì về chúng tôi
-        </h2>
 
-        <div v-if="loading" class="text-center text-white">
-          <div class="loading-spinner"></div>
-          <p>Đang tải đánh giá...</p>
-        </div>
+<!-- Improved Testimonials Section -->
+<section class="testimonials-section">
+  <div class="container">
+    <h2 class="section-title text-center mb-5">
+      Khách hàng nói gì về chúng tôi
+    </h2>
 
+    <div v-if="loading" class="text-center text-white">
+      <div class="loading-spinner"></div>
+      <p>Đang tải đánh giá...</p>
+    </div>
+    
+    <div v-else-if="testimonials.length === 0" class="text-center text-white opacity-75">
+      <div class="no-reviews-icon">💬</div>
+      <p class="mt-3">Chưa có đánh giá nào. Hãy là người đầu tiên chia sẻ trải nghiệm của bạn!</p>
+    </div>
+
+    <div v-else class="testimonials-container">
+      <!-- Always visible testimonials (first 3) -->
+      <div class="testimonials-grid">
         <div
-          v-else-if="testimonials.length === 0"
-          class="text-center text-white opacity-75"
+          v-for="(item, index) in visibleTestimonials"
+          :key="index"
+          class="testimonial-card"
+          :class="{ 'testimonial-featured': index === 0 }"
         >
-          <div class="no-reviews-icon">💬</div>
-          <p class="mt-3">
-            Chưa có đánh giá nào. Hãy là người đầu tiên chia sẻ trải nghiệm của
-            bạn!
-          </p>
-        </div>
-
-        <div v-else class="testimonials-container">
-          <!-- Always visible testimonials (first 3) -->
-          <div class="testimonials-grid">
-            <div
-              v-for="(item, index) in visibleTestimonials"
-              :key="index"
-              class="testimonial-card"
-              :class="{ 'testimonial-featured': index === 0 }"
-            >
-              <div class="testimonial-content">
-                <div class="testimonial-header">
-                  <div class="testimonial-avatar">
-                    <span>{{ getInitials(item.name || "Khách hàng") }}</span>
-                  </div>
-                  <div class="testimonial-info">
-                    <h4 class="testimonial-name">
-                      {{ item.name || "Khách hàng" }}
-                    </h4>
-                    <div class="testimonial-rating">
-                      <i
-                        v-for="n in 5"
-                        :key="n"
-                        class="fa-star fas"
-                        :class="
-                          n <= item.rate
-                            ? 'text-warning'
-                            : 'text-secondary opacity-25'
-                        "
-                      ></i>
-                    </div>
-                  </div>
-                </div>
-                <p class="testimonial-text">
-                  "{{ item.content || "Dịch vụ tuyệt vời, tôi rất hài lòng!" }}"
-                </p>
+          <div class="testimonial-content">
+            <div class="testimonial-header">
+              <div class="testimonial-avatar">
+                <span>{{ getInitials(item.name || 'Khách hàng') }}</span>
+              </div>
+              <div class="testimonial-info">
+                <h4 class="testimonial-name">
+                  {{  item.name || 'Khách hàng' }}
+                </h4>
+                <div class="testimonial-rating">
+                  <i
+                    v-for="n in 5"
+                    :key="n"
+                    class="fa-star fas"
+                    :class="n <= item.rate ? 'text-warning' : 'text-secondary opacity-25'"
+                  ></i>
+</div>
               </div>
             </div>
+            <p class="testimonial-text">
+              "{{ item.content || 'Dịch vụ tuyệt vời, tôi rất hài lòng!' }}"
+            </p>
           </div>
+        </div>
+      </div>
 
-          <!-- Show more button if there are more than 3 testimonials -->
-          <div v-if="testimonials.length > 3" class="text-center mt-4">
-            <button class="show-more-btn" @click="toggleShowAll">
-              <span v-if="!showAllTestimonials">
-                Xem thêm {{ testimonials.length - 3 }} đánh giá khác
-                <i class="fas fa-chevron-down ml-2"></i>
-              </span>
-              <span v-else>
-                Thu gọn
-                <i class="fas fa-chevron-up ml-2"></i>
-              </span>
-            </button>
-          </div>
+      <!-- Show more button if there are more than 3 testimonials -->
+      <div v-if="testimonials.length > 3" class="text-center mt-4">
+        <button 
+          class="show-more-btn"
+          @click="toggleShowAll"
+        >
+          <span v-if="!showAllTestimonials">
+            Xem thêm {{ testimonials.length - 3 }} đánh giá khác
+            <i class="fas fa-chevron-down ml-2"></i>
+          </span>
+          <span v-else>
+            Thu gọn
+            <i class="fas fa-chevron-up ml-2"></i>
+          </span>
+        </button>
+      </div>
 
-          <!-- Additional testimonials (hidden by default) -->
+      <!-- Additional testimonials (hidden by default) -->
+      <div v-if="showAllTestimonials && testimonials.length > 3" class="additional-testimonials">
+        <div class="testimonials-grid mt-4">
           <div
-            v-if="showAllTestimonials && testimonials.length > 3"
-            class="additional-testimonials"
+            v-for="(item, index) in additionalTestimonials"
+            :key="index + 3"
+            class="testimonial-card testimonial-fade-in"
           >
-            <div class="testimonials-grid mt-4">
-              <div
-                v-for="(item, index) in additionalTestimonials"
-                :key="index + 3"
-                class="testimonial-card testimonial-fade-in"
-              >
-                <div class="testimonial-content">
-                  <div class="testimonial-header">
-                    <div class="testimonial-avatar">
-                      <span>{{
-                        getInitials(item.user?.name || "Khách hàng")
-                      }}</span>
-                    </div>
-                    <div class="testimonial-info">
-                      <h4 class="testimonial-name">
-                        {{ item.name || "Khách hàng" }}
-                      </h4>
-                      <div class="testimonial-rating">
-                        <i
-                          v-for="n in 5"
-                          :key="n"
-                          class="fa-star fas"
-                          :class="
-                            n <= item.rate
-                              ? 'text-warning'
-                              : 'text-secondary opacity-25'
-                          "
-                        ></i>
-                      </div>
-                    </div>
+            <div class="testimonial-content">
+              <div class="testimonial-header">
+                <div class="testimonial-avatar">
+                  <span>{{ getInitials(item.user?.name || 'Khách hàng') }}</span>
+                </div>
+                <div class="testimonial-info">
+                  <h4 class="testimonial-name">
+                    {{  item.name || 'Khách hàng' }}
+                  </h4>
+                  <div class="testimonial-rating">
+                    <i
+                      v-for="n in 5"
+                      :key="n"
+                      class="fa-star fas"
+                      :class="n <= item.rate ? 'text-warning' : 'text-secondary opacity-25'"
+                    ></i>
                   </div>
-                  <p class="testimonial-text">
-                    "{{
-                      item.content || "Dịch vụ tuyệt vời, tôi rất hài lòng!"
-                    }}"
-                  </p>
-                  <!-- <div class="testimonial-footer">
+                </div>
+              </div>
+              <p class="testimonial-text">
+                "{{ item.content || 'Dịch vụ tuyệt vời, tôi rất hài lòng!' }}"
+              </p>
+              <!-- <div class="testimonial-footer">
                 <span class="testimonial-age">{{ item.user?.tuoi || '...' }} tuổi</span>
                 <div class="testimonial-decoration"></div>
               </div> -->
-                </div>
-              </div>
             </div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
+  </div>
+</section>
 
     <!-- Booking Section -->
     <section id="booking" class="booking">
@@ -453,23 +429,21 @@
               v-if="bookingForm.services.length && !bookingForm.consultAtStore"
             >
               <h4 class="section-title">Dịch vụ đã chọn:</h4>
-              <ul class="selected-services-list">
-                <li
-                  v-for="(service, index) in bookingForm.services"
-                  :key="index"
-                  class="selected-service-card"
-                >
-                  <!-- Thông tin dịch vụ -->
-                  <div class="service-info">
-                    <span class="service-name">{{ service.name }}</span>
-                    <span class="service-price"
-                      >{{ service.price.toLocaleString() }} VNĐ</span
-                    >
-                  </div>
+<ul class="selected-services-list">
+  <li
+    v-for="(service, index) in bookingForm.services"
+    :key="index"
+    class="selected-service-card"
+  >
+    <!-- Thông tin dịch vụ -->
+    <div class="service-info">
+      <span class="service-name">{{ service.name }}</span>
+<span class="service-price">{{ service.price.toLocaleString() }} VNĐ</span>
+    </div>
 
-                  <!-- Số lượng + nút xoá -->
-                  <div class="service-actions">
-                    <!-- <label :for="'quantity-' + index" class="quantity-label">Số lượng:</label>
+    <!-- Số lượng + nút xoá -->
+    <div class="service-actions">
+      <label :for="'quantity-' + index" class="quantity-label">Số lượng:</label>
       <input
         type="number"
         :id="'quantity-' + index"
@@ -478,18 +452,19 @@
         max="10"
         required
         class="quantity-input"
-      /> -->
-                    <button
-                      type="button"
-                      class="remove-service-btn"
-                      @click="removeService(index)"
-                      title="Xóa dịch vụ"
-                    >
-                      &times;
-                    </button>
-                  </div>
-                </li>
-              </ul>
+      />
+      <button
+        type="button"
+        class="remove-service-btn"
+        @click="removeService(index)"
+        title="Xóa dịch vụ"
+      >
+        &times;
+      </button>
+    </div>
+  </li>
+</ul>
+
             </div>
 
             <div class="form-row">
@@ -514,6 +489,9 @@
                     :value="slot.khungGio"
                   >
                     {{ slot.khungGio }}
+                    <span v-if="slot.conLai <= 2"
+                      >(Còn {{ slot.conLai }} chỗ)</span
+                    >
                   </option>
                 </select>
               </div>
@@ -546,88 +524,88 @@
       </div>
     </section>
 
-    <!-- Improved About Section -->
-    <section id="about" class="about-section">
-      <div class="container">
-        <div class="row align-items-center">
-          <!-- Cột trái: Nội dung -->
-          <div class="col-lg-6">
-            <div class="about-content-wrapper">
-              <h2 class="about-title">
-                <span class="title-accent">Về</span> TutaSpa
-              </h2>
-              <div class="about-subtitle">
-                Điểm đến hoàn hảo cho sự thư giãn và làm đẹp
+<!-- Improved About Section -->
+<section id="about" class="about-section">
+  <div class="container">
+    <div class="row align-items-center">
+      
+      <!-- Cột trái: Nội dung -->
+      <div class="col-lg-6">
+        <div class="about-content-wrapper">
+          <h2 class="about-title">
+            <span class="title-accent">Về</span> TutaSpa
+          </h2>
+          <div class="about-subtitle">
+            Điểm đến hoàn hảo cho sự thư giãn và làm đẹp
+          </div>
+          <p class="about-description">
+            Với hơn <strong>10 năm kinh nghiệm</strong> trong ngành làm đẹp, TutaSpa tự hào mang đến 
+            cho khách hàng những trải nghiệm thư giãn tuyệt vời nhất. Chúng tôi kết hợp tinh hoa 
+            truyền thống với công nghệ hiện đại, sử dụng 100% sản phẩm từ thiên nhiên.
+          </p>
+
+          <div class="about-features">
+            <div class="feature-item">
+              <div class="feature-icon-wrapper">
+                <span class="feature-emoji">🌿</span>
               </div>
-              <p class="about-description">
-                Với hơn <strong>10 năm kinh nghiệm</strong> trong ngành làm đẹp,
-                TutaSpa tự hào mang đến cho khách hàng những trải nghiệm thư
-                giãn tuyệt vời nhất. Chúng tôi kết hợp tinh hoa truyền thống với
-                công nghệ hiện đại, sử dụng 100% sản phẩm từ thiên nhiên.
-              </p>
-
-              <div class="about-features">
-                <div class="feature-item">
-                  <div class="feature-icon-wrapper">
-                    <span class="feature-emoji">🌿</span>
-                  </div>
-                  <div class="feature-content">
-                    <h4>Sản phẩm hữu cơ cao cấp</h4>
-                    <p>Nhập khẩu trực tiếp từ các thương hiệu uy tín</p>
-                  </div>
-                </div>
-
-                <div class="feature-item">
-                  <div class="feature-icon-wrapper">
-                    <span class="feature-emoji">💆‍♀️</span>
-                  </div>
-                  <div class="feature-content">
-                    <h4>Đội ngũ chuyên gia quốc tế</h4>
-                    <p>Được đào tạo bài bản tại Hàn Quốc và Nhật Bản</p>
-                  </div>
-                </div>
-
-                <div class="feature-item">
-                  <div class="feature-icon-wrapper">
-                    <span class="feature-emoji">🏆</span>
-                  </div>
-                  <div class="feature-content">
-                    <h4>Chứng nhận ISO 9001:2015</h4>
-                    <p>Đảm bảo chất lượng dịch vụ quốc tế</p>
-                  </div>
-                </div>
-
-                <div class="feature-item">
-                  <div class="feature-icon-wrapper">
-                    <span class="feature-emoji">💯</span>
-                  </div>
-                  <div class="feature-content">
-                    <h4>Cam kết hài lòng 100%</h4>
-                    <p>Hoàn tiền nếu không hài lòng với dịch vụ</p>
-                  </div>
-                </div>
+              <div class="feature-content">
+                <h4>Sản phẩm hữu cơ cao cấp</h4>
+                <p>Nhập khẩu trực tiếp từ các thương hiệu uy tín</p>
+              </div>
+            </div>
+            
+            <div class="feature-item">
+              <div class="feature-icon-wrapper">
+                <span class="feature-emoji">💆‍♀️</span>
+              </div>
+              <div class="feature-content">
+                <h4>Đội ngũ chuyên gia quốc tế</h4>
+                <p>Được đào tạo bài bản tại Hàn Quốc và Nhật Bản</p>
+              </div>
+            </div>
+            
+            <div class="feature-item">
+              <div class="feature-icon-wrapper">
+                <span class="feature-emoji">🏆</span>
+              </div>
+              <div class="feature-content">
+                <h4>Chứng nhận ISO 9001:2015</h4>
+                <p>Đảm bảo chất lượng dịch vụ quốc tế</p>
+              </div>
+            </div>
+            
+            <div class="feature-item">
+              <div class="feature-icon-wrapper">
+                <span class="feature-emoji">💯</span>
+              </div>
+              <div class="feature-content">
+                <h4>Cam kết hài lòng 100%</h4>
+                <p>Hoàn tiền nếu không hài lòng với dịch vụ</p>
               </div>
             </div>
           </div>
+        </div>
+      </div>
 
-          <!-- Cột phải: Hình ảnh -->
-          <div class="col-lg-6">
-            <div class="about-visual">
-              <div class="about-image-main">
-                <img
-                  src="https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8...070&q=80"
-                  alt="TutaSpa Interior"
-                  class="img-fluid rounded-4 shadow-lg"
-                />
-                <div class="image-overlay">
-                  <div class="overlay-content">
-                    <h3>Không gian thư giãn</h3>
-                    <p>Thiết kế sang trọng, yên tĩnh</p>
-                  </div>
-                </div>
+      <!-- Cột phải: Hình ảnh -->
+      <div class="col-lg-6">
+        <div class="about-visual">
+          <div class="about-image-main">
+            <img
+              src="https://images.unsplash.com/photo-1630595271375-5073a6c0638b?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzZ8fHNwYXxlbnwwfHwwfHx8MA%3D%3D"
+              alt="TutaSpa Interior"
+              class="img-fluid rounded-4 shadow-lg"
+            />
+            <div class="image-overlay">
+              <div class="overlay-content">
+                <h3>Không gian thư giãn</h3>
+                <p>Thiết kế sang trọng, yên tĩnh</p>
               </div>
-
-              <!-- <div class="about-stats">
+            </div>
+          </div>
+  
+          <!-- <div class="about-stats">
             <div class="stat-item">
               <div class="stat-number">5000+</div>
               <div class="stat-label">Khách hàng tin tưởng</div>
@@ -642,59 +620,55 @@
             </div>
           </div> -->
 
-              <!-- Google Map -->
-              <div class="col-lg-12">
-                <div class="map-wrapper rounded-4 overflow-hidden shadow h-100">
-                  <a
-                    href="https://www.google.com/maps/place/31+Nguyễn+Mộng+Tuân,+Hoà+Minh,+Liên+Chiểu,+Đà+Nẵng+550000"
-                    target="_blank"
-                    class="d-block w-100 h-100"
-                  >
-                    <iframe
-                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3834.168381775547!2d108.1698262!3d16.0633039!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3142191ed695fc89%3A0xb837389a53933ca9!2zMzEgTmfDtG4gTeG7mW5nIFR1w6puLCBIb8OgIE1pbmgsIExpw6puIENow61hLCDEkMOgIE5hbmc!5e0!3m2!1svi!2s!4v1721903400000"
-                      width="100%"
-                      height="100%"
-                      style="border: 0"
-                      allowfullscreen=""
-                      loading="lazy"
-                      referrerpolicy="no-referrer-when-downgrade"
-                      title="31 Nguyễn Mộng Tuân, Đà Nẵng"
-                    ></iframe>
-                  </a>
-                </div>
-                <a
-                  href="https://www.google.com/maps/place/31+Nguyễn+Mộng+Tuân,+Hoà+Minh,+Liên+Chiểu,+Đà+Nẵng+550000"
-                  target="_blank"
-                  class="text-decoration-none text-dark mt-2 d-block"
-                >
-                  <i
-                    class="fa-solid fa-map-location-dot me-2 text-primary-green"
-                  ></i
-                  >Xem bản đồ
-                </a>
-              </div>
+          <!-- Google Map -->
+        <div class="col-lg-12">
+          <div class="map-wrapper rounded-4 overflow-hidden shadow h-100">
+            <a
+              href="https://www.google.com/maps/place/31+Nguyễn+Mộng+Tuân,+Hoà+Minh,+Liên+Chiểu,+Đà+Nẵng+550000"
+              target="_blank"
+              class="d-block w-100 h-100" 
+            >
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3834.168381775547!2d108.1698262!3d16.0633039!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3142191ed695fc89%3A0xb837389a53933ca9!2zMzEgTmfDtG4gTeG7mW5nIFR1w6puLCBIb8OgIE1pbmgsIExpw6puIENow61hLCDEkMOgIE5hbmc!5e0!3m2!1svi!2s!4v1721903400000"
+                width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                title="31 Nguyễn Mộng Tuân, Đà Nẵng"
+              ></iframe>
+            </a>
+          </div>
+          <a
+            href="https://www.google.com/maps/place/31+Nguyễn+Mộng+Tuân,+Hoà+Minh,+Liên+Chiểu,+Đà+Nẵng+550000"
+            target="_blank"
+            class="text-decoration-none text-dark mt-2 d-block" 
+          >
+            <i class="fa-solid fa-map-location-dot me-2 text-primary-green"></i>Xem bản đồ
+          </a>
+        </div>
 
-              <div class="floating-badge">
-                <div class="badge-content">
-                  <span class="badge-icon">⭐</span>
-                  <div class="badge-text">
-                    <div class="badge-title">Top Rated</div>
-                    <div class="badge-subtitle">Spa in Da Nang</div>
-                  </div>
-                </div>
+        
+          <div class="floating-badge">
+            <div class="badge-content">
+              <span class="badge-icon">⭐</span>
+              <div class="badge-text">
+                <div class="badge-title">Top Rated</div>
+                <div class="badge-subtitle">Spa in Da Nang</div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </section>
+      
+    </div>
+  </div>
+</section>
+
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, watch, computed } from "vue";
 import apiClient from "../utils/axiosClient";
-import dayjs from "dayjs";
+
 // Reactive state
 const services = ref([]);
 const categories = ref([]);
@@ -707,7 +681,7 @@ const selectedService = ref(null);
 const bookingForm = ref({
   phone: "",
   services: [],
-  date: dayjs().format("YYYY-MM-DD"),
+  date: new Date().toISOString().split("T")[0],
   time: "",
   notes: "",
   consultAtStore: false,
@@ -739,7 +713,7 @@ const slides = [
   },
   {
     image:
-      "https://images.unsplash.com/photo-1596178065887-1198b6148b2b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+      "https://plus.unsplash.com/premium_photo-1723867490491-10519f8ed969?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjF8fHNwYXxlbnwwfHwwfHx8MA%3D%3D",
     title: " Chăm Sóc Chuyên Nghiệp",
     subtitle: "Với đội ngũ chuyên gia giàu kinh nghiệm",
   },
@@ -751,11 +725,14 @@ const slides = [
   },
 ];
 
+
+
 const stats = [
   { number: "10+", label: "Năm kinh nghiệm", icon: "🏆" },
   { number: "5000+", label: "Khách hàng hài lòng", icon: "👥" },
   { number: "24", label: "Dịch vụ chuyên nghiệp", icon: "🌿" },
 ];
+
 
 const testimonials = ref([]);
 
@@ -775,6 +752,8 @@ const toggleShowAll = () => {
   showAllTestimonials.value = !showAllTestimonials.value;
 };
 
+
+
 // Methods
 const handleConsultAtStore = () => {
   if (bookingForm.value.consultAtStore) {
@@ -791,7 +770,7 @@ const addServiceFromCard = (service) => {
     bookingForm.value.services.push({ ...service, soLuong: 1 });
   }
   const bookingSection = document.getElementById("booking");
-  if (bookingSection) {
+if (bookingSection) {
     bookingSection.scrollIntoView({ behavior: "smooth" });
   }
 };
@@ -823,8 +802,7 @@ const fetchCategories = async () => {
     const response = await apiClient.get("/LoaiDichVu");
     const data = response;
     categories.value = Array.isArray(data) ? data : data.data || [];
-    if (categories.value.length === 0)
-      throw new Error("Không có danh mục dịch vụ nào");
+    if (categories.value.length === 0) throw new Error("Không có danh mục dịch vụ nào");
   } catch (err) {
     console.error("Lỗi khi tải danh mục:", err);
     error.value = "Không thể tải danh mục dịch vụ. Hiển thị mặc định.";
@@ -847,9 +825,7 @@ const fetchServices = async () => {
         id: service.dichVuID,
         name: service.tenDichVu,
         category:
-          categories.value.find(
-            (cat) => cat.loaiDichVuID === service.loaiDichVuID
-          )?.tenLoai || "Khác",
+        categories.value.find((cat) => cat.loaiDichVuID === service.loaiDichVuID)?.tenLoai || "Khác",
         price: service.gia.toLocaleString("vi-VN"),
         duration: service.thoiGian,
         description: service.moTa,
@@ -901,7 +877,7 @@ const submitBooking = async () => {
       ? []
       : bookingForm.value.services.map((s) => ({
           dichVuID: s.id,
-          soLuong: 1,
+          soLuong: s.soLuong,
         }));
 
     const payload = {
@@ -915,7 +891,6 @@ const submitBooking = async () => {
     const res = await apiClient.post("/DatLich", payload);
 
     alert("Đặt lịch thành công!");
-    fetchSlots();
     resetBookingForm();
   } catch (err) {
     console.error("Lỗi đặt lịch:", err);
@@ -927,7 +902,7 @@ const resetBookingForm = () => {
   bookingForm.value = {
     phone: "",
     services: [],
-    date: dayjs().format("YYYY-MM-DD"),
+    date: new Date().toISOString().split("T")[0],
     time: "",
     notes: "",
     consultAtStore: false,
@@ -937,21 +912,15 @@ const resetBookingForm = () => {
 
 // Lifecycle hook
 
+
 const resetModalForm = () => {
-  modalForm.value = {
-    name: "",
-    phone: "",
-    email: "",
-    date: "",
-    time: "",
-    notes: "",
-  };
+  modalForm.value = { name: "", phone: "", email: "", date: "", time: "", notes: "" };
 };
 
 // ✅ Gom tất cả vào một onMounted duy nhất
 onMounted(async () => {
   try {
-    minDate.value = dayjs().format("YYYY-MM-DD");
+    minDate.value = new Date().toISOString().split("T")[0];
     loading.value = true;
 
     // Load dữ liệu
@@ -962,7 +931,7 @@ onMounted(async () => {
 
     // Load testimonials
     const res = await apiClient.get("/DanhGia/admin");
-    testimonials.value = res;
+    testimonials.value = res
   } catch (err) {
     console.error("Lỗi khi khởi tạo:", err);
   } finally {
@@ -970,6 +939,7 @@ onMounted(async () => {
   }
 });
 </script>
+
 
 <style>
 .carousel-item {
@@ -980,14 +950,17 @@ onMounted(async () => {
 }
 
 .carousel-caption {
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 90%;
-  max-width: 1200px;
+  top: 0;   /* chiếm toàn bộ */
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  text-align: center;
+  padding: 0 15px;
 }
+
+
 
 .font-lora {
   font-family: "Lora", serif;
@@ -1317,7 +1290,7 @@ onMounted(async () => {
 }
 
 .testimonials-section::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
@@ -1361,7 +1334,7 @@ onMounted(async () => {
 }
 
 .testimonial-card::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
@@ -1521,7 +1494,7 @@ onMounted(async () => {
 }
 
 .about-section::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
@@ -1628,9 +1601,10 @@ onMounted(async () => {
 /* map */
 .map-wrapper iframe {
   width: 100%;
-  height: 430px;
+  height: 430px; 
   border: 0;
 }
+
 
 .stat-item {
   text-align: center;
@@ -1957,12 +1931,8 @@ onMounted(async () => {
 }
 
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .error {
@@ -1993,23 +1963,23 @@ onMounted(async () => {
   .container {
     max-width: 100%;
   }
-
+  
   .carousel-caption {
     width: 95%;
   }
-
+  
   .display-2 {
     font-size: 2.5rem !important;
   }
-
+  
   .fs-3 {
     font-size: 1.4rem !important;
   }
-
+  
   .lead {
     font-size: 1rem !important;
   }
-
+  
   .services-grid {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   }
@@ -2020,31 +1990,31 @@ onMounted(async () => {
   .carousel-item {
     height: 90vh;
   }
-
+  
   .display-2 {
     font-size: 2.2rem !important;
     line-height: 1.2;
   }
-
+  
   .fs-3 {
     font-size: 1.2rem !important;
   }
-
+  
   .lead {
     font-size: 0.95rem !important;
     max-width: 600px !important;
   }
-
+  
   .d-flex.flex-wrap.justify-content-center.gap-4.mb-5 {
     gap: 1.5rem !important;
     flex-wrap: wrap;
   }
-
+  
   .d-flex.flex-wrap.justify-content-center.gap-4.mb-5 > div {
     min-width: 120px;
     padding: 1rem;
   }
-
+  
   .stat-number {
     font-size: 2rem;
   }
@@ -2052,20 +2022,20 @@ onMounted(async () => {
   .hero-title {
     font-size: 2.8rem;
   }
-
+  
   .hero-subtitle {
     font-size: 1.3rem;
   }
-
+  
   .stats-container {
     gap: 1.5rem;
   }
-
+  
   .booking-content {
     grid-template-columns: 1fr;
     gap: 3rem;
   }
-
+  
   .section-title {
     font-size: 2.3rem;
   }
@@ -2076,28 +2046,28 @@ onMounted(async () => {
   .carousel-item {
     height: 85vh;
   }
-
+  
   .carousel-caption {
     width: 95%;
     padding: 0 1rem;
   }
-
+  
   .display-2 {
     font-size: 1.8rem !important;
     margin-bottom: 1rem !important;
   }
-
+  
   .fs-3 {
     font-size: 1rem !important;
     margin-bottom: 1rem !important;
   }
-
+  
   .lead {
     font-size: 0.9rem !important;
     margin-bottom: 1.5rem !important;
     line-height: 1.5;
   }
-
+  
   /* Stats layout for tablet - FIXED */
   .d-flex.flex-wrap.justify-content-center.gap-4.mb-5 {
     display: grid !important;
@@ -2106,30 +2076,30 @@ onMounted(async () => {
     margin-bottom: 1.5rem !important;
     padding: 0 0.5rem;
   }
-
+  
   .d-flex.flex-wrap.justify-content-center.gap-4.mb-5 > div {
     min-width: auto;
     padding: 0.8rem 0.5rem;
     text-align: center;
   }
-
+  
   .stat-number {
     font-size: 1.5rem;
     margin-bottom: 0.2rem;
   }
-
+  
   .stat-label {
     font-size: 0.75rem;
     line-height: 1.2;
   }
-
+  
   /* Button adjustments */
   .d-flex.flex-column.flex-sm-row.justify-content-center.gap-3 {
     flex-direction: column !important;
     gap: 1rem !important;
     padding: 0 1rem;
   }
-
+  
   .btn-lg {
     padding: 0.8rem 2rem !important;
     font-size: 0.9rem !important;
@@ -2138,15 +2108,15 @@ onMounted(async () => {
   .features {
     padding: 4rem 1rem;
   }
-
+  
   .services {
     padding: 6rem 1rem;
   }
-
+  
   .booking {
     padding: 6rem 1rem;
   }
-
+  
   .features-grid {
     grid-template-columns: 1fr;
     gap: 1.5rem;
@@ -2169,7 +2139,7 @@ onMounted(async () => {
   .section-title {
     font-size: 2rem;
   }
-
+  
   .section-subtitle {
     font-size: 1rem;
   }
@@ -2177,25 +2147,25 @@ onMounted(async () => {
   .service-image {
     height: 180px;
   }
-
+  
   .service-content {
     padding: 1.5rem;
   }
-
+  
   .service-title {
     font-size: 1.2rem;
   }
-
+  
   .service-meta {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
   }
-
+  
   .service-duration {
     font-size: 0.8rem;
   }
-
+  
   .service-price {
     font-size: 1.2rem;
   }
@@ -2208,7 +2178,7 @@ onMounted(async () => {
   .hero-subtitle {
     font-size: 1.1rem;
   }
-
+  
   .hero-description {
     font-size: 1rem;
     padding: 0 1rem;
@@ -2246,26 +2216,26 @@ onMounted(async () => {
   .booking-form {
     padding: 2rem;
   }
-
+  
   .booking-info h2 {
     font-size: 2rem;
   }
-
+  
   .form-actions {
     flex-direction: column;
     align-items: stretch;
   }
-
+  
   .consult-checkbox {
     justify-content: center;
   }
-
+  
   .selected-service-item {
     flex-direction: column;
     gap: 0.5rem;
     align-items: stretch;
   }
-
+  
   .quantity-control {
     justify-content: space-between;
   }
@@ -2273,7 +2243,7 @@ onMounted(async () => {
   .testimonials-grid {
     flex-direction: column;
   }
-
+  
   .testimonial-card {
     min-width: auto;
   }
@@ -2283,7 +2253,7 @@ onMounted(async () => {
   .carousel-control-next {
     width: 8%;
   }
-
+  
   .carousel-control-prev-icon,
   .carousel-control-next-icon {
     width: 20px;
@@ -2297,31 +2267,31 @@ onMounted(async () => {
     height: 80vh;
     min-height: 500px;
   }
-
+  
   .carousel-caption {
     width: 100%;
     padding: 0 0.5rem;
     top: 45%;
   }
-
+  
   .display-2 {
     font-size: 1.4rem !important;
     margin-bottom: 0.5rem !important;
     line-height: 1.3;
   }
-
+  
   .fs-3 {
     font-size: 0.9rem !important;
     margin-bottom: 0.8rem !important;
   }
-
+  
   .lead {
     font-size: 0.8rem !important;
     margin-bottom: 1rem !important;
     line-height: 1.4;
     padding: 0 !important;
   }
-
+  
   /* Stats - vertical stack on mobile - FIXED */
   .d-flex.flex-wrap.justify-content-center.gap-4.mb-5 {
     display: flex !important;
@@ -2331,7 +2301,7 @@ onMounted(async () => {
     margin-bottom: 1rem !important;
     padding: 0;
   }
-
+  
   .d-flex.flex-wrap.justify-content-center.gap-4.mb-5 > div {
     display: flex;
     align-items: center;
@@ -2342,29 +2312,29 @@ onMounted(async () => {
     margin: 0;
     justify-content: center;
   }
-
+  
   .d-flex.flex-wrap.justify-content-center.gap-4.mb-5 > div .fs-1 {
     font-size: 1.2rem !important;
     margin: 0 !important;
   }
-
+  
   .d-flex.flex-wrap.justify-content-center.gap-4.mb-5 > div .fs-3 {
     font-size: 1rem !important;
     margin: 0 0.3rem 0 0 !important;
   }
-
+  
   .d-flex.flex-wrap.justify-content-center.gap-4.mb-5 > div .text-white {
     font-size: 0.7rem !important;
     margin: 0 !important;
     line-height: 1.2;
   }
-
+  
   /* Buttons */
   .d-flex.flex-column.flex-sm-row.justify-content-center.gap-3 {
     padding: 0 0.5rem;
     gap: 0.8rem !important;
   }
-
+  
   .btn-lg {
     padding: 0.7rem 1.5rem !important;
     font-size: 0.8rem !important;
@@ -2647,6 +2617,7 @@ onMounted(async () => {
     font-size: 1rem;
   }
 
+
   .submit-btn {
     font-size: 0.95rem;
     padding: 0.9rem 2rem;
@@ -2677,7 +2648,7 @@ onMounted(async () => {
   .carousel-indicators {
     bottom: 10px;
   }
-
+  
   .carousel-indicators button {
     width: 8px;
     height: 8px;
@@ -2691,34 +2662,38 @@ onMounted(async () => {
     height: 75vh;
     min-height: 450px;
   }
-
+  
   .carousel-caption {
     top: 40%;
   }
-
+  
   .display-2 {
     font-size: 1.2rem !important;
   }
-
+  
   .fs-3 {
     font-size: 0.8rem !important;
   }
-
+  
   .lead {
     font-size: 0.75rem !important;
   }
-
+  
   .d-flex.flex-wrap.justify-content-center.gap-4.mb-5 > div {
     max-width: 260px;
     padding: 0.5rem 0.8rem;
   }
-
+  
   .btn-lg {
     padding: 0.6rem 1.2rem !important;
     font-size: 0.75rem !important;
   }
+ 
 }
-.detail-service-link {
+  .detail-service-link{
   text-decoration: none;
 }
+
+
+
 </style>
