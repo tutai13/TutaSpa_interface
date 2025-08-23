@@ -672,6 +672,7 @@ import { ref, onMounted, watch, computed } from "vue";
 import apiClient from "../utils/axiosClient";
 import Swal from "sweetalert2";
 // Reactive state
+const isLoading = ref(false);
 const services = ref([]);
 const categories = ref([]);
 const currentCategory = ref("all");
@@ -896,6 +897,15 @@ const submitBooking = async () => {
       });
       return;
     }
+    isLoading.value = true;
+    Swal.fire({
+      title: "Đang xử lý...",
+      text: "Vui lòng đợi trong giây lát",
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
     const thoiGian = new Date(
       new Date(
         `${bookingForm.value.date}T${bookingForm.value.time}`
@@ -930,6 +940,8 @@ const submitBooking = async () => {
   } catch (err) {
     console.error("Lỗi đặt lịch:", err);
     alert("Đặt lịch thất bại!");
+  }finally {
+    isLoading.value = false;
   }
 };
 
