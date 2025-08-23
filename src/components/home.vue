@@ -890,7 +890,7 @@ const submitBooking = async () => {
       });
       return;
     }
-    if (!bookingForm.time) {
+    if (!bookingForm.value.time) {
       await Swal.fire({
         icon: "warning",
         title: "Thiếu thông tin",
