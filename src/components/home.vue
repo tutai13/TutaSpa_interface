@@ -405,6 +405,7 @@
                 id="phone"
                 v-model="bookingForm.phone"
                 placeholder="0123 456 789"
+                @input="filterPhone"
               />
             </div>
 
@@ -671,6 +672,7 @@
 import { ref, onMounted, watch, computed } from "vue";
 import apiClient from "../utils/axiosClient";
 import Swal from "sweetalert2";
+import dayjs from "dayjs";
 // Reactive state
 const isLoading = ref(false);
 const services = ref([]);
@@ -684,7 +686,7 @@ const selectedService = ref(null);
 const bookingForm = ref({
   phone: "",
   services: [],
-  date: new Date().toISOString().split("T")[0],
+  date: dayjs().format("YYYY-MM-DD"),
   time: "",
   notes: "",
   consultAtStore: false,
@@ -795,6 +797,13 @@ watch(
   }
 );
 
+const filterPhone = (event) => {
+  let value = event.target.value.replace(/\D/g, ""); // chỉ giữ số
+  if (value.length > 10) value = value.slice(0, 10); // tối đa 10 số
+  if (value && !value.startsWith("0")) value = "0" + value; // bắt buộc số 0 đầu
+  bookingForm.value.phone = value;
+};
+
 const fetchCategories = async () => {
   try {
     const response = await apiClient.get("/LoaiDichVu");
@@ -876,6 +885,15 @@ const submitBooking = async () => {
       });
       return;
     }
+    if (!/^0\d{9}$/.test(bookingForm.value.phone)) {
+      await Swal.fire({
+        icon: "error",
+        title: "Số điện thoại không hợp lệ",
+        text: "Vui lòng nhập đúng 10 số và bắt đầu bằng 0!",
+        confirmButtonText: "OK",
+      });
+      return;
+    }
     if (
       !bookingForm.value.services.length &&
       !bookingForm.value.consultAtStore
@@ -940,7 +958,7 @@ const submitBooking = async () => {
   } catch (err) {
     console.error("Lỗi đặt lịch:", err);
     alert("Đặt lịch thất bại!");
-  }finally {
+  } finally {
     isLoading.value = false;
   }
 };
@@ -949,7 +967,7 @@ const resetBookingForm = () => {
   bookingForm.value = {
     phone: "",
     services: [],
-    date: new Date().toISOString().split("T")[0],
+    date: dayjs().format("YYYY-MM-DD"),
     time: "",
     notes: "",
     consultAtStore: false,
@@ -957,23 +975,10 @@ const resetBookingForm = () => {
   selectedService.value = null;
 };
 
-// Lifecycle hook
-
-const resetModalForm = () => {
-  modalForm.value = {
-    name: "",
-    phone: "",
-    email: "",
-    date: "",
-    time: "",
-    notes: "",
-  };
-};
-
 // ✅ Gom tất cả vào một onMounted duy nhất
 onMounted(async () => {
   try {
-    minDate.value = new Date().toISOString().split("T")[0];
+    minDate.value = dayjs().format("YYYY-MM-DD");
     loading.value = true;
 
     // Load dữ liệu
