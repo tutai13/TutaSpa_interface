@@ -397,7 +397,7 @@
             </ul>
           </div>
 
-          <form class="booking-form" @.prevent="Booking">
+          <form class="booking-form" @.prevent="submitBooking">
             <div class="form-group">
               <label for="phone">Số điện thoại *</label>
               <input
