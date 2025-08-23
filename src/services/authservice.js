@@ -97,6 +97,9 @@ export const authAPI = {
     }
   },
 
+
+
+
   sendOTP: async (phoneNumber) => {
     try {
       const response = await apiClient.post(
@@ -127,6 +130,16 @@ export const authAPI = {
       const response = await apiClient.post("/account/register", userData);
       return true;
     } catch (error) {
+      throw error;
+    }
+  },
+
+  checkexist: async (phoneNumber) => {
+      try {
+        const response = await apiClient.get(`/account/phone/check?phoneNumber=${phoneNumber}`);
+        return response.exists;
+    } 
+      catch (error) {
       throw error;
     }
   },
@@ -331,47 +344,5 @@ export const apiUtils = {
   },
 };
 
-// Ví dụ sử dụng trong component Vue:
-/*
-import { authAPI, userAPI, genericAPI } from '@/services/api'
 
-export default {
-  methods: {
-    async login() {
-      try {
-        const response = await authAPI.login({
-          phone: this.phone,
-          password: this.password
-        })
-        console.log('Đăng nhập thành công:', response)
-      } catch (error) {
-        console.error('Lỗi đăng nhập:', error)
-      }
-    },
-
-    async getProfile() {
-      try {
-        const user = await userAPI.getCurrentUser()
-        console.log('Thông tin user:', user)
-      } catch (error) {
-        console.error('Lỗi lấy thông tin:', error)
-      }
-    },
-
-    async fetchData() {
-      try {
-        const data = await genericAPI.get('/products', {
-          page: 1,
-          limit: 10
-        })
-        console.log('Dữ liệu:', data)
-      } catch (error) {
-        console.error('Lỗi lấy dữ liệu:', error)
-      }
-    }
-  }
-}
-*/
-
-// Export axios instance nếu cần sử dụng trực tiếp
 export default apiClient;

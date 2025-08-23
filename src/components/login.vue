@@ -196,7 +196,7 @@ const togglePassword = () => {
 }
 
 const forgotPassword = () => {
-  router.push('/forgot-password')
+  router.push('/ForgetPassword')
 }
 
 const goToRegister = () => {
