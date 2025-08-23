@@ -397,7 +397,7 @@
             </ul>
           </div>
 
-          <form class="booking-form" @submit.prevent="submitBooking">
+          <form class="booking-form" @.prevent="Booking">
             <div class="form-group">
               <label for="phone">Số điện thoại *</label>
               <input
@@ -501,9 +501,6 @@
                     :value="slot.khungGio"
                   >
                     {{ slot.khungGio }}
-                    <span v-if="slot.conLai <= 2"
-                      >(Còn {{ slot.conLai }} chỗ)</span
-                    >
                   </option>
                 </select>
               </div>
@@ -923,7 +920,12 @@ const submitBooking = async () => {
 
     const res = await apiClient.post("/DatLich", payload);
 
-    alert("Đặt lịch thành công!");
+    await Swal.fire({
+      icon: "success",
+      title: "Thành công",
+      text: "Đặt lịch thành công!",
+      confirmButtonText: "OK",
+    });
     resetBookingForm();
   } catch (err) {
     console.error("Lỗi đặt lịch:", err);
