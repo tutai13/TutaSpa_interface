@@ -779,7 +779,7 @@ const slides = [
   },
   {
     image:
-      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+      "https://media.istockphoto.com/id/1960192709/vi/anh/woman-indulges-in-blissful-foot-massage-at-luxurious-spa-salon-quiescent.jpg?s=612x612&w=0&k=20&c=Ll5MOS6iv3hjUY3jCTkHazaAv9tg7O9WvpJmLUDwTW0=",
     title: "Làm Đẹp Tự Nhiên",
     subtitle: "Sử dụng 100% sản phẩm thiên nhiên",
   },
