@@ -9,7 +9,9 @@
               <i class="fas fa-star text-warning me-2"></i>
               Đánh Giá Dịch Vụ
             </h1>
-            <p class="hero-subtitle">Chia sẻ trải nghiệm của bạn với chúng tôi</p>
+            <p id="topdanhgia" class="hero-subtitle">
+              Chia sẻ trải nghiệm của bạn với chúng tôi
+            </p>
           </div>
         </div>
       </div>
@@ -20,7 +22,9 @@
         <div class="col-lg-8">
           <!-- Main Form Card -->
           <div class="card review-card shadow-lg border-0 mb-5">
-            <div class="card-header bg-gradient-primary text-white text-center py-4">
+            <div
+              class="card-header bg-gradient-primary text-white text-center py-4"
+            >
               <h4 class="mb-0">
                 <i class="fas fa-edit me-2"></i>
                 {{ editingId ? "Chỉnh sửa đánh giá" : "Viết đánh giá của bạn" }}
@@ -69,7 +73,9 @@
                     Đánh giá của bạn
                   </label>
                   <div class="star-rating-container">
-                    <div class="star-rating d-flex justify-content-center gap-2 py-3">
+                    <div
+                      class="star-rating d-flex justify-content-center gap-2 py-3"
+                    >
                       <span
                         v-for="i in 5"
                         :key="i"
@@ -115,12 +121,14 @@
                 <div class="mb-4">
                   <div class="card bg-light border-0">
                     <div class="card-body">
-                      <div class="d-flex justify-content-between align-items-center">
+                      <div
+                        class="d-flex justify-content-between align-items-center"
+                      >
                         <div class="d-flex align-items-center">
                           <i class="fas fa-user text-success me-2"></i>
                           <span class="fw-semibold">Hiện tên</span>
                         </div>
-                        
+
                         <div class="form-check form-switch">
                           <input
                             class="form-check-input"
@@ -129,7 +137,7 @@
                             v-model="danhGia.anDanh"
                           />
                         </div>
-                        
+
                         <div class="d-flex align-items-center">
                           <i class="fas fa-user-secret text-secondary me-2"></i>
                           <span class="fw-semibold">Ẩn danh</span>
@@ -139,8 +147,6 @@
                   </div>
                 </div>
 
-                
-
                 <!-- Submit button -->
                 <div class="d-grid">
                   <button
@@ -148,11 +154,16 @@
                     class="btn btn-primary btn-lg submit-button"
                     :disabled="isSubmitting"
                   >
-                    <span v-if="isSubmitting" class="spinner-border spinner-border-sm me-2"></span>
+                    <span
+                      v-if="isSubmitting"
+                      class="spinner-border spinner-border-sm me-2"
+                    ></span>
                     <i v-else class="fas fa-paper-plane me-2"></i>
-                    
+
                     <span v-if="isSubmitting">Đang gửi...</span>
-                    <span v-else>{{ editingId ? "Cập nhật đánh giá" : "Gửi đánh giá" }}</span>
+                    <span v-else>{{
+                      editingId ? "Cập nhật đánh giá" : "Gửi đánh giá"
+                    }}</span>
                   </button>
                 </div>
               </form>
@@ -160,66 +171,70 @@
           </div>
 
           <!-- Đánh giá gần đây -->
-          <div v-if="danhSach.length > 0" class="recent-reviews">
-            <div class="text-center mb-4">
-              <h3 class="text-white fw-bold">
-                <i class="fas fa-comments me-2"></i>
-                Đánh giá gần đây
-              </h3>
-            </div>
-            
-            <div
-              v-for="(dg, index) in danhSach"
-              :key="dg.id"
-              class="card review-item shadow border-0 mb-3"
-              :style="{ animationDelay: `${index * 0.1}s` }"
-            >
-              <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                  <div class="review-stars">
-                    <span
-                      v-for="i in 5"
-                      :key="i"
-                      class="star-display me-1"
-                      :class="{
-                        'text-warning': i <= dg.soSao,
-                        'text-muted': i > dg.soSao,
-                      }"
-                    >
-                      <i class="fas fa-star"></i>
+          <div id="danhgia">
+            <div v-if="danhSach.length > 0" class="recent-reviews">
+              <div class="text-center mb-4">
+                <h3 class="text-white fw-bold">
+                  <i class="fas fa-comments me-2"></i>
+                  Đánh giá gần đây
+                </h3>
+              </div>
+
+              <div
+                v-for="(dg, index) in danhSach"
+                :key="dg.id"
+                class="card review-item shadow border-0 mb-3"
+                :style="{ animationDelay: `${index * 0.1}s` }"
+              >
+                <div class="card-body">
+                  <div
+                    class="d-flex justify-content-between align-items-center mb-3"
+                  >
+                    <div class="review-stars">
+                      <span
+                        v-for="i in 5"
+                        :key="i"
+                        class="star-display me-1"
+                        :class="{
+                          'text-warning': i <= dg.soSao,
+                          'text-muted': i > dg.soSao,
+                        }"
+                      >
+                        <i class="fas fa-star"></i>
+                      </span>
+                    </div>
+                    <small class="text-muted">
+                      <i class="fas fa-calendar-alt me-1"></i>
+                      {{ formatDate(dg.ngayTao) }}
+                    </small>
+                  </div>
+
+                  <div class="review-content mb-3">
+                    <p class="mb-0">{{ dg.noiDung }}</p>
+                  </div>
+
+                  <div class="review-author d-flex align-items-center mb-2">
+                    <i class="fas fa-user-circle text-primary me-2"></i>
+                    <span class="text-muted">Người đánh giá:</span>
+                    <span v-if="dg.anDanh" class="badge bg-secondary ms-2">
+                      <i class="fas fa-user-secret me-1"></i>
+                      Ẩn danh
+                    </span>
+                    <span v-else class="fw-semibold text-dark ms-2">
+                      {{ dg.user?.name || "Không rõ" }}
                     </span>
                   </div>
-                  <small class="text-muted">
-                    <i class="fas fa-calendar-alt me-1"></i>
-                    {{ formatDate(dg.ngayTao) }}
-                  </small>
-                </div>
-                
-                <div class="review-content mb-3">
-                  <p class="mb-0">{{ dg.noiDung }}</p>
-                </div>
-                
-                <div class="review-author d-flex align-items-center mb-2">
-                  <i class="fas fa-user-circle text-primary me-2"></i>
-                  <span class="text-muted">Người đánh giá:</span>
-                  <span v-if="dg.anDanh" class="badge bg-secondary ms-2">
-                    <i class="fas fa-user-secret me-1"></i>
-                    Ẩn danh
-                  </span>
-                  <span v-else class="fw-semibold text-dark ms-2">
-                    {{ dg.user?.name || "Không rõ" }}
-                  </span>
-                </div>
 
-                <!-- Nút Sửa -->
-                <div class="review-actions text-end">
-                  <button
-                    v-if="dg.userId === userId"
-                    class="btn btn-sm btn-outline-primary"
-                    @click="editDanhGia(dg)"
-                  >
-                    <i class="fas fa-edit me-1"></i> Sửa
-                  </button>
+                  <!-- Nút Sửa -->
+                  <div class="review-actions text-end">
+                    <button
+                      v-if="dg.userId === userId"
+                      class="btn btn-sm btn-outline-primary"
+                      @click="handleEdit(dg)"
+                    >
+                      <i class="fas fa-edit me-1"></i> Sửa
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -232,11 +247,12 @@
 
 <script setup>
 import { ref, onMounted, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import axiosClient from "../utils/axiosClient";
 import Swal from "sweetalert2";
 
 const route = useRoute();
+const router = useRouter();
 
 // Reactive data
 const danhGia = ref({
@@ -273,7 +289,15 @@ const ratingTexts = {
   4: "😊 Hài lòng",
   5: "🤩 Rất hài lòng",
 };
+const handleEdit = async (dg) => {
+  editDanhGia(dg);
 
+  const el = document.querySelector("#topdanhgia");
+  if (el) {
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+  router.replace({ hash: "topdanhgia" });
+};
 const getRatingText = (rating) => ratingTexts[rating] || "";
 const setRating = (rating) => (danhGia.value.soSao = rating);
 const hoverRating = (rating) => (hoveredRating.value = rating);
@@ -320,13 +344,11 @@ async function submitDanhGia() {
       });
       //Thông báo thành công
       await Swal.fire({
-  icon: "success",
-  title: "Cập nhật thành công!",
-  showConfirmButton: false,
-  timer: 1500
-});
-
-
+        icon: "success",
+        title: "Cập nhật thành công!",
+        showConfirmButton: false,
+        timer: 1500,
+      });
 
       editingId.value = null;
     } else {
@@ -336,11 +358,11 @@ async function submitDanhGia() {
         userId,
       });
       await Swal.fire({
-      icon: "success",
-      title: "Thành công",
-      text: "Đánh giá thành công!",
-      confirmButtonText: "OK",
-    });
+        icon: "success",
+        title: "Thành công",
+        text: "Đánh giá thành công!",
+        confirmButtonText: "OK",
+      });
     }
 
     const currentDichVuID = danhGia.value.maDichVu;
@@ -354,13 +376,12 @@ async function submitDanhGia() {
   } catch (err) {
     console.error(err);
     await Swal.fire({
-  position: "center",
-  icon: "error",
-  title: "Gửi thất bại!",
-  showConfirmButton: false,
-  timer: 2000
-});
-
+      position: "center",
+      icon: "error",
+      title: "Gửi thất bại!",
+      showConfirmButton: false,
+      timer: 2000,
+    });
   } finally {
     isSubmitting.value = false;
   }
@@ -368,23 +389,27 @@ async function submitDanhGia() {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 
 .review-page {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   background: linear-gradient(135deg, #8de499 0%, #8de499 50%, #8de499 100%);
   min-height: 100vh;
 }
 
 .hero-section {
-  background: linear-gradient(135deg, rgba(168, 255, 214, 0.9), rgba(255, 250, 182, 0.9));
+  background: linear-gradient(
+    135deg,
+    rgba(168, 255, 214, 0.9),
+    rgba(255, 250, 182, 0.9)
+  );
   padding: 4rem 0 2rem;
   position: relative;
   overflow: hidden;
 }
 
 .hero-section::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -434,7 +459,7 @@ async function submitDanhGia() {
 }
 
 .review-card .card-header::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 0;
@@ -446,8 +471,13 @@ async function submitDanhGia() {
 }
 
 @keyframes shimmer {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }
 
 @keyframes slideInUp {
@@ -471,7 +501,8 @@ async function submitDanhGia() {
   margin-bottom: 0.75rem;
 }
 
-.form-control, .form-select {
+.form-control,
+.form-select {
   border: 2px solid #e2e8f0;
   border-radius: 12px;
   padding: 0.875rem 1rem;
@@ -480,7 +511,8 @@ async function submitDanhGia() {
   background: #f8fafc;
 }
 
-.form-control:focus, .form-select:focus {
+.form-control:focus,
+.form-select:focus {
   border-color: #74b9ff;
   box-shadow: 0 0 0 0.25rem rgba(116, 185, 255, 0.15);
   background: white;
@@ -505,19 +537,28 @@ async function submitDanhGia() {
 }
 
 .star-rating-container::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-background: linear-gradient(90deg, transparent, rgba(116, 185, 255, 0.1), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(116, 185, 255, 0.1),
+    transparent
+  );
   animation: starGlow 2s ease-in-out infinite;
 }
 
 @keyframes starGlow {
-  0% { left: -100%; }
-  100% { left: 100%; }
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
 }
 
 .star-btn {
@@ -568,13 +609,18 @@ background: linear-gradient(90deg, transparent, rgba(116, 185, 255, 0.1), transp
 }
 
 .submit-button::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
   transition: left 0.6s ease;
 }
 
@@ -629,15 +675,15 @@ background: linear-gradient(90deg, transparent, rgba(116, 185, 255, 0.1), transp
   .hero-title {
     font-size: 2.5rem;
   }
-  
+
   .hero-subtitle {
     font-size: 1.1rem;
   }
-  
+
   .star-btn {
     font-size: 2rem;
   }
-  
+
   .recent-reviews h3 {
     font-size: 2rem;
   }

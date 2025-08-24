@@ -24,11 +24,13 @@
             <div class="header-icon">📅</div>
             <div>
               <h2 class="column-title">Lịch Đã Đặt</h2>
-              <p class="column-subtitle">{{ lichSuChuaThanhToan.length }} lịch hẹn đang chờ</p>
+              <p class="column-subtitle">
+                {{ lichSuChuaThanhToan.length }} lịch hẹn đang chờ
+              </p>
             </div>
           </div>
         </div>
-        
+
         <div class="history-cards">
           <div
             v-for="datLich in lichSuChuaThanhToan"
@@ -40,11 +42,15 @@
               <div class="date-info">
                 <div class="date-icon">📅</div>
                 <div>
-                  <div class="date-text">{{ formatDate(datLich.thoiGian) }}</div>
+                  <div class="date-text">
+                    {{ formatDate(datLich.thoiGian) }}
+                  </div>
                   <div class="payment-status pending">⏳ Chưa thanh toán</div>
                 </div>
               </div>
-              <div class="status-badge pending-badge">{{ datLich.trangThai }}</div>
+              <div class="status-badge pending-badge">
+                {{ datLich.trangThai }}
+              </div>
             </div>
 
             <!-- Services List -->
@@ -56,7 +62,10 @@
               >
                 <div class="service-main">
                   <div class="service-icon-wrapper pending-icon">
-                    <i :class="getServiceIcon(ct.dichVu?.tenDichVu)" class="service-icon"></i>
+                    <i
+                      :class="getServiceIcon(ct.dichVu?.tenDichVu)"
+                      class="service-icon"
+                    ></i>
                   </div>
                   <div class="service-details">
                     <h4 class="service-name">{{ ct.dichVu.tenDichVu }}</h4>
@@ -100,11 +109,13 @@
             <div class="header-icon">✨</div>
             <div>
               <h2 class="column-title">Lịch Đã Hoàn Thành</h2>
-              <p class="column-subtitle">{{ lichSuDaThanhToan.length }} lịch hẹn đã hoàn thành</p>
+              <p class="column-subtitle">
+                {{ lichSuDaThanhToan.length }} lịch hẹn đã hoàn thành
+              </p>
             </div>
           </div>
         </div>
-        
+
         <div class="history-cards">
           <div
             v-for="datLich in lichSuDaThanhToan"
@@ -116,11 +127,15 @@
               <div class="date-info">
                 <div class="date-icon">📅</div>
                 <div>
-                  <div class="date-text">{{ formatDate(datLich.thoiGian) }}</div>
+                  <div class="date-text">
+                    {{ formatDate(datLich.thoiGian) }}
+                  </div>
                   <div class="payment-status completed">✅ Đã thanh toán</div>
                 </div>
               </div>
-              <div class="status-badge completed-badge">{{ datLich.trangThai }}</div>
+              <div class="status-badge completed-badge">
+                {{ datLich.trangThai }}
+              </div>
             </div>
 
             <!-- Services List -->
@@ -132,7 +147,10 @@
               >
                 <div class="service-main">
                   <div class="service-icon-wrapper completed-icon">
-                    <i :class="getServiceIcon(ct.dichVu?.tenDichVu)" class="service-icon"></i>
+                    <i
+                      :class="getServiceIcon(ct.dichVu?.tenDichVu)"
+                      class="service-icon"
+                    ></i>
                   </div>
                   <div class="service-details">
                     <h4 class="service-name">{{ ct.dichVu.tenDichVu }}</h4>
@@ -154,25 +172,27 @@
 
                 <!-- Action Button -->
                 <div class="service-actions">
-  <router-link
-    v-if="ct.dichVu && !checkDaDanhGia(ct)"
-    :to="`/DanhGia/${ct.dichVu.dichVuID}`"
-    class="review-btn primary-btn"
-  >
-    <i class="fas fa-star"></i>
-    <span>Đánh giá dịch vụ</span>
-  </router-link>
-  
-  <router-link
-    v-else-if="ct.dichVu && checkDaDanhGia(ct)"
-    :to="`/DanhGia/${ct.dichVu.dichVuID}`"
-    class="review-btn secondary-btn"
-  >
-    <i class="fas fa-eye"></i>
-    <span>Xem đánh giá của bạn</span>
-  </router-link>
-</div>
+                  <router-link
+                    v-if="ct.dichVu && !checkDaDanhGia(ct)"
+                    :to="`/DanhGia/${ct.dichVu.dichVuID}`"
+                    class="review-btn primary-btn"
+                  >
+                    <i class="fas fa-star"></i>
+                    <span>Đánh giá dịch vụ</span>
+                  </router-link>
 
+                  <router-link
+                    v-else-if="ct.dichVu && checkDaDanhGia(ct)"
+                    :to="{
+                      path: `/DanhGia/${ct.dichVu.dichVuID}`,
+                      hash: '#danhgia',
+                    }"
+                    class="review-btn secondary-btn"
+                  >
+                    <i class="fas fa-eye"></i>
+                    <span>Xem đánh giá của bạn</span>
+                  </router-link>
+                </div>
               </div>
             </div>
           </div>
@@ -189,7 +209,7 @@ import Swal from "sweetalert2";
 
 const lichSu = ref([]);
 const isLoading = ref(false);
-const userInfo = JSON.parse(localStorage.getItem("user_info") || '{}');
+const userInfo = JSON.parse(localStorage.getItem("user_info") || "{}");
 const userId = userInfo.id;
 
 // Map lưu trạng thái đánh giá của từng dịch vụ
@@ -199,8 +219,20 @@ onMounted(async () => {
   await loadLichSu();
   await loadDanhGiaStatus();
 });
-const formatCurrency = (value) => new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND", }).format(value);
-const formatDate = (str) => { const d = new Date(str); return d.toLocaleDateString("vi-VN", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", }); };
+const formatCurrency = (value) =>
+  new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
+    value
+  );
+const formatDate = (str) => {
+  const d = new Date(str);
+  return d.toLocaleDateString("vi-VN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
 // Load lịch sử đặt lịch
 const loadLichSu = async () => {
   try {
@@ -215,10 +247,12 @@ const loadLichSu = async () => {
 const loadDanhGiaStatus = async () => {
   try {
     // Duyệt tất cả dịch vụ trong lichSu đã thanh toán
-    for (const datLich of lichSu.value.filter(l => l.daThanhToan)) {
+    for (const datLich of lichSu.value.filter((l) => l.daThanhToan)) {
       for (const ct of datLich.chiTietDatLichs) {
         if (ct.dichVu) {
-          const res = await apiClient.get(`/danhgia/dichvu/${ct.dichVu.dichVuID}/${userId}`);
+          const res = await apiClient.get(
+            `/danhgia/dichvu/${ct.dichVu.dichVuID}/${userId}`
+          );
           danhGiaStatus.value[ct.dichVu.dichVuID] = res.hasReview;
         }
       }
@@ -238,30 +272,38 @@ const getUserId = () => userId;
 
 // Hàm lấy icon cho từng loại dịch vụ
 const getServiceIcon = (tenDichVu) => {
-  if (!tenDichVu) return 'fas fa-spa';
+  if (!tenDichVu) return "fas fa-spa";
   const serviceName = tenDichVu.toLowerCase();
-  if (serviceName.includes('massage') || serviceName.includes('mát xa')) return 'fas fa-hand-sparkles';
-  if (serviceName.includes('facial') || serviceName.includes('chăm sóc da mặt')) return 'fas fa-user-check';
-  if (serviceName.includes('nail') || serviceName.includes('móng')) return 'fas fa-hand-paper';
-  if (serviceName.includes('hair') || serviceName.includes('tóc')) return 'fas fa-cut';
-  if (serviceName.includes('body') || serviceName.includes('toàn thân')) return 'fas fa-user';
-  if (serviceName.includes('foot') || serviceName.includes('chân')) return 'fas fa-shoe-prints';
-  if (serviceName.includes('therapy') || serviceName.includes('trị liệu')) return 'fas fa-heart';
-  if (serviceName.includes('relax') || serviceName.includes('thư giãn')) return 'fas fa-leaf';
-  return 'fas fa-spa';
+  if (serviceName.includes("massage") || serviceName.includes("mát xa"))
+    return "fas fa-hand-sparkles";
+  if (serviceName.includes("facial") || serviceName.includes("chăm sóc da mặt"))
+    return "fas fa-user-check";
+  if (serviceName.includes("nail") || serviceName.includes("móng"))
+    return "fas fa-hand-paper";
+  if (serviceName.includes("hair") || serviceName.includes("tóc"))
+    return "fas fa-cut";
+  if (serviceName.includes("body") || serviceName.includes("toàn thân"))
+    return "fas fa-user";
+  if (serviceName.includes("foot") || serviceName.includes("chân"))
+    return "fas fa-shoe-prints";
+  if (serviceName.includes("therapy") || serviceName.includes("trị liệu"))
+    return "fas fa-heart";
+  if (serviceName.includes("relax") || serviceName.includes("thư giãn"))
+    return "fas fa-leaf";
+  return "fas fa-spa";
 };
 
 // Computed phân chia lịch
 const lichSuDaThanhToan = computed(() => {
   return lichSu.value
-    .filter(l => l.daThanhToan)
+    .filter((l) => l.daThanhToan)
     .sort((a, b) => {
       // Kiểm tra nếu a có ít nhất 1 dịch vụ chưa đánh giá
-      const aHasNotReview = a.chiTietDatLichs.some(ct => !checkDaDanhGia(ct));
-      const bHasNotReview = b.chiTietDatLichs.some(ct => !checkDaDanhGia(ct));
+      const aHasNotReview = a.chiTietDatLichs.some((ct) => !checkDaDanhGia(ct));
+      const bHasNotReview = b.chiTietDatLichs.some((ct) => !checkDaDanhGia(ct));
 
       if (aHasNotReview && !bHasNotReview) return -1; // a lên trước
-      if (!aHasNotReview && bHasNotReview) return 1;  // b lên trước
+      if (!aHasNotReview && bHasNotReview) return 1; // b lên trước
 
       // Nếu bằng nhau, sắp xếp theo thời gian (mới nhất lên trước)
       return new Date(b.thoiGian) - new Date(a.thoiGian);
@@ -270,14 +312,9 @@ const lichSuDaThanhToan = computed(() => {
 
 const lichSuChuaThanhToan = computed(() => {
   return lichSu.value
-    .filter(l => !l.daThanhToan)
+    .filter((l) => !l.daThanhToan)
     .sort((a, b) => new Date(b.thoiGian) - new Date(a.thoiGian));
 });
-
-
-
-
-
 
 const danhGiaList = ref([]); // Danh sách các đánh giá của user
 
@@ -296,15 +333,6 @@ const loadDanhGiaByUser = async () => {
   }
 };
 
-
-
-
-
-
-
-
-
-
 const xoaLich = async (id) => {
   const result = await Swal.fire({
     title: "Xác nhận hủy lịch",
@@ -317,9 +345,9 @@ const xoaLich = async (id) => {
     cancelButtonText: "Không",
     background: "#fff",
     customClass: {
-      title: 'swal-title',
-      content: 'swal-content'
-    }
+      title: "swal-title",
+      content: "swal-content",
+    },
   });
 
   if (result.isConfirmed) {
@@ -333,10 +361,10 @@ const xoaLich = async (id) => {
           Swal.showLoading();
         },
       });
-      
+
       await apiClient.delete(`/DatLich/${id}`);
       await loadLichSu();
-      
+
       await Swal.fire({
         icon: "success",
         title: "Thành công",
@@ -345,7 +373,6 @@ const xoaLich = async (id) => {
         confirmButtonColor: "#27ae60",
         background: "#f8fff8",
       });
-
     } catch (err) {
       console.error("Lỗi khi xóa lịch:", err);
       await Swal.fire({
@@ -353,7 +380,7 @@ const xoaLich = async (id) => {
         title: "Thất bại",
         text: "Đã xảy ra lỗi khi hủy lịch hẹn. Vui lòng thử lại!",
         confirmButtonText: "OK",
-        confirmButtonColor: "#e74c3c"
+        confirmButtonColor: "#e74c3c",
       });
     } finally {
       Swal.close();
@@ -361,9 +388,6 @@ const xoaLich = async (id) => {
     }
   }
 };
-
-
-
 
 // Safe helpers to handle items that may be service OR product (or missing)
 const getTen = (ct) => {
@@ -395,9 +419,7 @@ const getGia = (ct) => {
       : Number(ct?.thanhTien)) || 0
   );
 };
-
 </script>
-
 
 <style scoped>
 .spa-history-container {
@@ -489,12 +511,20 @@ const getGia = (ct) => {
 
 .column-header.completed {
   border-top-color: #27ae60;
-  background: linear-gradient(135deg, rgba(39, 174, 96, 0.08) 0%, rgba(39, 174, 96, 0.03) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(39, 174, 96, 0.08) 0%,
+    rgba(39, 174, 96, 0.03) 100%
+  );
 }
 
 .column-header.pending {
   border-top-color: #f39c12;
-  background: linear-gradient(135deg, rgba(243, 156, 18, 0.08) 0%, rgba(243, 156, 18, 0.03) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(243, 156, 18, 0.08) 0%,
+    rgba(243, 156, 18, 0.03) 100%
+  );
 }
 
 .header-content {
@@ -548,7 +578,7 @@ const getGia = (ct) => {
 }
 
 .completed-card::before {
-  content: '✓';
+  content: "✓";
   position: absolute;
   top: 15px;
   right: 15px;
@@ -572,7 +602,7 @@ const getGia = (ct) => {
 }
 
 .pending-card::before {
-  content: '⏳';
+  content: "⏳";
   position: absolute;
   top: 15px;
   right: 15px;
@@ -589,8 +619,13 @@ const getGia = (ct) => {
 }
 
 @keyframes subtle-pulse {
-  0%, 100% { box-shadow: 0 8px 25px rgba(45, 90, 45, 0.08); }
-  50% { box-shadow: 0 8px 25px rgba(243, 156, 18, 0.15); }
+  0%,
+  100% {
+    box-shadow: 0 8px 25px rgba(45, 90, 45, 0.08);
+  }
+  50% {
+    box-shadow: 0 8px 25px rgba(243, 156, 18, 0.15);
+  }
 }
 
 /* Card Headers */
@@ -681,12 +716,20 @@ const getGia = (ct) => {
 }
 
 .service-icon-wrapper.completed-icon {
-  background: linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(46, 204, 113, 0.1) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(39, 174, 96, 0.1) 0%,
+    rgba(46, 204, 113, 0.1) 100%
+  );
   border: 2px solid rgba(39, 174, 96, 0.2);
 }
 
 .service-icon-wrapper.pending-icon {
-  background: linear-gradient(135deg, rgba(243, 156, 18, 0.1) 0%, rgba(230, 126, 34, 0.1) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(243, 156, 18, 0.1) 0%,
+    rgba(230, 126, 34, 0.1) 100%
+  );
   border: 2px solid rgba(243, 156, 18, 0.2);
 }
 
@@ -757,7 +800,8 @@ const getGia = (ct) => {
   gap: 0.75rem;
 }
 
-.review-btn, .delete-btn {
+.review-btn,
+.delete-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -825,7 +869,7 @@ const getGia = (ct) => {
     grid-template-columns: 1fr;
     gap: 2rem;
   }
-  
+
   .column-header {
     position: static;
   }
@@ -866,11 +910,12 @@ const getGia = (ct) => {
     flex-direction: column;
   }
 
-  .review-btn, .delete-btn {
+  .review-btn,
+  .delete-btn {
     width: 100%;
     justify-content: center;
   }
-  
+
   .column-title {
     font-size: 1.2rem;
   }
@@ -893,7 +938,7 @@ const getGia = (ct) => {
   .service-name {
     font-size: 1.1rem;
   }
-  
+
   .header-content {
     flex-direction: column;
     text-align: center;
