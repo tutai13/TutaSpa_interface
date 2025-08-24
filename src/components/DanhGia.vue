@@ -234,6 +234,7 @@
 import { ref, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
 import axiosClient from "../utils/axiosClient";
+import Swal from "sweetalert2";
 
 const route = useRoute();
 
@@ -317,7 +318,16 @@ async function submitDanhGia() {
         ...danhGia.value,
         userId,
       });
-      alert("✅ Đã cập nhật đánh giá.");
+      //Thông báo thành công
+      await Swal.fire({
+  icon: "success",
+  title: "Cập nhật thành công!",
+  showConfirmButton: false,
+  timer: 1500
+});
+
+
+
       editingId.value = null;
     } else {
       // Create new
@@ -325,7 +335,12 @@ async function submitDanhGia() {
         ...danhGia.value,
         userId,
       });
-      alert("✅ Đã gửi đánh giá.");
+      await Swal.fire({
+      icon: "success",
+      title: "Thành công",
+      text: "Đánh giá thành công!",
+      confirmButtonText: "OK",
+    });
     }
 
     const currentDichVuID = danhGia.value.maDichVu;
@@ -338,7 +353,14 @@ async function submitDanhGia() {
     await loadDanhGia(currentDichVuID);
   } catch (err) {
     console.error(err);
-    alert("❌ Gửi đánh giá thất bại.");
+    await Swal.fire({
+  position: "center",
+  icon: "error",
+  title: "Gửi thất bại!",
+  showConfirmButton: false,
+  timer: 2000
+});
+
   } finally {
     isSubmitting.value = false;
   }
