@@ -17,82 +17,14 @@
 
     <!-- Two Column Layout -->
     <div v-else class="history-layout">
-      <!-- Left Column - Đã thanh toán -->
+      <!-- Left Column - Lịch đã đặt (chưa thanh toán) -->
       <div class="history-column left-column">
-        <div class="column-header completed">
-          <div class="header-content">
-            <div class="header-icon">✨</div>
-            <div>
-              <h2 class="column-title">Lịch Đã Hoàn Thành</h2>
-              <p class="column-subtitle">{{ lichSuDaThanhToan.length }} lịch hẹn</p>
-            </div>
-          </div>
-        </div>
-        
-        <div class="history-cards">
-          <div
-            v-for="datLich in lichSuDaThanhToan"
-            :key="datLich.datLichID"
-            class="history-card completed-card"
-          >
-            <!-- Card Header -->
-            <div class="card-header completed-header">
-              <div class="date-info">
-                <div class="date-icon">📅</div>
-                <div>
-                  <div class="date-text">{{ formatDate(datLich.thoiGian) }}</div>
-                  <div class="payment-status completed">✅ Đã thanh toán</div>
-                </div>
-              </div>
-              <div class="status-badge completed-badge">{{ datLich.trangThai }}</div>
-            </div>
-
-            <!-- Services List -->
-            <div class="services-list">
-              <div
-                v-for="ct in datLich.chiTietDatLichs"
-                :key="ct.chiTietDatLichID"
-                class="service-item"
-              >
-                <div class="service-main">
-                  <div class="service-icon completed-icon">🌸</div>
-                  <div class="service-details">
-                    <h4 class="service-name">{{ ct.dichVu.tenDichVu }}</h4>
-                    <div class="service-info">
-                      <span class="quantity">Số lượng: {{ ct.soLuongDV }}</span>
-                      <span class="unit-price">Giá: {{ formatCurrency(ct.dichVu.gia) }}</span>
-                    </div>
-                  </div>
-                  <div class="service-total completed-total">
-                    {{ formatCurrency(ct.dichVu.gia * ct.soLuongDV) }}
-                  </div>
-                </div>
-
-                <!-- Action Button -->
-                <div class="service-actions">
-                  <router-link
-                    v-if="ct.dichVu"
-                    :to="`/DanhGia/${ct.dichVu.dichVuID}`"
-                    class="review-btn"
-                  >
-                    <i class="fa-regular fa-star"></i>
-                    Đánh giá dịch vụ
-                  </router-link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right Column - Chưa thanh toán -->
-      <div class="history-column right-column">
         <div class="column-header pending">
           <div class="header-content">
-            <div class="header-icon">⏳</div>
+            <div class="header-icon">📅</div>
             <div>
               <h2 class="column-title">Lịch Đã Đặt</h2>
-              <p class="column-subtitle">{{ lichSuChuaThanhToan.length }} lịch hẹn</p>
+              <p class="column-subtitle">{{ lichSuChuaThanhToan.length }} lịch hẹn đang chờ</p>
             </div>
           </div>
         </div>
@@ -123,12 +55,20 @@
                 class="service-item"
               >
                 <div class="service-main">
-                  <div class="service-icon pending-icon">🌿</div>
+                  <div class="service-icon-wrapper pending-icon">
+                    <i :class="getServiceIcon(ct.dichVu?.tenDichVu)" class="service-icon"></i>
+                  </div>
                   <div class="service-details">
                     <h4 class="service-name">{{ ct.dichVu.tenDichVu }}</h4>
                     <div class="service-info">
-                      <span class="quantity">Số lượng: {{ ct.soLuongDV }}</span>
-                      <span class="unit-price">Giá: {{ formatCurrency(ct.dichVu.gia) }}</span>
+                      <span class="quantity">
+                        <i class="fas fa-list-ol"></i>
+                        Số lượng: {{ ct.soLuongDV }}
+                      </span>
+                      <span class="unit-price">
+                        <i class="fas fa-tag"></i>
+                        Giá: {{ formatCurrency(ct.dichVu.gia) }}
+                      </span>
                     </div>
                   </div>
                   <div class="service-total pending-total">
@@ -136,10 +76,103 @@
                   </div>
                 </div>
 
-                <!-- New Order Badge -->
-                <div class="new-order-badge">
-                  <span class="new-badge">MỚI</span>
+                <!-- Action Button -->
+                <div class="service-actions">
+                  <button
+                    class="btn delete-btn"
+                    @click="xoaLich(datLich.datLichID)"
+                    title="Hủy lịch hẹn"
+                  >
+                    <i class="fas fa-times-circle"></i>
+                    <span>Hủy lịch</span>
+                  </button>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column - Lịch đã hoàn thành -->
+      <div class="history-column right-column">
+        <div class="column-header completed">
+          <div class="header-content">
+            <div class="header-icon">✨</div>
+            <div>
+              <h2 class="column-title">Lịch Đã Hoàn Thành</h2>
+              <p class="column-subtitle">{{ lichSuDaThanhToan.length }} lịch hẹn đã hoàn thành</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="history-cards">
+          <div
+            v-for="datLich in lichSuDaThanhToan"
+            :key="datLich.datLichID"
+            class="history-card completed-card"
+          >
+            <!-- Card Header -->
+            <div class="card-header completed-header">
+              <div class="date-info">
+                <div class="date-icon">📅</div>
+                <div>
+                  <div class="date-text">{{ formatDate(datLich.thoiGian) }}</div>
+                  <div class="payment-status completed">✅ Đã thanh toán</div>
+                </div>
+              </div>
+              <div class="status-badge completed-badge">{{ datLich.trangThai }}</div>
+            </div>
+
+            <!-- Services List -->
+            <div class="services-list">
+              <div
+                v-for="ct in datLich.chiTietDatLichs"
+                :key="ct.chiTietDatLichID"
+                class="service-item"
+              >
+                <div class="service-main">
+                  <div class="service-icon-wrapper completed-icon">
+                    <i :class="getServiceIcon(ct.dichVu?.tenDichVu)" class="service-icon"></i>
+                  </div>
+                  <div class="service-details">
+                    <h4 class="service-name">{{ ct.dichVu.tenDichVu }}</h4>
+                    <div class="service-info">
+                      <span class="quantity">
+                        <i class="fas fa-list-ol"></i>
+                        Số lượng: {{ ct.soLuongDV }}
+                      </span>
+                      <span class="unit-price">
+                        <i class="fas fa-tag"></i>
+                        Giá: {{ formatCurrency(ct.dichVu.gia) }}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="service-total completed-total">
+                    {{ formatCurrency(ct.dichVu.gia * ct.soLuongDV) }}
+                  </div>
+                </div>
+
+                <!-- Action Button -->
+                <div class="service-actions">
+  <router-link
+    v-if="ct.dichVu && !checkDaDanhGia(ct)"
+    :to="`/DanhGia/${ct.dichVu.dichVuID}`"
+    class="review-btn primary-btn"
+  >
+    <i class="fas fa-star"></i>
+    <span>Đánh giá dịch vụ</span>
+  </router-link>
+  
+  <router-link
+    v-else-if="ct.dichVu && checkDaDanhGia(ct)"
+    :to="`/DanhGia/${ct.dichVu.dichVuID}`"
+    class="review-btn secondary-btn"
+  >
+    <i class="fas fa-eye"></i>
+    <span>Xem đánh giá của bạn</span>
+  </router-link>
+</div>
+
               </div>
             </div>
           </div>
@@ -152,61 +185,185 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import apiClient from "../utils/axiosClient";
+import Swal from "sweetalert2";
 
 const lichSu = ref([]);
+const isLoading = ref(false);
+const userInfo = JSON.parse(localStorage.getItem("user_info") || '{}');
+const userId = userInfo.id;
 
-onMounted(() => {
-  loadLichSu();
+// Map lưu trạng thái đánh giá của từng dịch vụ
+const danhGiaStatus = ref({}); // { [dichVuID]: true/false }
+
+onMounted(async () => {
+  await loadLichSu();
+  await loadDanhGiaStatus();
 });
-
+const formatCurrency = (value) => new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND", }).format(value);
+const formatDate = (str) => { const d = new Date(str); return d.toLocaleDateString("vi-VN", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", }); };
+// Load lịch sử đặt lịch
 const loadLichSu = async () => {
   try {
     const res = await apiClient.get("/DatLich/by-user");
     lichSu.value = res;
   } catch (err) {
-    console.error("❌ Lỗi tải lịch sử dịch vụ:", err);
+    console.error("⚠ Lỗi tải lịch sử dịch vụ:", err);
   }
 };
 
-// Computed properties for sorting and filtering
+// Load trạng thái đánh giá từng dịch vụ
+const loadDanhGiaStatus = async () => {
+  try {
+    // Duyệt tất cả dịch vụ trong lichSu đã thanh toán
+    for (const datLich of lichSu.value.filter(l => l.daThanhToan)) {
+      for (const ct of datLich.chiTietDatLichs) {
+        if (ct.dichVu) {
+          const res = await apiClient.get(`/danhgia/dichvu/${ct.dichVu.dichVuID}/${userId}`);
+          danhGiaStatus.value[ct.dichVu.dichVuID] = res.hasReview;
+        }
+      }
+    }
+  } catch (err) {
+    console.error("Lỗi tải trạng thái đánh giá:", err);
+  }
+};
+
+// Kiểm tra đã đánh giá chưa
+const checkDaDanhGia = (ct) => {
+  return ct.dichVu ? !!danhGiaStatus.value[ct.dichVu.dichVuID] : false;
+};
+
+// Hàm lấy user ID
+const getUserId = () => userId;
+
+// Hàm lấy icon cho từng loại dịch vụ
+const getServiceIcon = (tenDichVu) => {
+  if (!tenDichVu) return 'fas fa-spa';
+  const serviceName = tenDichVu.toLowerCase();
+  if (serviceName.includes('massage') || serviceName.includes('mát xa')) return 'fas fa-hand-sparkles';
+  if (serviceName.includes('facial') || serviceName.includes('chăm sóc da mặt')) return 'fas fa-user-check';
+  if (serviceName.includes('nail') || serviceName.includes('móng')) return 'fas fa-hand-paper';
+  if (serviceName.includes('hair') || serviceName.includes('tóc')) return 'fas fa-cut';
+  if (serviceName.includes('body') || serviceName.includes('toàn thân')) return 'fas fa-user';
+  if (serviceName.includes('foot') || serviceName.includes('chân')) return 'fas fa-shoe-prints';
+  if (serviceName.includes('therapy') || serviceName.includes('trị liệu')) return 'fas fa-heart';
+  if (serviceName.includes('relax') || serviceName.includes('thư giãn')) return 'fas fa-leaf';
+  return 'fas fa-spa';
+};
+
+// Computed phân chia lịch
 const lichSuDaThanhToan = computed(() => {
   return lichSu.value
-    .filter(item => item.daThanhToan)
+    .filter(l => l.daThanhToan)
     .sort((a, b) => {
-      // Sắp xếp theo thời gian mới nhất và ưu tiên những lịch chưa đánh giá
-      const timeA = new Date(a.thoiGian).getTime();
-      const timeB = new Date(b.thoiGian).getTime();
-      return timeB - timeA; // Mới nhất lên trước
+      // Kiểm tra nếu a có ít nhất 1 dịch vụ chưa đánh giá
+      const aHasNotReview = a.chiTietDatLichs.some(ct => !checkDaDanhGia(ct));
+      const bHasNotReview = b.chiTietDatLichs.some(ct => !checkDaDanhGia(ct));
+
+      if (aHasNotReview && !bHasNotReview) return -1; // a lên trước
+      if (!aHasNotReview && bHasNotReview) return 1;  // b lên trước
+
+      // Nếu bằng nhau, sắp xếp theo thời gian (mới nhất lên trước)
+      return new Date(b.thoiGian) - new Date(a.thoiGian);
     });
 });
 
 const lichSuChuaThanhToan = computed(() => {
   return lichSu.value
-    .filter(item => !item.daThanhToan)
-    .sort((a, b) => {
-      // Sắp xếp theo thời gian mới nhất lên trước
-      const timeA = new Date(a.thoiGian).getTime();
-      const timeB = new Date(b.thoiGian).getTime();
-      return timeB - timeA; // Mới nhất lên trước
-    });
+    .filter(l => !l.daThanhToan)
+    .sort((a, b) => new Date(b.thoiGian) - new Date(a.thoiGian));
 });
 
-const formatDate = (str) => {
-  const d = new Date(str);
-  return d.toLocaleDateString("vi-VN", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+
+
+
+
+
+const danhGiaList = ref([]); // Danh sách các đánh giá của user
+
+onMounted(() => {
+  loadLichSu();
+  loadDanhGiaByUser();
+});
+
+// Load danh sách đánh giá của user
+const loadDanhGiaByUser = async () => {
+  try {
+    const res = await apiClient.get(`/DanhGia/by-user${userId}`);
+    danhGiaList.value = res;
+  } catch (err) {
+    console.error("Lỗi tải danh sách đánh giá:", err);
+  }
 };
 
-const formatCurrency = (value) =>
-  new Intl.NumberFormat("vi-VN", {
-    style: "currency",
-    currency: "VND",
-  }).format(value);
+
+
+
+
+
+
+
+
+
+const xoaLich = async (id) => {
+  const result = await Swal.fire({
+    title: "Xác nhận hủy lịch",
+    text: "Bạn có chắc chắn muốn hủy lịch hẹn này không?",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonColor: "#e74c3c",
+    cancelButtonColor: "#95a5a6",
+    confirmButtonText: "Hủy lịch",
+    cancelButtonText: "Không",
+    background: "#fff",
+    customClass: {
+      title: 'swal-title',
+      content: 'swal-content'
+    }
+  });
+
+  if (result.isConfirmed) {
+    try {
+      isLoading.value = true;
+      Swal.fire({
+        title: "Đang xử lý...",
+        text: "Vui lòng đợi trong giây lát",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+      
+      await apiClient.delete(`/DatLich/${id}`);
+      await loadLichSu();
+      
+      await Swal.fire({
+        icon: "success",
+        title: "Thành công",
+        text: "Bạn đã hủy lịch hẹn thành công!",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#27ae60",
+        background: "#f8fff8",
+      });
+
+    } catch (err) {
+      console.error("Lỗi khi xóa lịch:", err);
+      await Swal.fire({
+        icon: "error",
+        title: "Thất bại",
+        text: "Đã xảy ra lỗi khi hủy lịch hẹn. Vui lòng thử lại!",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#e74c3c"
+      });
+    } finally {
+      Swal.close();
+      isLoading.value = false;
+    }
+  }
+};
+
+
+
 
 // Safe helpers to handle items that may be service OR product (or missing)
 const getTen = (ct) => {
@@ -238,7 +395,9 @@ const getGia = (ct) => {
       : Number(ct?.thanhTien)) || 0
   );
 };
+
 </script>
+
 
 <style scoped>
 .spa-history-container {
@@ -329,13 +488,13 @@ const getGia = (ct) => {
 }
 
 .column-header.completed {
-  border-top-color: #6ba86b;
-  background: linear-gradient(135deg, rgba(107, 168, 107, 0.05) 0%, rgba(107, 168, 107, 0.02) 100%);
+  border-top-color: #27ae60;
+  background: linear-gradient(135deg, rgba(39, 174, 96, 0.08) 0%, rgba(39, 174, 96, 0.03) 100%);
 }
 
 .column-header.pending {
-  border-top-color: #e67e22;
-  background: linear-gradient(135deg, rgba(230, 126, 34, 0.05) 0%, rgba(230, 126, 34, 0.02) 100%);
+  border-top-color: #f39c12;
+  background: linear-gradient(135deg, rgba(243, 156, 18, 0.08) 0%, rgba(243, 156, 18, 0.03) 100%);
 }
 
 .header-content {
@@ -379,46 +538,59 @@ const getGia = (ct) => {
 }
 
 .history-card:hover {
-  transform: translateY(-5px) scale(1.02);
-  box-shadow: 0 15px 35px rgba(45, 90, 45, 0.15);
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(45, 90, 45, 0.12);
 }
 
 /* Completed Cards */
 .completed-card {
-  border-left: 4px solid #6ba86b;
+  border-left: 4px solid #27ae60;
 }
 
 .completed-card::before {
-  content: '';
+  content: '✓';
   position: absolute;
-  top: 0;
-  right: 0;
-  width: 50px;
-  height: 50px;
-  background: linear-gradient(135deg, #6ba86b, #4a8c4a);
-  clip-path: polygon(100% 0%, 0% 0%, 100% 100%);
+  top: 15px;
+  right: 15px;
+  width: 30px;
+  height: 30px;
+  background: linear-gradient(135deg, #27ae60, #2ecc71);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  z-index: 1;
 }
 
 /* Pending Cards */
 .pending-card {
-  border-left: 4px solid #e67e22;
-  animation: pulse-new 2s infinite;
+  border-left: 4px solid #f39c12;
+  animation: subtle-pulse 3s infinite;
 }
 
 .pending-card::before {
-  content: '';
+  content: '⏳';
   position: absolute;
-  top: 0;
-  right: 0;
-  width: 50px;
-  height: 50px;
-  background: linear-gradient(135deg, #e67e22, #d35400);
-  clip-path: polygon(100% 0%, 0% 0%, 100% 100%);
+  top: 15px;
+  right: 15px;
+  width: 30px;
+  height: 30px;
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 14px;
+  z-index: 1;
 }
 
-@keyframes pulse-new {
+@keyframes subtle-pulse {
   0%, 100% { box-shadow: 0 8px 25px rgba(45, 90, 45, 0.08); }
-  50% { box-shadow: 0 8px 25px rgba(230, 126, 34, 0.2); }
+  50% { box-shadow: 0 8px 25px rgba(243, 156, 18, 0.15); }
 }
 
 /* Card Headers */
@@ -433,11 +605,11 @@ const getGia = (ct) => {
 }
 
 .completed-header {
-  background: linear-gradient(135deg, #6ba86b 0%, #4a8c4a 100%);
+  background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
 }
 
 .pending-header {
-  background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+  background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
 }
 
 .date-info {
@@ -447,7 +619,7 @@ const getGia = (ct) => {
 }
 
 .date-icon {
-  font-size: 2rem;
+  font-size: 1.8rem;
   opacity: 0.9;
 }
 
@@ -462,14 +634,6 @@ const getGia = (ct) => {
   padding: 0.25rem 0.75rem;
   border-radius: 12px;
   font-weight: 500;
-}
-
-.payment-status.completed {
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
-}
-
-.payment-status.pending {
   background: rgba(255, 255, 255, 0.2);
   color: #fff;
 }
@@ -479,15 +643,8 @@ const getGia = (ct) => {
   border-radius: 20px;
   font-size: 0.85rem;
   font-weight: 500;
+  background: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(10px);
-}
-
-.completed-badge {
-  background: rgba(255, 255, 255, 0.25);
-}
-
-.pending-badge {
-  background: rgba(255, 255, 255, 0.25);
 }
 
 /* Services List */
@@ -512,17 +669,37 @@ const getGia = (ct) => {
   margin-bottom: 1rem;
 }
 
-.service-icon {
-  font-size: 2.2rem;
+/* Service Icons */
+.service-icon-wrapper {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 }
 
-.completed-icon {
-  filter: hue-rotate(0deg);
+.service-icon-wrapper.completed-icon {
+  background: linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(46, 204, 113, 0.1) 100%);
+  border: 2px solid rgba(39, 174, 96, 0.2);
 }
 
-.pending-icon {
-  filter: hue-rotate(30deg);
+.service-icon-wrapper.pending-icon {
+  background: linear-gradient(135deg, rgba(243, 156, 18, 0.1) 0%, rgba(230, 126, 34, 0.1) 100%);
+  border: 2px solid rgba(243, 156, 18, 0.2);
+}
+
+.service-icon {
+  font-size: 1.5rem;
+}
+
+.completed-icon .service-icon {
+  color: #27ae60;
+}
+
+.pending-icon .service-icon {
+  color: #f39c12;
 }
 
 .service-details {
@@ -547,6 +724,15 @@ const getGia = (ct) => {
 .unit-price {
   color: #5a7a5a;
   font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.quantity i,
+.unit-price i {
+  font-size: 0.8rem;
+  opacity: 0.7;
 }
 
 .service-total {
@@ -557,66 +743,80 @@ const getGia = (ct) => {
 }
 
 .completed-total {
-  color: #6ba86b;
+  color: #27ae60;
 }
 
 .pending-total {
-  color: #e67e22;
-}
-
-/* New Order Badge */
-.new-order-badge {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 1rem;
-}
-
-.new-badge {
-  background: linear-gradient(135deg, #e67e22, #d35400);
-  color: white;
-  padding: 0.4rem 1rem;
-  border-radius: 15px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  animation: glow-new 1.5s ease-in-out infinite alternate;
-}
-
-@keyframes glow-new {
-  from { box-shadow: 0 0 5px rgba(230, 126, 34, 0.5); }
-  to { box-shadow: 0 0 15px rgba(230, 126, 34, 0.8); }
+  color: #f39c12;
 }
 
 /* Service Actions */
 .service-actions {
   display: flex;
   justify-content: flex-end;
+  gap: 0.75rem;
 }
 
-.review-btn {
+.review-btn, .delete-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: linear-gradient(135deg, #6ba86b 0%, #4a8c4a 100%);
-  color: white;
-  padding: 0.75rem 1.5rem;
+  padding: 0.75rem 1.25rem;
   border-radius: 25px;
   text-decoration: none;
   font-weight: 500;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 15px rgba(107, 168, 107, 0.3);
+  border: none;
+  cursor: pointer;
 }
 
-.review-btn:hover {
-  background: linear-gradient(135deg, #4a8c4a 0%, #3a7a3a 100%);
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 8px 25px rgba(107, 168, 107, 0.4);
+.primary-btn {
+  background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+}
+
+.primary-btn:hover {
+  background: linear-gradient(135deg, #219a52 0%, #27ae60 100%);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 25px rgba(39, 174, 96, 0.4);
   color: white;
 }
 
-.review-btn i {
-  font-size: 1rem;
+.secondary-btn {
+  background: linear-gradient(135deg, #3498db 0%, #5dade2 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+}
+
+.secondary-btn:hover {
+  background: linear-gradient(135deg, #2980b9 0%, #3498db 100%);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
+  color: white;
+}
+
+.delete-btn {
+  background: linear-gradient(135deg, #e74c3c 0%, #ec7063 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+}
+
+.delete-btn:hover {
+  background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+}
+
+/* SweetAlert2 Custom Styles */
+.swal-title {
+  color: #2d5a2d !important;
+  font-weight: 600 !important;
+}
+
+.swal-content {
+  color: #5a7a5a !important;
 }
 
 /* Responsive Design */
@@ -663,9 +863,10 @@ const getGia = (ct) => {
 
   .service-actions {
     justify-content: stretch;
+    flex-direction: column;
   }
 
-  .review-btn {
+  .review-btn, .delete-btn {
     width: 100%;
     justify-content: center;
   }
@@ -680,8 +881,13 @@ const getGia = (ct) => {
     font-size: 1.8rem;
   }
 
+  .service-icon-wrapper {
+    width: 40px;
+    height: 40px;
+  }
+
   .service-icon {
-    font-size: 1.8rem;
+    font-size: 1.2rem;
   }
 
   .service-name {
