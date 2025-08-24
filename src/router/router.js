@@ -51,7 +51,6 @@ const routes = [
     component: ForgetPassword,
   },
 
-
   // Route động cho chi tiết dịch vụ
   {
     path: "/dichvu/:id",
@@ -72,7 +71,7 @@ const router = createRouter({
     if (to.hash) {
       return {
         el: to.hash,
-        behavior: "smooth",
+        behavior: `smooth`,
       };
     }
     return { top: 0 };
