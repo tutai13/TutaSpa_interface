@@ -15,60 +15,132 @@
       <p>Hãy trải nghiệm những dịch vụ tuyệt vời của chúng tôi</p>
     </div>
 
-    <!-- History Cards -->
-    <div class="history-grid">
-      <div
-        v-for="datLich in lichSu"
-        :key="datLich.datLichID"
-        class="history-card"
-      >
-        <!-- Card Header -->
-        <div class="card-header">
-          <div class="date-info">
-            <div class="date-icon">📅</div>
+    <!-- Two Column Layout -->
+    <div v-else class="history-layout">
+      <!-- Left Column - Đã thanh toán -->
+      <div class="history-column left-column">
+        <div class="column-header completed">
+          <div class="header-content">
+            <div class="header-icon">✨</div>
             <div>
-              <div class="date-text">{{ formatDate(datLich.thoiGian) }}</div>
-              <div class="payment-method">
-                {{ datLich.daThanhToan ? "Đã thanh toán" : "Chưa thanh toán" }}
+              <h2 class="column-title">Lịch Đã Hoàn Thành</h2>
+              <p class="column-subtitle">{{ lichSuDaThanhToan.length }} lịch hẹn</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="history-cards">
+          <div
+            v-for="datLich in lichSuDaThanhToan"
+            :key="datLich.datLichID"
+            class="history-card completed-card"
+          >
+            <!-- Card Header -->
+            <div class="card-header completed-header">
+              <div class="date-info">
+                <div class="date-icon">📅</div>
+                <div>
+                  <div class="date-text">{{ formatDate(datLich.thoiGian) }}</div>
+                  <div class="payment-status completed">✅ Đã thanh toán</div>
+                </div>
+              </div>
+              <div class="status-badge completed-badge">{{ datLich.trangThai }}</div>
+            </div>
+
+            <!-- Services List -->
+            <div class="services-list">
+              <div
+                v-for="ct in datLich.chiTietDatLichs"
+                :key="ct.chiTietDatLichID"
+                class="service-item"
+              >
+                <div class="service-main">
+                  <div class="service-icon completed-icon">🌸</div>
+                  <div class="service-details">
+                    <h4 class="service-name">{{ ct.dichVu.tenDichVu }}</h4>
+                    <div class="service-info">
+                      <span class="quantity">Số lượng: {{ ct.soLuongDV }}</span>
+                      <span class="unit-price">Giá: {{ formatCurrency(ct.dichVu.gia) }}</span>
+                    </div>
+                  </div>
+                  <div class="service-total completed-total">
+                    {{ formatCurrency(ct.dichVu.gia * ct.soLuongDV) }}
+                  </div>
+                </div>
+
+                <!-- Action Button -->
+                <div class="service-actions">
+                  <router-link
+                    v-if="ct.dichVu"
+                    :to="`/DanhGia/${ct.dichVu.dichVuID}`"
+                    class="review-btn"
+                  >
+                    <i class="fa-regular fa-star"></i>
+                    Đánh giá dịch vụ
+                  </router-link>
+                </div>
               </div>
             </div>
           </div>
-          <div class="status-badge">{{ datLich.trangThai }}</div>
         </div>
+      </div>
 
-        <!-- Services List -->
-        <div class="services-list">
+      <!-- Right Column - Chưa thanh toán -->
+      <div class="history-column right-column">
+        <div class="column-header pending">
+          <div class="header-content">
+            <div class="header-icon">⏳</div>
+            <div>
+              <h2 class="column-title">Lịch Đã Đặt</h2>
+              <p class="column-subtitle">{{ lichSuChuaThanhToan.length }} lịch hẹn</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="history-cards">
           <div
-            v-for="ct in datLich.chiTietDatLichs"
-            :key="ct.chiTietDatLichID"
-            class="service-item"
+            v-for="datLich in lichSuChuaThanhToan"
+            :key="datLich.datLichID"
+            class="history-card pending-card"
           >
-            <div class="service-main">
-              <div class="service-icon">🌸</div>
-              <div class="service-details">
-                <h4 class="service-name">{{ ct.dichVu.tenDichVu }}</h4>
-                <div class="service-info">
-                  <span class="quantity">Số lượng: {{ ct.soLuongDV }}</span>
-                  <span class="unit-price"
-                    >Giá: {{ formatCurrency(ct.dichVu.gia) }}</span
-                  >
+            <!-- Card Header -->
+            <div class="card-header pending-header">
+              <div class="date-info">
+                <div class="date-icon">📅</div>
+                <div>
+                  <div class="date-text">{{ formatDate(datLich.thoiGian) }}</div>
+                  <div class="payment-status pending">⏳ Chưa thanh toán</div>
                 </div>
               </div>
-              <div class="service-total">
-                {{ formatCurrency(ct.dichVu.gia * ct.soLuongDV) }}
-              </div>
+              <div class="status-badge pending-badge">{{ datLich.trangThai }}</div>
             </div>
 
-            <!-- Action Button -->
-            <div class="service-actions">
-              <router-link
-                v-if="datLich.daThanhToan && ct.dichVu"
-                :to="`/DanhGia/${ct.dichVu.dichVuID}`"
-                class="review-btn"
+            <!-- Services List -->
+            <div class="services-list">
+              <div
+                v-for="ct in datLich.chiTietDatLichs"
+                :key="ct.chiTietDatLichID"
+                class="service-item"
               >
-                <i class="fa-regular fa-star"></i>
-                Đánh giá dịch vụ
-              </router-link>
+                <div class="service-main">
+                  <div class="service-icon pending-icon">🌿</div>
+                  <div class="service-details">
+                    <h4 class="service-name">{{ ct.dichVu.tenDichVu }}</h4>
+                    <div class="service-info">
+                      <span class="quantity">Số lượng: {{ ct.soLuongDV }}</span>
+                      <span class="unit-price">Giá: {{ formatCurrency(ct.dichVu.gia) }}</span>
+                    </div>
+                  </div>
+                  <div class="service-total pending-total">
+                    {{ formatCurrency(ct.dichVu.gia * ct.soLuongDV) }}
+                  </div>
+                </div>
+
+                <!-- New Order Badge -->
+                <div class="new-order-badge">
+                  <span class="new-badge">MỚI</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -78,7 +150,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import apiClient from "../utils/axiosClient";
 
 const lichSu = ref([]);
@@ -96,6 +168,29 @@ const loadLichSu = async () => {
   }
 };
 
+// Computed properties for sorting and filtering
+const lichSuDaThanhToan = computed(() => {
+  return lichSu.value
+    .filter(item => item.daThanhToan)
+    .sort((a, b) => {
+      // Sắp xếp theo thời gian mới nhất và ưu tiên những lịch chưa đánh giá
+      const timeA = new Date(a.thoiGian).getTime();
+      const timeB = new Date(b.thoiGian).getTime();
+      return timeB - timeA; // Mới nhất lên trước
+    });
+});
+
+const lichSuChuaThanhToan = computed(() => {
+  return lichSu.value
+    .filter(item => !item.daThanhToan)
+    .sort((a, b) => {
+      // Sắp xếp theo thời gian mới nhất lên trước
+      const timeA = new Date(a.thoiGian).getTime();
+      const timeB = new Date(b.thoiGian).getTime();
+      return timeB - timeA; // Mới nhất lên trước
+    });
+});
+
 const formatDate = (str) => {
   const d = new Date(str);
   return d.toLocaleDateString("vi-VN", {
@@ -112,12 +207,12 @@ const formatCurrency = (value) =>
     style: "currency",
     currency: "VND",
   }).format(value);
-// --- Safe helpers to handle items that may be service OR product (or missing) ---
+
+// Safe helpers to handle items that may be service OR product (or missing)
 const getTen = (ct) => {
   if (ct && ct.dichVu) return ct.dichVu.tenDichVu;
   if (ct && ct.sanPham)
     return ct.sanPham.tenSanPham || `Sản phẩm #${ct.sanPhamID ?? ""}`;
-  // Fallback if both null
   const label = ct?.dichVuID
     ? `Dịch vụ #${ct.dichVuID}`
     : ct?.sanPhamID
@@ -129,7 +224,6 @@ const getTen = (ct) => {
 const getGia = (ct) => {
   if (ct && ct.dichVu) return ct.dichVu.gia;
   if (ct && ct.sanPham) {
-    // Prefer explicit price on product if available, otherwise derive from line total
     return (
       ct.sanPham.gia ??
       ((ct?.soLuongSP
@@ -138,14 +232,12 @@ const getGia = (ct) => {
         0)
     );
   }
-  // If neither, try to derive unit price from line
   return (
     (ct?.soLuongSP
       ? Number(ct?.thanhTien) / Number(ct?.soLuongSP)
       : Number(ct?.thanhTien)) || 0
   );
 };
-// ------------------------------------------------------------------------------
 </script>
 
 <style scoped>
@@ -160,21 +252,22 @@ const getGia = (ct) => {
 .header-section {
   text-align: center;
   margin-bottom: 3rem;
-  max-width: 800px;
+  max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
 }
 
 .page-title {
-  font-size: 2.5rem;
+  font-size: 2.8rem;
   font-weight: 700;
   color: #2d5a2d;
   margin-bottom: 1rem;
   letter-spacing: -0.02em;
+  text-shadow: 0 2px 4px rgba(45, 90, 45, 0.1);
 }
 
 .page-subtitle {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   color: #5a7a5a;
   margin-bottom: 0;
   line-height: 1.6;
@@ -207,35 +300,144 @@ const getGia = (ct) => {
   font-size: 1rem;
 }
 
-/* History Grid */
-.history-grid {
-  max-width: 1200px;
+/* Two Column Layout */
+.history-layout {
+  max-width: 1400px;
   margin: 0 auto;
   display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 2rem;
+  align-items: start;
+}
+
+.history-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Column Headers */
+.column-header {
+  background: white;
+  border-radius: 15px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 25px rgba(45, 90, 45, 0.1);
+  border-top: 4px solid;
+  position: sticky;
+  top: 1rem;
+  z-index: 10;
+}
+
+.column-header.completed {
+  border-top-color: #6ba86b;
+  background: linear-gradient(135deg, rgba(107, 168, 107, 0.05) 0%, rgba(107, 168, 107, 0.02) 100%);
+}
+
+.column-header.pending {
+  border-top-color: #e67e22;
+  background: linear-gradient(135deg, rgba(230, 126, 34, 0.05) 0%, rgba(230, 126, 34, 0.02) 100%);
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.header-icon {
+  font-size: 2.5rem;
+}
+
+.column-title {
+  color: #2d5a2d;
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem 0;
+}
+
+.column-subtitle {
+  color: #5a7a5a;
+  font-size: 0.95rem;
+  margin: 0;
+  opacity: 0.8;
+}
+
+/* History Cards */
+.history-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .history-card {
   background: white;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(45, 90, 45, 0.1);
+  border-radius: 18px;
+  box-shadow: 0 8px 25px rgba(45, 90, 45, 0.08);
   overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 }
 
 .history-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(45, 90, 45, 0.15);
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 15px 35px rgba(45, 90, 45, 0.15);
 }
 
-/* Card Header */
+/* Completed Cards */
+.completed-card {
+  border-left: 4px solid #6ba86b;
+}
+
+.completed-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #6ba86b, #4a8c4a);
+  clip-path: polygon(100% 0%, 0% 0%, 100% 100%);
+}
+
+/* Pending Cards */
+.pending-card {
+  border-left: 4px solid #e67e22;
+  animation: pulse-new 2s infinite;
+}
+
+.pending-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #e67e22, #d35400);
+  clip-path: polygon(100% 0%, 0% 0%, 100% 100%);
+}
+
+@keyframes pulse-new {
+  0%, 100% { box-shadow: 0 8px 25px rgba(45, 90, 45, 0.08); }
+  50% { box-shadow: 0 8px 25px rgba(230, 126, 34, 0.2); }
+}
+
+/* Card Headers */
 .card-header {
-  background: linear-gradient(135deg, #6ba86b 0%, #4a8c4a 100%);
   color: white;
   padding: 1.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+.completed-header {
+  background: linear-gradient(135deg, #6ba86b 0%, #4a8c4a 100%);
+}
+
+.pending-header {
+  background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
 }
 
 .date-info {
@@ -255,18 +457,37 @@ const getGia = (ct) => {
   margin-bottom: 0.25rem;
 }
 
-.payment-method {
-  font-size: 0.9rem;
-  opacity: 0.9;
+.payment-status {
+  font-size: 0.85rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.payment-status.completed {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.payment-status.pending {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
 }
 
 .status-badge {
-  background: rgba(255, 255, 255, 0.2);
   padding: 0.5rem 1rem;
   border-radius: 20px;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 500;
   backdrop-filter: blur(10px);
+}
+
+.completed-badge {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.pending-badge {
+  background: rgba(255, 255, 255, 0.25);
 }
 
 /* Services List */
@@ -276,7 +497,8 @@ const getGia = (ct) => {
 
 .service-item {
   padding: 1.5rem;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f5f5f5;
+  position: relative;
 }
 
 .service-item:last-child {
@@ -291,8 +513,16 @@ const getGia = (ct) => {
 }
 
 .service-icon {
-  font-size: 2rem;
+  font-size: 2.2rem;
   flex-shrink: 0;
+}
+
+.completed-icon {
+  filter: hue-rotate(0deg);
+}
+
+.pending-icon {
+  filter: hue-rotate(30deg);
 }
 
 .service-details {
@@ -320,11 +550,41 @@ const getGia = (ct) => {
 }
 
 .service-total {
-  color: #2d5a2d;
   font-size: 1.3rem;
   font-weight: 700;
   text-align: right;
   flex-shrink: 0;
+}
+
+.completed-total {
+  color: #6ba86b;
+}
+
+.pending-total {
+  color: #e67e22;
+}
+
+/* New Order Badge */
+.new-order-badge {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.new-badge {
+  background: linear-gradient(135deg, #e67e22, #d35400);
+  color: white;
+  padding: 0.4rem 1rem;
+  border-radius: 15px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  animation: glow-new 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes glow-new {
+  from { box-shadow: 0 0 5px rgba(230, 126, 34, 0.5); }
+  to { box-shadow: 0 0 15px rgba(230, 126, 34, 0.8); }
 }
 
 /* Service Actions */
@@ -344,14 +604,14 @@ const getGia = (ct) => {
   text-decoration: none;
   font-weight: 500;
   font-size: 0.95rem;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 4px 15px rgba(107, 168, 107, 0.3);
 }
 
 .review-btn:hover {
   background: linear-gradient(135deg, #4a8c4a 0%, #3a7a3a 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(107, 168, 107, 0.4);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(107, 168, 107, 0.4);
   color: white;
 }
 
@@ -360,13 +620,24 @@ const getGia = (ct) => {
 }
 
 /* Responsive Design */
+@media (max-width: 1024px) {
+  .history-layout {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .column-header {
+    position: static;
+  }
+}
+
 @media (max-width: 768px) {
   .spa-history-container {
     padding: 1rem 0.5rem;
   }
 
   .page-title {
-    font-size: 2rem;
+    font-size: 2.2rem;
   }
 
   .card-header {
@@ -398,19 +669,29 @@ const getGia = (ct) => {
     width: 100%;
     justify-content: center;
   }
+  
+  .column-title {
+    font-size: 1.2rem;
+  }
 }
 
 @media (max-width: 480px) {
   .page-title {
-    font-size: 1.7rem;
+    font-size: 1.8rem;
   }
 
   .service-icon {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
   }
 
   .service-name {
     font-size: 1.1rem;
+  }
+  
+  .header-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
   }
 }
 </style>

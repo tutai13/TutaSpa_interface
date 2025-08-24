@@ -983,7 +983,7 @@ onMounted(async () => {
     await fetchSlots();
 
     // Load testimonials
-    const res = await apiClient.get("/DanhGia/admin");
+    const res = await apiClient.get("/DanhGia/admin/highlights");
     testimonials.value = res;
   } catch (err) {
     console.error("Lỗi khi khởi tạo:", err);
