@@ -258,7 +258,7 @@
                   </div>
                 </router-link>
                 <button
-                  class="service-book-btn btn btn-sm mt-auto"
+                  class="service-book-btn btn btn-sm"
                   @click="addServiceFromCard(service)"
                 >
                   <span>Đặt lịch</span>
