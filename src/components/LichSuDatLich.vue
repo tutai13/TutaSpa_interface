@@ -334,15 +334,16 @@ const loadDanhGiaByUser = async () => {
 };
 
 const xoaLich = async (id) => {
-  const result = await Swal.fire({
+  // Bước 1: Xác nhận hủy
+  const confirmResult = await Swal.fire({
     title: "Xác nhận hủy lịch",
     text: "Bạn có chắc chắn muốn hủy lịch hẹn này không?",
     icon: "question",
     showCancelButton: true,
     confirmButtonColor: "#e74c3c",
-    cancelButtonColor: "#95a5a6",
+    cancelButtonColor: "#27ae60",
     confirmButtonText: "Hủy lịch",
-    cancelButtonText: "Không",
+    cancelButtonText: "Đổi giờ với TutaSpa",
     background: "#fff",
     customClass: {
       title: "swal-title",
@@ -350,7 +351,30 @@ const xoaLich = async (id) => {
     },
   });
 
-  if (result.isConfirmed) {
+  // Nếu KH chọn ĐỔI GIỜ → điều hướng chat box trên trang chủ
+  if (confirmResult.dismiss === Swal.DismissReason.cancel) {
+    Swal.fire({
+      title: "Đổi lịch hẹn",
+      html: `
+        <p>Bạn có thể chat trực tiếp với thu ngân TutaSpa để chọn giờ mới:</p>
+        <button id="chatBtn" class="swal2-confirm swal2-styled" style="background:#27ae60">
+          💬 Chat với TutaSpa
+        </button>
+      `,
+      showConfirmButton: false,
+      didOpen: () => {
+        document.getElementById("chatBtn").addEventListener("click", () => {
+          // 👉 Điều hướng đến trang chủ có chat box
+          window.location.href = "/"; 
+          // hoặc scroll tới chat box nếu có sẵn trên trang
+        });
+      },
+    });
+    return; // Không xóa lịch
+  }
+
+  // Nếu KH xác nhận HỦY
+  if (confirmResult.isConfirmed) {
     try {
       isLoading.value = true;
       Swal.fire({
@@ -367,8 +391,8 @@ const xoaLich = async (id) => {
 
       await Swal.fire({
         icon: "success",
-        title: "Thành công",
-        text: "Bạn đã hủy lịch hẹn thành công!",
+        title: "Đã hủy thành công",
+        text: "Cảm ơn bạn, rất mong được phục vụ bạn vào lần sau!",
         confirmButtonText: "OK",
         confirmButtonColor: "#27ae60",
         background: "#f8fff8",
@@ -388,6 +412,8 @@ const xoaLich = async (id) => {
     }
   }
 };
+
+
 
 // Safe helpers to handle items that may be service OR product (or missing)
 const getTen = (ct) => {
