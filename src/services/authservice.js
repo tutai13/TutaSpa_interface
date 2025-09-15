@@ -1,11 +1,8 @@
-
 import axios from "axios";
 import { error } from "../notification";
 import { useAuthState } from "./authstate";
 // Cấu hình base URL cho API
 const API_BASE_URL = import.meta.env.VITE_BASE_URL;
-
-
 
 // Tạo axios instance
 const apiClient = axios.create({
@@ -83,8 +80,8 @@ export const authAPI = {
   // Đăng nhập
   login: async (credentials) => {
     try {
-      const response = await apiClient.post('/account/login', credentials)
-      
+      const response = await apiClient.post("/account/login", credentials);
+
       // Lưu token vào localStorage
       if (response.accessToken) {
         const state = useAuthState();
@@ -96,9 +93,6 @@ export const authAPI = {
       throw error;
     }
   },
-
-
-
 
   sendOTP: async (phoneNumber) => {
     try {
@@ -123,6 +117,30 @@ export const authAPI = {
       throw error;
     }
   },
+  // Gửi OTP qua email
+  sendOTPMail: async (email) => {
+    try {
+      const response = await apiClient.post(`/otp/sendMail?mail=${email}`);
+      return response;
+    } catch (error) {
+      console.error("Send OTP mail error:", error);
+      throw error;
+    }
+  },
+
+  // Xác thực OTP qua email
+  verifyOTPMail: async (email, OTP) => {
+    try {
+      const response = await apiClient.post(`/otp/verifyMail`, {
+        email: email,
+        OTP: OTP,
+      });
+      return true;
+    } catch (error) {
+      console.error("Verify OTP mail error:", error);
+      throw error;
+    }
+  },
 
   // Đăng ký
   register: async (userData) => {
@@ -135,11 +153,12 @@ export const authAPI = {
   },
 
   checkexist: async (phoneNumber) => {
-      try {
-        const response = await apiClient.get(`/account/phone/check?phoneNumber=${phoneNumber}`);
-        return response.exists;
-    } 
-      catch (error) {
+    try {
+      const response = await apiClient.get(
+        `/account/phone/check?phoneNumber=${phoneNumber}`
+      );
+      return response.exists;
+    } catch (error) {
       throw error;
     }
   },
@@ -163,12 +182,9 @@ export const authAPI = {
       const response = await apiClient.post("/account/refresh-token");
       localStorage.setItem("accessToken", response.accessToken);
       return true;
-      
     } catch (error) {
-      
       localStorage.removeItem("accessToken");
       throw error;
-
     }
   },
 
@@ -343,6 +359,5 @@ export const apiUtils = {
     }
   },
 };
-
 
 export default apiClient;
