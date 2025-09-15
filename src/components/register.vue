@@ -5,7 +5,9 @@
       <div class="register-header">
         <div class="welcome-icon">🌱</div>
         <h1 class="register-title">Tham gia cùng chúng tôi</h1>
-        <p class="register-subtitle">Tạo tài khoản mới để bắt đầu hành trình chăm sóc sức khỏe</p>
+        <p class="register-subtitle">
+          Tạo tài khoản mới để bắt đầu hành trình chăm sóc sức khỏe
+        </p>
       </div>
 
       <!-- Register Form -->
@@ -15,19 +17,40 @@
           <label for="name" class="form-label">Họ và tên</label>
           <div class="input-container">
             <div class="input-icon">👤</div>
-            <input 
-              type="text" 
+            <input
+              type="text"
               id="name"
               class="form-input"
               v-model="form.name"
               placeholder="Nhập họ và tên"
-              :class="{ 'error': errors.name }"
-            >
+              :class="{ error: errors.name }"
+            />
           </div>
           <transition name="fade">
             <div v-if="errors.name" class="error-message">
               <i class="fas fa-exclamation-circle"></i>
               {{ errors.name }}
+            </div>
+          </transition>
+        </div>
+        <!-- Email Input -->
+        <div class="form-group">
+          <label for="email" class="form-label">Email</label>
+          <div class="input-container">
+            <div class="input-icon">📧</div>
+            <input
+              type="email"
+              id="email"
+              class="form-input"
+              v-model="form.email"
+              placeholder="Nhập địa chỉ email"
+              :class="{ error: errors.email }"
+            />
+          </div>
+          <transition name="fade">
+            <div v-if="errors.email" class="error-message">
+              <i class="fas fa-exclamation-circle"></i>
+              {{ errors.email }}
             </div>
           </transition>
         </div>
@@ -37,15 +60,15 @@
           <label for="phone" class="form-label">Số điện thoại</label>
           <div class="input-container">
             <div class="input-icon">📱</div>
-            <input 
-              type="tel" 
+            <input
+              type="tel"
               id="phone"
               class="form-input"
               v-model="form.phone"
               placeholder="Nhập số điện thoại"
-              :class="{ 'error': errors.phone }"
+              :class="{ error: errors.phone }"
               :disabled="otpSent"
-            >
+            />
           </div>
           <transition name="fade">
             <div v-if="errors.phone" class="error-message">
@@ -56,8 +79,8 @@
         </div>
 
         <!-- OTP Section -->
-        <div class="form-group">
-          <button 
+        <!-- <div class="form-group">
+          <button
             type="button"
             class="otp-btn"
             @click="sendOTP"
@@ -74,43 +97,117 @@
               <span>📨</span>
               <span>Gửi mã OTP</span>
             </div>
-          </button>
+          </button> -->
 
-          <!-- OTP Input -->
-          <div v-if="otpSent" class="otp-input-section">
+        <!-- OTP Input -->
+        <!--<div v-if="otpSent" class="otp-input-section">
             <label for="otp" class="form-label">Mã OTP</label>
             <div class="input-container otp-container">
               <div class="input-icon">🛡️</div>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 id="otp"
                 class="form-input"
                 v-model="form.otp"
                 placeholder="Nhập mã OTP (6 số)"
-                :class="{ 'error': errors.otp, 'verified': otpVerified }"
+                :class="{ error: errors.otp, verified: otpVerified }"
                 maxlength="6"
                 :disabled="otpVerified"
-              >
+              />
               <div v-if="!otpVerified" class="otp-actions">
-                <button 
+                <button
                   type="button"
                   class="resend-btn"
                   @click="resendOTP"
                   :disabled="countdown > 0"
                 >
-                  {{ countdown > 0 ? `${countdown}s` : 'Gửi lại' }}
+                  {{ countdown > 0 ? `${countdown}s` : "Gửi lại" }}
                 </button>
-                <button 
+                <button
                   type="button"
                   class="verify-btn"
                   @click="verifyOTP"
                   :disabled="isVerifyingOTP || !form.otp"
                 >
-                  <div v-if="isVerifyingOTP" class="loading-spinner-small"></div>
+                  <div
+                    v-if="isVerifyingOTP"
+                    class="loading-spinner-small"
+                  ></div>
                   <span v-else>✓</span>
                 </button>
               </div>
               <div v-if="otpVerified" class="verified-badge">
+                <span>✅ Đã xác nhận</span>
+              </div>
+            </div>
+            <transition name="fade">
+              <div v-if="errors.otp" class="error-message">
+                <i class="fas fa-exclamation-circle"></i>
+                {{ errors.otp }}
+              </div>
+            </transition>
+          </div>
+        </div> -->
+
+        <!-- OTP mail -->
+        <div class="form-group">
+          <button
+            type="button"
+            class="otp-btn"
+            @click="sendOTPMail"
+            :disabled="isLoadingOTPMail || !form.email || otpSentMail"
+          >
+            <div v-if="isLoadingOTPMail" class="btn-content">
+              <span>Đang gửi...</span>
+            </div>
+            <div v-else-if="otpSentMail" class="btn-content">
+              <span>✅</span>
+              <span>Đã gửi OTP</span>
+            </div>
+            <div v-else class="btn-content">
+              <span>📨</span>
+              <span>Gửi mã OTP mail</span>
+            </div>
+          </button>
+
+          <!-- OTP Input -->
+          <div v-if="otpSentMail" class="otp-input-section">
+            <label for="otpMail" class="form-label">Mã OTP Email</label>
+            <div class="input-container otp-container">
+              <div class="input-icon">🛡️</div>
+              <input
+                type="text"
+                id="otpMail"
+                class="form-input"
+                v-model="form.otp"
+                placeholder="Nhập mã OTP (6 số)"
+                :class="{ error: errors.otp, verified: otpVerifiedMail }"
+                maxlength="6"
+                :disabled="otpVerifiedMail"
+              />
+              <div v-if="!otpVerifiedMail" class="otp-actions">
+                <button
+                  type="button"
+                  class="resend-btn"
+                  @click="resendOTPMail"
+                  :disabled="countdownMail > 0"
+                >
+                  {{ countdownMail > 0 ? `${countdownMail}s` : "Gửi lại" }}
+                </button>
+                <button
+                  type="button"
+                  class="verify-btn"
+                  @click="verifyOTPMail"
+                  :disabled="isVerifyingOTP || !form.otp"
+                >
+                  <div
+                    v-if="isVerifyingOTP"
+                    class="loading-spinner-small"
+                  ></div>
+                  <span v-else>✓</span>
+                </button>
+              </div>
+              <div v-if="otpVerifiedMail" class="verified-badge">
                 <span>✅ Đã xác nhận</span>
               </div>
             </div>
@@ -128,19 +225,16 @@
           <label for="password" class="form-label">Mật khẩu</label>
           <div class="input-container">
             <div class="input-icon">🔒</div>
-            <input 
+            <input
               :type="showPassword ? 'text' : 'password'"
               id="password"
               class="form-input"
               v-model="form.password"
               placeholder="Nhập mật khẩu"
-              :class="{ 'error': errors.password }"
-            >
-            <div 
-              class="password-toggle"
-              @click="togglePassword"
-            >
-              {{ showPassword ? '🙈' : '👁️' }}
+              :class="{ error: errors.password }"
+            />
+            <div class="password-toggle" @click="togglePassword">
+              {{ showPassword ? "🙈" : "👁️" }}
             </div>
           </div>
           <transition name="fade">
@@ -153,22 +247,21 @@
 
         <!-- Confirm Password Input -->
         <div class="form-group">
-          <label for="confirmPassword" class="form-label">Xác nhận mật khẩu</label>
+          <label for="confirmPassword" class="form-label"
+            >Xác nhận mật khẩu</label
+          >
           <div class="input-container">
             <div class="input-icon">🔐</div>
-            <input 
+            <input
               :type="showConfirmPassword ? 'text' : 'password'"
               id="confirmPassword"
               class="form-input"
               v-model="form.confirmPassword"
               placeholder="Nhập lại mật khẩu"
-              :class="{ 'error': errors.confirmPassword }"
-            >
-            <div 
-              class="password-toggle"
-              @click="toggleConfirmPassword"
-            >
-              {{ showConfirmPassword ? '🙈' : '👁️' }}
+              :class="{ error: errors.confirmPassword }"
+            />
+            <div class="password-toggle" @click="toggleConfirmPassword">
+              {{ showConfirmPassword ? "🙈" : "👁️" }}
             </div>
           </div>
           <transition name="fade">
@@ -180,11 +273,12 @@
         </div>
 
         <!-- Register Button -->
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           class="register-btn"
-          :disabled="isLoading || !otpVerified"
+          :disabled="isLoading || !otpVerifiedMail"
         >
+          <!-- !otpVerified -->
           <div v-if="isLoading" class="btn-content">
             <span>Đang đăng ký...</span>
           </div>
@@ -221,252 +315,369 @@
 </template>
 
 <script setup>
-import notification from '../notification'
-import { ref, reactive, onUnmounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { authAPI } from '../services/authservice'
+import notification from "../notification";
+import { ref, reactive, onUnmounted } from "vue";
+import { useRouter } from "vue-router";
+import { authAPI } from "../services/authservice";
 
 // Router instance
-const router = useRouter()
+const router = useRouter();
 
 // Reactive data
 const form = reactive({
-  name: '',
-  phone: '',
-  otp: '',
-  password: '',
-  confirmPassword: ''
-})
+  name: "",
+  phone: "",
+  email: "",
+  otp: "",
+  password: "",
+  confirmPassword: "",
+});
 
 const errors = reactive({
-  name: '',
-  phone: '',
-  otp: '',
-  password: '',
-  confirmPassword: ''
-})
+  name: "",
+  phone: "",
+  email: "",
+  otp: "",
+  password: "",
+  confirmPassword: "",
+});
 
 // Refs
-const showPassword = ref(false)
-const showConfirmPassword = ref(false)
-const isLoading = ref(false)
-const isLoadingOTP = ref(false)
-const isVerifyingOTP = ref(false)
-const otpSent = ref(false)
-const otpVerified = ref(false)
-const countdown = ref(0)
-let countdownInterval = null
+const showPassword = ref(false);
+const showConfirmPassword = ref(false);
+const isLoading = ref(false);
+const isLoadingOTP = ref(false);
+const isVerifyingOTP = ref(false);
+const otpSent = ref(false);
+const otpVerified = ref(false);
+const countdown = ref(0);
+let countdownInterval = null;
+const isLoadingOTPMail = ref(false);
+const otpSentMail = ref(false);
+const otpVerifiedMail = ref(false);
+const countdownMail = ref(0);
+let countdownIntervalMail = null;
 
 // Methods
 const validateForm = () => {
-  let isValid = true
-  
+  let isValid = true;
+
   // Reset errors
-  errors.name = ''
-  errors.phone = ''
-  errors.password = ''
-  errors.confirmPassword = ''
+  errors.name = "";
+  errors.phone = "";
+  errors.password = "";
+  errors.confirmPassword = "";
 
   // Validate name
   if (!form.name.trim()) {
-    errors.name = 'Vui lòng nhập họ và tên'
-    isValid = false
+    errors.name = "Vui lòng nhập họ và tên";
+    isValid = false;
   } else if (form.name.trim().length < 2) {
-    errors.name = 'Họ và tên phải có ít nhất 2 ký tự'
-    isValid = false
+    errors.name = "Họ và tên phải có ít nhất 2 ký tự";
+    isValid = false;
   }
 
   // Validate phone
   if (!form.phone.trim()) {
-    errors.phone = 'Vui lòng nhập số điện thoại'
-    isValid = false
-  } else if (!/^[0-9]{10,11}$/.test(form.phone.replace(/\s/g, ''))) {
-    errors.phone = 'Số điện thoại không hợp lệ'
-    isValid = false
+    errors.phone = "Vui lòng nhập số điện thoại";
+    isValid = false;
+  } else if (!/^[0-9]{10,11}$/.test(form.phone.replace(/\s/g, ""))) {
+    errors.phone = "Số điện thoại không hợp lệ";
+    isValid = false;
   }
 
   // Validate password
   if (!form.password.trim()) {
-    errors.password = 'Vui lòng nhập mật khẩu'
-    isValid = false
+    errors.password = "Vui lòng nhập mật khẩu";
+    isValid = false;
   } else if (form.password.length < 6) {
-    errors.password = 'Mật khẩu phải có ít nhất 6 ký tự'
-    isValid = false
+    errors.password = "Mật khẩu phải có ít nhất 6 ký tự";
+    isValid = false;
   }
 
   // Validate confirm password
   if (!form.confirmPassword.trim()) {
-    errors.confirmPassword = 'Vui lòng xác nhận mật khẩu'
-    isValid = false
+    errors.confirmPassword = "Vui lòng xác nhận mật khẩu";
+    isValid = false;
   } else if (form.password !== form.confirmPassword) {
-    errors.confirmPassword = 'Mật khẩu xác nhận không khớp'
-    isValid = false
+    errors.confirmPassword = "Mật khẩu xác nhận không khớp";
+    isValid = false;
   }
 
-  return isValid
-}
+  return isValid;
+};
 
 const sendOTP = async () => {
   // Validate phone first
   if (!form.phone.trim()) {
-    errors.phone = 'Vui lòng nhập số điện thoại'
-    return
-  }
-  
-  if (!/^[0-9]{10,11}$/.test(form.phone.replace(/\s/g, ''))) {
-    errors.phone = 'Số điện thoại không hợp lệ'
-    return
-  }
-  var exists = await authAPI.checkexist(form.phone)
-  if( exists) {
-    notification.error("Số điện thoại đã được đăng ký. Vui lòng sử dụng số khác.")
-    return
+    errors.phone = "Vui lòng nhập số điện thoại";
+    return;
   }
 
-  isLoadingOTP.value = true
-  errors.phone = ''
+  if (!/^[0-9]{10,11}$/.test(form.phone.replace(/\s/g, ""))) {
+    errors.phone = "Số điện thoại không hợp lệ";
+    return;
+  }
+  var exists = await authAPI.checkexist(form.phone);
+  if (exists) {
+    notification.error(
+      "Số điện thoại đã được đăng ký. Vui lòng sử dụng số khác."
+    );
+    return;
+  }
+
+  isLoadingOTP.value = true;
+  errors.phone = "";
 
   try {
-    const result = await authAPI.sendOTP(form.phone)
+    const result = await authAPI.sendOTP(form.phone);
 
     if (result.code == 106 || result.code == 203) {
-      otpSent.value = true
-      otpVerified.value = false
-      startCountdown()
+      otpSent.value = true;
+      otpVerified.value = false;
+      startCountdown();
       notification.success("Mã OTP đã được gửi đến số điện thoại của bạn", {
         title: "",
-        timer: 2000
-      })
+        timer: 2000,
+      });
     } else {
-      notification.error("Gửi OTP thất bại")
+      notification.error("Gửi OTP thất bại");
     }
   } catch (error) {
-    console.error('Send OTP error:', error)
-    notification.error(error.message ? error.message : 'Gửi OTP thất bại. Vui lòng thử lại!')
+    console.error("Send OTP error:", error);
+    notification.error(
+      error.message ? error.message : "Gửi OTP thất bại. Vui lòng thử lại!"
+    );
   } finally {
-    isLoadingOTP.value = false
+    isLoadingOTP.value = false;
   }
-}
+};
 
 const verifyOTP = async () => {
   if (!form.otp.trim()) {
-    errors.otp = 'Vui lòng nhập mã OTP'
-    return
-  }
-  
-  if (!/^[0-9]{6}$/.test(form.otp)) {
-    errors.otp = 'Mã OTP phải có 6 số'
-    return
+    errors.otp = "Vui lòng nhập mã OTP";
+    return;
   }
 
-  isVerifyingOTP.value = true
-  errors.otp = ''
+  if (!/^[0-9]{6}$/.test(form.otp)) {
+    errors.otp = "Mã OTP phải có 6 số";
+    return;
+  }
+
+  isVerifyingOTP.value = true;
+  errors.otp = "";
 
   try {
-    const result = await authAPI.verifyOTP(form.phone, form.otp)
+    const result = await authAPI.verifyOTP(form.phone, form.otp);
 
     if (result) {
-      otpVerified.value = true
+      otpVerified.value = true;
       notification.success("Xác thực OTP thành công!", {
         title: "",
-        timer: 2000
-      })
+        timer: 2000,
+      });
     } else {
-      errors.otp = 'Mã OTP không chính xác'
-      notification.error("Mã OTP không chính xác")
+      errors.otp = "Mã OTP không chính xác";
+      notification.error("Mã OTP không chính xác");
     }
   } catch (error) {
-    console.error('Verify OTP error:', error)
-    errors.otp = error.message || 'Xác thực OTP thất bại'
-    notification.error(error.message ? error.message : 'Xác thực OTP thất bại. Vui lòng thử lại!')
+    console.error("Verify OTP error:", error);
+    errors.otp = error.message || "Xác thực OTP thất bại";
+    notification.error(
+      error.message ? error.message : "Xác thực OTP thất bại. Vui lòng thử lại!"
+    );
   } finally {
-    isVerifyingOTP.value = false
+    isVerifyingOTP.value = false;
   }
-}
+};
 
 const resendOTP = async () => {
-  var exists = await authAPI.checkexist(form.phone)
-  if( exists) {
-    notification.error("Số điện thoại đã được đăng ký. Vui lòng sử dụng số khác.")
-    return
+  var exists = await authAPI.checkexist(form.phone);
+  if (exists) {
+    notification.error(
+      "Số điện thoại đã được đăng ký. Vui lòng sử dụng số khác."
+    );
+    return;
   }
 
-  otpVerified.value = false
-  form.otp = ''
-  await sendOTP()
-}
+  otpVerified.value = false;
+  form.otp = "";
+  await sendOTP();
+};
 
 const startCountdown = () => {
-  countdown.value = 60
+  countdown.value = 60;
   countdownInterval = setInterval(() => {
-    countdown.value--
+    countdown.value--;
     if (countdown.value <= 0) {
-      clearInterval(countdownInterval)
+      clearInterval(countdownInterval);
     }
-  }, 1000)
-}
-
-const handleRegister = async () => {
-  if (!validateForm()) return
-
-  if (!otpVerified.value) {
-    notification.error("Vui lòng xác thực OTP trước khi đăng ký")
-    return
+  }, 1000);
+};
+const sendOTPMail = async () => {
+  if (!form.email.trim()) {
+    errors.email = "Vui lòng nhập email";
+    return;
   }
 
-  isLoading.value = true
+  // regex check email cơ bản
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+    errors.email = "Email không hợp lệ";
+    return;
+  }
+
+  isLoadingOTPMail.value = true;
+  errors.email = "";
+
+  try {
+    const result = await authAPI.sendOTPMail(form.email);
+
+    if (result.code == 106) {
+      otpSentMail.value = true;
+      otpVerifiedMail.value = false;
+      startCountdownMail();
+      notification.success("Mã OTP đã được gửi đến email của bạn", {
+        title: "",
+        timer: 2000,
+      });
+    } else {
+      notification.error("Gửi OTP email thất bại");
+    }
+  } catch (error) {
+    console.error("Send OTP mail error:", error);
+    notification.error(
+      error.message ? error.message : "Gửi OTP mail thất bại. Vui lòng thử lại!"
+    );
+  } finally {
+    isLoadingOTPMail.value = false;
+  }
+};
+
+// Xác thực OTP mail
+const verifyOTPMail = async () => {
+  if (!form.otp.trim()) {
+    errors.otp = "Vui lòng nhập mã OTP";
+    return;
+  }
+
+  if (!/^[0-9]{6}$/.test(form.otp)) {
+    errors.otp = "Mã OTP phải có 6 số";
+    return;
+  }
+
+  isVerifyingOTP.value = true;
+  errors.otp = "";
+
+  try {
+    const result = await authAPI.verifyOTPMail(form.email, form.otp);
+
+    if (result) {
+      otpVerifiedMail.value = true;
+      notification.success("Xác thực OTP email thành công!", {
+        title: "",
+        timer: 2000,
+      });
+    } else {
+      errors.otp = "Mã OTP email không chính xác";
+      notification.error("Mã OTP email không chính xác");
+    }
+  } catch (error) {
+    console.error("Verify OTP mail error:", error);
+    errors.otp = error.message || "Xác thực OTP email thất bại";
+    notification.error(
+      error.message
+        ? error.message
+        : "Xác thực OTP email thất bại. Vui lòng thử lại!"
+    );
+  } finally {
+    isVerifyingOTP.value = false;
+  }
+};
+
+// Resend OTP mail
+const resendOTPMail = async () => {
+  otpVerifiedMail.value = false;
+  form.otp = "";
+  await sendOTPMail();
+};
+
+// Countdown cho OTP mail
+const startCountdownMail = () => {
+  countdownMail.value = 60;
+  countdownIntervalMail = setInterval(() => {
+    countdownMail.value--;
+    if (countdownMail.value <= 0) {
+      clearInterval(countdownIntervalMail);
+    }
+  }, 1000);
+};
+const handleRegister = async () => {
+  if (!validateForm()) return;
+
+  // if (!otpVerified.value) {
+  //   notification.error("Vui lòng xác thực OTP trước khi đăng ký");
+  //   return;
+  // }
+  if (!otpVerifiedMail.value) {
+    notification.error("Vui lòng xác thực OTP email trước khi đăng ký");
+    return;
+  }
+
+  isLoading.value = true;
 
   try {
     const result = await authAPI.register({
       Name: form.name,
       PhoneNumber: form.phone,
+      Email: form.email,
       Password: form.password,
-      ConfirmPassword: form.confirmPassword
-    })
+      ConfirmPassword: form.confirmPassword,
+    });
 
     if (result) {
       notification.success("Đăng ký thành công! Vui lòng đăng nhập.", {
         title: "",
-        timer: 2000
-      })
-      
+        timer: 2000,
+      });
+
       setTimeout(() => {
-        router.push('/login')
-      }, 2000)
-      return
+        router.push("/login");
+      }, 2000);
+      return;
     }
 
-    notification.error("Đăng ký thất bại")
-    
+    notification.error("Đăng ký thất bại");
   } catch (error) {
-    console.error('Register error:', error)
-    notification.error(error.message ? error.message : 'Đăng ký thất bại. Vui lòng thử lại!')
+    console.error("Register error:", error);
+    notification.error(
+      error.message ? error.message : "Đăng ký thất bại. Vui lòng thử lại!"
+    );
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
-}
+};
 
 const togglePassword = () => {
-  showPassword.value = !showPassword.value
-}
+  showPassword.value = !showPassword.value;
+};
 
 const toggleConfirmPassword = () => {
-  showConfirmPassword.value = !showConfirmPassword.value
-}
+  showConfirmPassword.value = !showConfirmPassword.value;
+};
 
 const goToLogin = () => {
-  router.push('/login')
-}
+  router.push("/login");
+};
 
 // Cleanup countdown on unmount
 onUnmounted(() => {
   if (countdownInterval) {
-    clearInterval(countdownInterval)
+    clearInterval(countdownInterval);
   }
-})
+});
 
 // Emit events
-const emit = defineEmits(['register-success', 'go-to-login'])
+const emit = defineEmits(["register-success", "go-to-login"]);
 </script>
 
 <style scoped>
@@ -477,34 +688,44 @@ const emit = defineEmits(['register-success', 'go-to-login'])
   align-items: center;
   justify-content: center;
   padding: 2rem 1rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   position: relative;
   overflow: hidden;
 }
 
 .spa-register-wrapper::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -50%;
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle, rgba(107, 168, 107, 0.05) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(107, 168, 107, 0.05) 0%,
+    transparent 70%
+  );
   animation: float 20s ease-in-out infinite;
 }
 
 @keyframes float {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  33% { transform: translate(30px, -30px) rotate(120deg); }
-  66% { transform: translate(-20px, 20px) rotate(240deg); }
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  33% {
+    transform: translate(30px, -30px) rotate(120deg);
+  }
+  66% {
+    transform: translate(-20px, 20px) rotate(240deg);
+  }
 }
 
 .spa-register-container {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   border-radius: 24px;
-  box-shadow: 
-    0 20px 40px rgba(45, 90, 45, 0.1),
+  box-shadow: 0 20px 40px rgba(45, 90, 45, 0.1),
     0 0 0 1px rgba(255, 255, 255, 0.2);
   padding: 2.5rem;
   width: 100%;
@@ -515,7 +736,7 @@ const emit = defineEmits(['register-success', 'go-to-login'])
 }
 
 .spa-register-container::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -527,8 +748,13 @@ const emit = defineEmits(['register-success', 'go-to-login'])
 }
 
 @keyframes gradient {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }
 
 /* Header */
@@ -544,9 +770,19 @@ const emit = defineEmits(['register-success', 'go-to-login'])
 }
 
 @keyframes bounce {
-  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-  40% { transform: translateY(-10px); }
-  60% { transform: translateY(-5px); }
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
 }
 
 .register-title {
@@ -662,13 +898,18 @@ const emit = defineEmits(['register-success', 'go-to-login'])
 }
 
 .otp-btn::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
   transition: left 0.5s ease;
 }
 
@@ -795,13 +1036,18 @@ const emit = defineEmits(['register-success', 'go-to-login'])
 }
 
 .register-btn::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
   transition: left 0.5s ease;
 }
 
@@ -841,8 +1087,12 @@ const emit = defineEmits(['register-success', 'go-to-login'])
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Divider */
@@ -853,7 +1103,7 @@ const emit = defineEmits(['register-success', 'go-to-login'])
 }
 
 .divider::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 0;
@@ -960,18 +1210,29 @@ const emit = defineEmits(['register-success', 'go-to-login'])
 }
 
 @keyframes float-leaf {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  25% { transform: translate(10px, -10px) rotate(90deg); }
-  50% { transform: translate(-5px, 5px) rotate(180deg); }
-  75% { transform: translate(5px, -5px) rotate(270deg); }
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(10px, -10px) rotate(90deg);
+  }
+  50% {
+    transform: translate(-5px, 5px) rotate(180deg);
+  }
+  75% {
+    transform: translate(5px, -5px) rotate(270deg);
+  }
 }
 
 /* Transitions */
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: all 0.3s ease;
 }
 
-.fade-enter-from, .fade-leave-to {
+.fade-enter-from,
+.fade-leave-to {
   opacity: 0;
   transform: translateY(-10px);
 }
@@ -981,16 +1242,16 @@ const emit = defineEmits(['register-success', 'go-to-login'])
   .spa-register-wrapper {
     padding: 1rem;
   }
-  
+
   .spa-register-container {
     padding: 2rem 1.5rem;
     max-width: 100%;
   }
-  
+
   .register-title {
     font-size: 1.7rem;
   }
-  
+
   .form-input {
     font-size: 16px; /* Prevent zoom on iOS */
   }
@@ -1000,7 +1261,8 @@ const emit = defineEmits(['register-success', 'go-to-login'])
     gap: 0.3rem;
   }
 
-  .resend-btn, .verify-btn {
+  .resend-btn,
+  .verify-btn {
     font-size: 0.75rem;
     padding: 0.3rem 0.6rem;
   }
@@ -1010,11 +1272,11 @@ const emit = defineEmits(['register-success', 'go-to-login'])
   .spa-register-container {
     padding: 1.5rem 1rem;
   }
-  
+
   .register-title {
     font-size: 1.5rem;
   }
-  
+
   .welcome-icon {
     font-size: 2.5rem;
   }
