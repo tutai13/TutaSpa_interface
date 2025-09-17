@@ -92,7 +92,13 @@
               <div v-if="otpSent">
                 <div class="alert alert-success mb-3" role="alert">
                   <i class="fas fa-check-circle me-2"></i>
-                  Mã OTP đã được gửi đến số {{ form.phone }}
+                  Mã OTP đã được gửi đến email <strong>{{ form.email }}</strong
+                  >.
+                  <br />
+                  <small class="text-muted">
+                    ⚠️ Nếu không thấy trong hộp thư đến, vui lòng kiểm tra thêm
+                    thư mục <strong>Spam / Thư rác</strong>.
+                  </small>
                 </div>
 
                 <div class="mb-3">
