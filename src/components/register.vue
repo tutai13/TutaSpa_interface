@@ -536,9 +536,9 @@ const sendOTPMail = async () => {
       otpSentMail.value = true;
       otpVerifiedMail.value = false;
       startCountdownMail();
-      notification.success("Mã OTP đã được gửi đến email của bạn", {
+      notification.success("Mã OTP đã được gửi đến email của bạn. Vui lòng kiểm tra hộp thư đến hoặc thư rác (Spam).", {
         title: "",
-        timer: 2000,
+        timer: 4000,
       });
     } else {
       notification.error("Gửi OTP email thất bại");
