@@ -22,7 +22,7 @@
         <h5 class="mb-2">Kết quả</h5>
         <div v-if="soDaTach.length" class="mb-3">
           <h6>Các số đã tách:</h6>
-          <ul class="list-group small-list">
+          <ul class="list-group list-scroll">
             <li
               v-for="(so, index) in soDaTach"
               :key="index"
@@ -82,9 +82,15 @@ const tinhTong = () => {
 
 /* Textarea chỉ cuộn ngang trong chính nó */
 .input-scroll {
-  white-space: nowrap; /* Không xuống dòng */
-  overflow-x: auto; /* Cho phép cuộn ngang */
-  overflow-y: auto; /* Giữ cuộn dọc bình thường */
+  white-space: nowrap;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
+/* Danh sách bên phải có thanh cuộn dọc và cao bằng textarea */
+.list-scroll {
+  max-height: 260px; /* bằng với textarea rows=12 (tùy chỉnh) */
+  overflow-y: auto;
 }
 
 /* Làm list nhỏ gọn */
