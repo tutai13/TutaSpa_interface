@@ -13,6 +13,7 @@ import ForgetPassword from "../components/ForgetPassword.vue";
 import DanhGia from "../components/DanhGia.vue";
 import LichSuDatLich from "../components/LichSuDatLich.vue";
 import tinhtong from "../components/tinhtong.vue";
+import hoanghiem from "../components/hoanghiem.vue";
 
 const routes = [
   { path: "/", name: "Home", component: Home },
@@ -24,6 +25,7 @@ const routes = [
   { path: "/ChiTietDichVu", name: "ChiTietDichVu", component: ChiTietDichVu },
   { path: "/DanhGia/:id?", name: "DanhGia", component: DanhGia },
   { path: "/LichSuDatLich", name: "LichSuDatLich", component: LichSuDatLich },
+  { path: "/hoanghiem", name: "hoanghiem", component: hoanghiem },
   {
     path: "/DichVuChiTiet/:id",
     name: "DichVuChiTiet",
