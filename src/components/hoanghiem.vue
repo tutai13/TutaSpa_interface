@@ -2,8 +2,8 @@
 import * as XLSX from "xlsx";
 import { ref } from "vue";
 
-const selectedSheet = ref("T9");
-const selectedDate = ref("2025-09-03");
+const selectedSheet = ref("T10");
+const selectedDate = ref("2025-10-01");
 const reportText = ref("");
 const deXuat = ref("");
 
