@@ -14,25 +14,48 @@
             <span>TutaSpa 🌿</span>
           </router-link>
         </div>
-        
+
         <!-- Mobile Menu Toggle -->
-        <button class="mobile-menu-toggle" @click="toggleMenu" :class="{ active: isMenuVisible }">
+        <button
+          class="mobile-menu-toggle"
+          @click="toggleMenu"
+          :class="{ active: isMenuVisible }"
+        >
           <span></span>
           <span></span>
           <span></span>
         </button>
-        
+
         <!-- Navigation Links -->
         <ul class="nav-links" :class="{ 'mobile-active': isMenuVisible }">
-          <li><router-link to="/" @click="closeMobileMenu">Trang chủ</router-link></li>
-          <li><router-link to="/#services" @click="closeMobileMenu">Dịch vụ</router-link></li>
-          <li><router-link to="/DatLich" @click="closeMobileMenu">Đặt lịch</router-link></li>
-          <li><router-link to="/#about" @click="closeMobileMenu">Về chúng tôi</router-link></li>
-          <li><router-link to="/#contact" @click="closeMobileMenu">Liên hệ</router-link></li>
-          
+          <li>
+            <router-link to="/" @click="closeMobileMenu">Trang chủ</router-link>
+          </li>
+          <li>
+            <router-link to="/#services" @click="closeMobileMenu"
+              >Dịch vụ</router-link
+            >
+          </li>
+          <li>
+            <router-link to="/DatLich" @click="closeMobileMenu"
+              >Đặt lịch</router-link
+            >
+          </li>
+          <li>
+            <router-link to="/#about" @click="closeMobileMenu"
+              >Về chúng tôi</router-link
+            >
+          </li>
+          <li>
+            <router-link to="/#contact" @click="closeMobileMenu"
+              >Liên hệ</router-link
+            >
+          </li>
+
           <!-- Mobile User Actions - Inside Menu -->
           <li class="mobile-user-actions">
-            <router-link style="background-color: orange;"
+            <router-link
+              style="background-color: orange"
               v-if="!state.isAuthenticated"
               to="/login"
               class="mobile-auth-btn login-btn"
@@ -60,7 +83,7 @@
             </button>
           </li>
         </ul>
-        
+
         <!-- Desktop User Actions -->
         <div class="user-actions desktop-only">
           <router-link
@@ -93,7 +116,7 @@
 
     <!-- Content -->
     <main class="main-content"><router-view></router-view></main>
-    
+
     <!-- Floating Button -->
     <div class="chat-popup-wrapper">
       <!-- Chat Toggle Button -->
@@ -281,14 +304,14 @@ onMounted(() => {
     }
     lastScroll = currentScroll;
   });
-  
+
   // Close mobile menu when clicking outside
-  document.addEventListener('click', (e) => {
-    if (!e.target.closest('.nav') && isMenuVisible.value) {
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".nav") && isMenuVisible.value) {
       isMenuVisible.value = false;
     }
   });
-  
+
   initializeChat();
 });
 
@@ -626,8 +649,9 @@ body {
 
 /* Header Styles - Enhanced WOW Factor */
 .header {
-  background: linear-gradient(135deg, 
-    rgba(120, 186, 126, 0.95) 0%, 
+  background: linear-gradient(
+    135deg,
+    rgba(120, 186, 126, 0.95) 0%,
     rgba(107, 163, 113, 0.95) 30%,
     rgba(94, 140, 100, 0.95) 70%,
     rgba(78, 120, 85, 0.95) 100%
@@ -639,22 +663,21 @@ body {
   top: 0;
   z-index: 1000;
   backdrop-filter: blur(20px) saturate(180%);
-  box-shadow: 
-    0 8px 32px rgba(120, 186, 126, 0.4),
-    0 2px 8px rgba(0, 0, 0, 0.1),
+  box-shadow: 0 8px 32px rgba(120, 186, 126, 0.4), 0 2px 8px rgba(0, 0, 0, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .header::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(90deg, 
+  background: linear-gradient(
+    90deg,
     transparent 0%,
     rgba(255, 255, 255, 0.05) 50%,
     transparent 100%
@@ -663,8 +686,13 @@ body {
 }
 
 @keyframes shimmer {
-  0%, 100% { opacity: 0; }
-  50% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 .header.hidden {
@@ -784,13 +812,14 @@ body {
 }
 
 .nav-links a::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, 
+  background: linear-gradient(
+    90deg,
     transparent,
     rgba(255, 255, 255, 0.2),
     transparent
@@ -817,9 +846,7 @@ body {
   background: rgba(255, 255, 255, 0.15);
   border-color: rgba(255, 215, 0, 0.3);
   transform: translateY(-2px) scale(1.05);
-  box-shadow: 
-    0 10px 25px rgba(0, 0, 0, 0.2),
-    0 0 20px rgba(255, 215, 0, 0.3);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2), 0 0 20px rgba(255, 215, 0, 0.3);
   text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
 }
 
@@ -843,9 +870,9 @@ body {
   box-shadow: none !important;
   transform: none !important;
   text-shadow: none !important;
-  background: rgba(255,255,255,0.05) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
   color: white !important;
-  border-color: rgba(255,255,255,0.1) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 .nav-links a::before,
@@ -915,20 +942,14 @@ body {
 }
 
 .book-btn {
-  background: linear-gradient(135deg, 
-    #f59e0b 0%, 
-    #f97316 50%, 
-    #ea580c 100%
-  );
+  background: linear-gradient(135deg, #f59e0b 0%, #f97316 50%, #ea580c 100%);
   padding: 0.8rem 1.5rem;
   border-radius: 50px;
   text-decoration: none;
   color: white;
   font-weight: 700;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 
-    0 8px 20px rgba(245, 158, 11, 0.4),
-    0 2px 4px rgba(0, 0, 0, 0.2),
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4), 0 2px 4px rgba(0, 0, 0, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
   border: 2px solid rgba(255, 255, 255, 0.2);
   cursor: pointer;
@@ -942,13 +963,14 @@ body {
 }
 
 .book-btn::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, 
+  background: linear-gradient(
+    90deg,
     transparent,
     rgba(255, 255, 255, 0.3),
     transparent
@@ -958,18 +980,12 @@ body {
 
 .book-btn:hover {
   transform: translateY(-3px) scale(1.05);
-  box-shadow: 
-    0 15px 35px rgba(245, 158, 11, 0.5),
-    0 5px 15px rgba(0, 0, 0, 0.3),
+  box-shadow: 0 15px 35px rgba(245, 158, 11, 0.5), 0 5px 15px rgba(0, 0, 0, 0.3),
     0 0 20px rgba(255, 215, 0, 0.4);
   border-color: rgba(255, 215, 0, 0.4);
   color: white;
   text-decoration: none;
-  background: linear-gradient(135deg, 
-    #fbbf24 0%, 
-    #f59e0b 50%, 
-    #d97706 100%
-  );
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
 }
 
 .book-btn:hover::before {
@@ -978,9 +994,7 @@ body {
 
 .book-btn:active {
   transform: translateY(-1px) scale(1.02);
-  box-shadow: 
-    0 8px 20px rgba(245, 158, 11, 0.4),
-    0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .book-btn i {
@@ -1388,9 +1402,9 @@ body {
   box-shadow: none !important;
   transform: none !important;
   text-shadow: none !important;
-  background: rgba(255,255,255,0.05) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
   color: white !important;
-  border-color: rgba(255,255,255,0.1) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 .nav-links a::before,
@@ -1698,8 +1712,8 @@ body {
 }
 
 /* High DPI displays */
-@media screen and (-webkit-min-device-pixel-ratio: 2), 
-       screen and (min-resolution: 192dpi) {
+@media screen and (-webkit-min-device-pixel-ratio: 2),
+  screen and (min-resolution: 192dpi) {
   .logo img {
     image-rendering: -webkit-optimize-contrast;
     image-rendering: crisp-edges;
